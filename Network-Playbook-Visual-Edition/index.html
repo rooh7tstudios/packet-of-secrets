@@ -1,0 +1,853 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network Engineer's Reference Playbook — Visual Edition</title>
+<style>
+  :root{
+    --ink:#1a2332; --paper:#fdfdfb; --panel:#f2f4f7; --line:#c9d2dc;
+    --wire:#0e7490;       /* teal — data path */
+    --ctrl:#b45309;       /* amber — control plane */
+    --danger:#b91c1c;     /* red — blocked/deny */
+    --ok:#15803d;         /* green — permit/forwarding */
+    --dim:#64748b;
+    --mono:"Consolas","SF Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font:16px/1.6 Georgia,"Times New Roman",serif;}
+  .wrap{max-width:960px;margin:0 auto;padding:32px 24px 80px}
+  h1{font-size:2rem;line-height:1.2;margin:.2em 0 .1em;letter-spacing:-.01em}
+  h2{font-size:1.45rem;margin:2.2em 0 .4em;padding-top:.6em;border-top:3px solid var(--ink)}
+  h3{font-size:1.12rem;margin:1.6em 0 .3em;color:#0f3550}
+  .kicker{font:600 .72rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--wire)}
+  p{margin:.5em 0}
+  code,pre{font-family:var(--mono);font-size:.84em}
+  code{background:var(--panel);padding:1px 5px;border-radius:3px}
+  pre{background:#10202e;color:#d7e5f0;padding:14px 16px;border-radius:6px;overflow-x:auto;line-height:1.45}
+  pre code{background:none;padding:0;color:inherit}
+  .fig{margin:1.2em 0;padding:14px 14px 8px;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+  .fig svg{display:block;width:100%;height:auto}
+  .figcap{font:italic .82rem/1.5 Georgia,serif;color:var(--dim);margin:8px 4px 4px}
+  .figcap b{font-style:normal;color:var(--ink)}
+  .tag{display:inline-block;font:600 .68rem/1 var(--mono);letter-spacing:.06em;padding:3px 8px;border-radius:99px;margin-right:6px}
+  .tag.pt{background:#e0f2fe;color:#075985}.tag.gns{background:#fef3c7;color:#92400e}.tag.ot{background:#dcfce7;color:#166534}
+  .callout{border-left:4px solid var(--ctrl);background:#fffbeb;padding:10px 14px;margin:.9em 0;font-size:.95em}
+  .iv{border-left:4px solid var(--wire);background:#ecfeff;padding:10px 14px;margin:.9em 0;font-size:.95em}
+  table{border-collapse:collapse;width:100%;margin:.8em 0;font-size:.92em}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel);font-family:var(--mono);font-size:.8em;letter-spacing:.04em}
+  .toc{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 22px;margin:1.4em 0}
+  .toc a{color:#0f3550;text-decoration:none}
+  .toc li{margin:.15em 0}
+  /* shared SVG text styles */
+  text{font-family:var(--mono)}
+  @media print{ pre{white-space:pre-wrap} h2{break-before:page} .fig{break-inside:avoid} }
+</style>
+</head>
+<body><div class="wrap">
+
+<div class="kicker">Reference · Theory · Labs · Troubleshooting · Interviews</div>
+<h1>Network Engineer's Reference Playbook</h1>
+<p style="color:var(--dim);margin-top:0">Visual edition — inline diagrams for the topics where a picture does the heavy lifting. Companion to the full research playbook. Legend used throughout: <span style="color:var(--wire)">■ teal = data path</span>, <span style="color:var(--ctrl)">■ amber = control plane</span>, <span style="color:var(--ok)">■ green = permit/forwarding</span>, <span style="color:var(--danger)">■ red = deny/blocked</span>.</p>
+
+<div class="toc"><b>Contents</b>
+<ol>
+<li><a href="#s1">Foundations — Life of a Packet, Encapsulation, VLANs/Trunks, STP</a></li>
+<li><a href="#s2">Services — DHCP DORA, NAT, HSRP</a></li>
+<li><a href="#s3">Routing — OSPF states &amp; areas, EIGRP DUAL, BGP best-path, MPLS L3VPN, SD-WAN</a></li>
+<li><a href="#s4">Security &amp; VPN — IPsec/IKEv2, GRE-over-IPsec, TLS 1.2 vs 1.3, ZTNA vs VPN</a></li>
+<li><a href="#s5">Design — Three-tier campus, Spine-leaf VXLAN-EVPN, Purdue / IEC 62443</a></li>
+<li><a href="#s6">Learning order &amp; lab platform map</a></li>
+</ol></div>
+
+<h2 id="s1">1 · Foundations</h2>
+
+<h3>1.1 Life of a Packet <span class="tag pt">PACKET TRACER</span></h3>
+<p>The classic interview question. Host A opens <code>https://www.example.com</code> across routed hops. The single most important invariant: <b>source/destination IP stay constant end-to-end; source/destination MAC are rewritten at every hop</b> (until NAT rewrites the IP at the edge).</p>
+
+<div class="fig">
+<svg viewBox="0 0 940 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Life of a packet end to end">
+  <defs>
+    <marker id="arw" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#0e7490"/></marker>
+    <marker id="arwA" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#b45309"/></marker>
+  </defs>
+  <!-- devices -->
+  <g font-size="12" text-anchor="middle">
+    <rect x="20" y="120" width="110" height="66" rx="8" fill="#fff" stroke="#1a2332" stroke-width="1.5"/>
+    <text x="75" y="146" font-weight="bold">Host A</text>
+    <text x="75" y="164" fill="#64748b">10.10.10.10/24</text>
+    <text x="75" y="179" fill="#64748b">MAC A</text>
+
+    <rect x="205" y="120" width="120" height="66" rx="8" fill="#fff" stroke="#1a2332" stroke-width="1.5"/>
+    <text x="265" y="141" font-weight="bold">R1 (gateway)</text>
+    <text x="265" y="158" fill="#64748b">.1 | MAC G1</text>
+    <text x="265" y="175" fill="#0e7490">TTL−1, FIB lookup</text>
+
+    <rect x="400" y="120" width="120" height="66" rx="8" fill="#fff" stroke="#1a2332" stroke-width="1.5"/>
+    <text x="460" y="141" font-weight="bold">R2 (NAT)</text>
+    <text x="460" y="158" fill="#64748b">src IP:port ⇄</text>
+    <text x="460" y="175" fill="#b45309">rewrites source</text>
+
+    <rect x="595" y="120" width="120" height="66" rx="8" fill="#fff" stroke="#1a2332" stroke-width="1.5"/>
+    <text x="655" y="141" font-weight="bold">R3</text>
+    <text x="655" y="158" fill="#64748b">longest-prefix</text>
+    <text x="655" y="175" fill="#0e7490">re-encapsulates L2</text>
+
+    <rect x="790" y="120" width="130" height="66" rx="8" fill="#fff" stroke="#1a2332" stroke-width="1.5"/>
+    <text x="855" y="146" font-weight="bold">Server</text>
+    <text x="855" y="164" fill="#64748b">93.184.216.34</text>
+    <text x="855" y="179" fill="#64748b">MAC S</text>
+  </g>
+  <!-- data path -->
+  <g stroke="#0e7490" stroke-width="2.5" fill="none">
+    <line x1="130" y1="153" x2="200" y2="153" marker-end="url(#arw)"/>
+    <line x1="325" y1="153" x2="395" y2="153" marker-end="url(#arw)"/>
+    <line x1="520" y1="153" x2="590" y2="153" marker-end="url(#arw)"/>
+    <line x1="715" y1="153" x2="785" y2="153" marker-end="url(#arw)"/>
+  </g>
+  <!-- MAC rewrite labels -->
+  <g font-size="10.5" text-anchor="middle" fill="#0e7490">
+    <text x="165" y="145">src MAC A</text><text x="165" y="132">dst MAC G1</text>
+    <text x="360" y="145">src MAC G1'</text><text x="360" y="132">dst MAC R2</text>
+    <text x="555" y="145">src MAC R2'</text><text x="555" y="132">dst MAC R3</text>
+    <text x="750" y="145">src MAC R3'</text><text x="750" y="132">dst MAC S</text>
+  </g>
+  <!-- constant IP band -->
+  <rect x="20" y="215" width="500" height="30" rx="6" fill="#ecfeff" stroke="#0e7490" stroke-dasharray="4 3"/>
+  <text x="270" y="234" font-size="11.5" text-anchor="middle" fill="#0e7490">IP header constant: src 10.10.10.10 → dst 93.184.216.34</text>
+  <rect x="540" y="215" width="380" height="30" rx="6" fill="#fffbeb" stroke="#b45309" stroke-dasharray="4 3"/>
+  <text x="730" y="234" font-size="11.5" text-anchor="middle" fill="#b45309">after NAT: src 203.0.113.5:40012 → dst 93.184.216.34</text>
+  <!-- pre-steps -->
+  <g font-size="11">
+    <rect x="20" y="20" width="900" height="78" rx="8" fill="#fff" stroke="#c9d2dc"/>
+    <text x="36" y="42" font-weight="bold" fill="#b45309">Before the first data packet (control plane):</text>
+    <text x="36" y="61">① AND own IP/mask vs destination → off-subnet → use default gateway   ② ARP broadcast "who has 10.10.10.1?" → unicast reply, cache MAC G1</text>
+    <text x="36" y="80">③ DNS UDP/53 via resolver (root → TLD → authoritative) → A record   ④ TCP SYN / SYN-ACK / ACK to :443   ⑤ TLS handshake (see §4.3)</text>
+  </g>
+  <!-- per hop router action -->
+  <g font-size="11">
+    <rect x="20" y="268" width="900" height="72" rx="8" fill="#fff" stroke="#c9d2dc"/>
+    <text x="36" y="290" font-weight="bold">Every router, every hop:</text>
+    <text x="36" y="309">verify dst MAC → strip L2 (de-encapsulate) → longest-prefix-match on dst IP → resolve next-hop (ARP if needed)</text>
+    <text x="36" y="328">→ new L2 header (re-encapsulate, new src/dst MAC) → TTL−1 → recompute checksum → forward</text>
+  </g>
+</svg>
+<div class="figcap"><b>Fig 1.</b> Life of a packet. MACs change per hop (teal labels), the IP pair is constant until the NAT router rewrites the source. Say this diagram out loud and you've answered the interview question.</div>
+</div>
+
+<div class="fig">
+<svg viewBox="0 0 940 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Encapsulation stack">
+  <g font-size="12">
+    <!-- nested boxes -->
+    <rect x="30" y="30" width="880" height="180" rx="8" fill="#fff" stroke="#1a2332" stroke-width="1.5"/>
+    <text x="52" y="55" font-weight="bold">L2 Frame</text>
+    <rect x="40" y="70" width="120" height="120" rx="6" fill="#f2f4f7" stroke="#64748b"/>
+    <text x="100" y="120" text-anchor="middle">Ethernet</text>
+    <text x="100" y="138" text-anchor="middle" fill="#64748b">src/dst MAC</text>
+    <text x="100" y="156" text-anchor="middle" fill="#64748b">802.1Q tag</text>
+
+    <rect x="170" y="70" width="700" height="120" rx="6" fill="#ecfeff" stroke="#0e7490"/>
+    <text x="192" y="93" font-weight="bold" fill="#0e7490">L3 Packet</text>
+    <rect x="182" y="102" width="120" height="76" rx="6" fill="#fff" stroke="#0e7490"/>
+    <text x="242" y="135" text-anchor="middle">IP header</text>
+    <text x="242" y="153" text-anchor="middle" fill="#64748b">src/dst IP · TTL</text>
+
+    <rect x="312" y="102" width="546" height="76" rx="6" fill="#fffbeb" stroke="#b45309"/>
+    <text x="334" y="123" font-weight="bold" fill="#b45309">L4 Segment</text>
+    <rect x="324" y="130" width="130" height="40" rx="6" fill="#fff" stroke="#b45309"/>
+    <text x="389" y="155" text-anchor="middle">TCP/UDP ports</text>
+    <rect x="466" y="130" width="380" height="40" rx="6" fill="#dcfce7" stroke="#15803d"/>
+    <text x="656" y="155" text-anchor="middle" fill="#166534">Application data (TLS, HTTP, DNS …)</text>
+
+    <rect x="880" y="70" width="20" height="120" rx="4" fill="#f2f4f7" stroke="#64748b"/>
+    <text x="890" y="135" text-anchor="middle" font-size="9" transform="rotate(-90 890 135)">FCS</text>
+  </g>
+  <g font-size="11" fill="#64748b" text-anchor="middle">
+    <text x="470" y="228">sender wraps outward-in (data → segment → packet → frame → bits) · receiver unwraps inward-out</text>
+  </g>
+</svg>
+<div class="figcap"><b>Fig 2.</b> Encapsulation. Each router strips and rebuilds only the outer (grey) layer; each NAT touches the teal layer; end hosts own everything inside.</div>
+</div>
+
+<h3>1.2 VLANs &amp; Trunks <span class="tag pt">PACKET TRACER</span></h3>
+<p>A VLAN is a logical broadcast domain; a trunk carries many VLANs by inserting a 4-byte <b>802.1Q tag</b> (12-bit VLAN ID → 4094 usable, 3-bit PCP for CoS). The <b>native VLAN</b> travels untagged — both ends must match or you leak traffic between VLANs.</p>
+<pre><code>interface gi0/24
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10,20,99
+ switchport nonegotiate</code></pre>
+<div class="iv"><b>Interview signal:</b> explain the double-tagging attack (attacker on native VLAN stacks two tags; first switch pops one, second forwards into the victim VLAN) and why the fix is an unused, tagged native VLAN. <span class="tag ot">OT</span> VLANs segment but do not secure — IEC 62443 conduits need ACL/firewall enforcement on top.</div>
+
+<h3>1.3 Spanning Tree Protocol <span class="tag pt">PACKET TRACER</span></h3>
+<p>STP elects one <b>root bridge</b> (lowest Bridge ID = priority + MAC), then every non-root switch selects its cheapest path; redundant paths <b>block</b>. Rapid PVST+ (802.1w) converges in under a second via proposal/agreement instead of 30–50 s timers.</p>
+
+<div class="fig">
+<svg viewBox="0 0 940 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="STP topology and port roles">
+  <defs><marker id="blk" markerWidth="10" markerHeight="10" refX="5" refY="5"><circle cx="5" cy="5" r="4" fill="#b91c1c"/></marker></defs>
+  <!-- links -->
+  <line x1="470" y1="90" x2="215" y2="230" stroke="#15803d" stroke-width="3"/>
+  <line x1="470" y1="90" x2="725" y2="230" stroke="#15803d" stroke-width="3"/>
+  <line x1="255" y1="255" x2="685" y2="255" stroke="#b91c1c" stroke-width="3" stroke-dasharray="7 5"/>
+  <!-- blocked X -->
+  <g stroke="#b91c1c" stroke-width="3"><line x1="660" y1="243" x2="686" y2="269"/><line x1="686" y1="243" x2="660" y2="269"/></g>
+  <!-- switches -->
+  <g font-size="12" text-anchor="middle">
+    <rect x="395" y="40" width="150" height="56" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+    <text x="470" y="63" font-weight="bold">SW1 — ROOT</text>
+    <text x="470" y="82" fill="#64748b">priority 24576</text>
+    <rect x="140" y="228" width="150" height="56" rx="8" fill="#fff" stroke="#1a2332" stroke-width="1.5"/>
+    <text x="215" y="251" font-weight="bold">SW2</text>
+    <text x="215" y="270" fill="#64748b">32768</text>
+    <rect x="650" y="228" width="150" height="56" rx="8" fill="#fff" stroke="#1a2332" stroke-width="1.5"/>
+    <text x="725" y="251" font-weight="bold">SW3</text>
+    <text x="725" y="270" fill="#64748b">32768 · higher MAC</text>
+  </g>
+  <!-- port role labels -->
+  <g font-size="10.5" font-weight="bold">
+    <text x="400" y="115" fill="#b45309">DP</text><text x="532" y="115" fill="#b45309">DP</text>
+    <text x="252" y="222" fill="#15803d">RP</text><text x="672" y="222" fill="#15803d">RP</text>
+    <text x="300" y="248" fill="#b45309">DP</text><text x="628" y="248" fill="#b91c1c">ALT/BLK</text>
+  </g>
+  <!-- state machine -->
+  <g font-size="11" text-anchor="middle">
+    <text x="470" y="20" font-weight="bold" font-size="12">802.1D states (50 s worst case)  vs  802.1w (sub-second)</text>
+    <g>
+      <rect x="60" y="300" width="120" height="26" rx="13" fill="#fee2e2" stroke="#b91c1c"/><text x="120" y="317">Blocking (20s)</text>
+      <rect x="240" y="300" width="120" height="26" rx="13" fill="#fef3c7" stroke="#b45309"/><text x="300" y="317">Listening (15s)</text>
+      <rect x="420" y="300" width="120" height="26" rx="13" fill="#fef3c7" stroke="#b45309"/><text x="480" y="317">Learning (15s)</text>
+      <rect x="600" y="300" width="130" height="26" rx="13" fill="#dcfce7" stroke="#15803d"/><text x="665" y="317">Forwarding</text>
+      <g stroke="#64748b" stroke-width="1.5"><line x1="180" y1="313" x2="238" y2="313"/><line x1="360" y1="313" x2="418" y2="313"/><line x1="540" y1="313" x2="598" y2="313"/></g>
+      <text x="820" y="317" fill="#0e7490">RSTP: propose/agree →</text>
+    </g>
+  </g>
+</svg>
+<div class="figcap"><b>Fig 3.</b> Triangle topology: SW1 wins root (lowest priority), SW2/SW3 pick root ports (RP) toward it, and the SW2–SW3 link blocks on SW3's side (higher BID loses the designated-port election). PortFast on that blocked link's equivalent host ports + BPDU Guard is the hardening baseline.</div>
+</div>
+
+<div class="callout"><b>War story to keep ready:</b> a rogue low-priority switch plugged into access steals root → traffic hairpins through a 100 Mb closet switch. Root Guard on distribution downlinks err-disables the port the moment a superior BPDU arrives.</div>
+<h2 id="s2">2 · Services</h2>
+
+<h3>2.1 DHCP — DORA <span class="tag pt">PACKET TRACER</span></h3>
+<div class="fig">
+<svg viewBox="0 0 940 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="DHCP DORA sequence">
+  <defs>
+    <marker id="a2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#0e7490"/></marker>
+    <marker id="a2b" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#b45309"/></marker>
+  </defs>
+  <g font-size="12" text-anchor="middle" font-weight="bold">
+    <text x="180" y="30">Client (0.0.0.0)</text><text x="760" y="30">DHCP Server</text>
+  </g>
+  <line x1="180" y1="40" x2="180" y2="235" stroke="#c9d2dc" stroke-width="2"/>
+  <line x1="760" y1="40" x2="760" y2="235" stroke="#c9d2dc" stroke-width="2"/>
+  <g font-size="11.5">
+    <line x1="180" y1="65" x2="755" y2="65" stroke="#0e7490" stroke-width="2" marker-end="url(#a2)"/>
+    <text x="470" y="58" text-anchor="middle" fill="#0e7490"><tspan font-weight="bold">D</tspan>ISCOVER — broadcast 255.255.255.255 "any server out there?"</text>
+    <line x1="760" y1="110" x2="185" y2="110" stroke="#b45309" stroke-width="2" marker-end="url(#a2b)"/>
+    <text x="470" y="103" text-anchor="middle" fill="#b45309"><tspan font-weight="bold">O</tspan>FFER — proposed IP, mask, gateway, DNS, lease</text>
+    <line x1="180" y1="155" x2="755" y2="155" stroke="#0e7490" stroke-width="2" marker-end="url(#a2)"/>
+    <text x="470" y="148" text-anchor="middle" fill="#0e7490"><tspan font-weight="bold">R</tspan>EQUEST — broadcast "I accept THIS offer" (declines others)</text>
+    <line x1="760" y1="200" x2="185" y2="200" stroke="#b45309" stroke-width="2" marker-end="url(#a2b)"/>
+    <text x="470" y="193" text-anchor="middle" fill="#b45309"><tspan font-weight="bold">A</tspan>CK — lease bound; client may gratuitous-ARP its new IP</text>
+  </g>
+  <text x="470" y="230" font-size="10.5" text-anchor="middle" fill="#64748b">Across subnets: router intercepts broadcast and unicasts it — ip helper-address · DHCP snooping drops OFFERs on untrusted ports</text>
+</svg>
+<div class="figcap"><b>Fig 4.</b> DORA. Discover and Request are broadcasts (client has no IP yet); Offer/ACK come back from the server. Relay agents make it work across VLANs.</div>
+</div>
+
+<h3>2.2 HSRP / VRRP first-hop redundancy <span class="tag pt">PACKET TRACER</span></h3>
+<div class="fig">
+<svg viewBox="0 0 940 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="HSRP virtual gateway">
+  <defs><marker id="a3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#0e7490"/></marker></defs>
+  <!-- hosts -->
+  <g font-size="11.5" text-anchor="middle">
+    <rect x="60" y="200" width="110" height="50" rx="8" fill="#fff" stroke="#1a2332"/>
+    <text x="115" y="222" font-weight="bold">Hosts</text><text x="115" y="240" fill="#64748b">gw = 10.10.10.1</text>
+  </g>
+  <!-- virtual router -->
+  <rect x="330" y="180" width="280" height="66" rx="10" fill="#ecfeff" stroke="#0e7490" stroke-width="2" stroke-dasharray="6 4"/>
+  <g font-size="12" text-anchor="middle">
+    <text x="470" y="205" font-weight="bold" fill="#0e7490">VIRTUAL GATEWAY 10.10.10.1</text>
+    <text x="470" y="226" fill="#0e7490">vMAC 0000.0c07.ac0a (group 10)</text>
+  </g>
+  <line x1="170" y1="223" x2="325" y2="215" stroke="#0e7490" stroke-width="2.5" marker-end="url(#a3)"/>
+  <!-- real routers -->
+  <g font-size="11.5" text-anchor="middle">
+    <rect x="290" y="50" width="170" height="76" rx="8" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
+    <text x="375" y="74" font-weight="bold" fill="#166534">SW-A — ACTIVE</text>
+    <text x="375" y="93">10.10.10.2 · prio 110</text>
+    <text x="375" y="111" fill="#166534">preempt · track uplink −20</text>
+    <rect x="490" y="50" width="170" height="76" rx="8" fill="#fff" stroke="#1a2332" stroke-width="1.5"/>
+    <text x="575" y="74" font-weight="bold">SW-B — STANDBY</text>
+    <text x="575" y="93">10.10.10.3 · prio 100</text>
+    <text x="575" y="111" fill="#64748b">listens for hellos</text>
+  </g>
+  <line x1="375" y1="126" x2="415" y2="178" stroke="#15803d" stroke-width="2.5"/>
+  <line x1="575" y1="126" x2="530" y2="178" stroke="#64748b" stroke-width="2" stroke-dasharray="5 4"/>
+  <g font-size="10.5" fill="#b45309" text-anchor="middle">
+    <text x="470" y="40">hellos 224.0.0.102 every 3 s · dead 10 s (HSRPv2)</text>
+  </g>
+  <line x1="460" y1="60" x2="490" y2="60" stroke="#b45309" stroke-width="2" stroke-dasharray="3 3"/>
+  <g font-size="10.5" fill="#64748b">
+    <text x="640" y="215">Failure: SW-A dies or uplink-track fires →</text>
+    <text x="640" y="232">SW-B claims vIP + vMAC, sends gratuitous</text>
+    <text x="640" y="249">ARP — hosts never change a thing.</text>
+  </g>
+</svg>
+<div class="figcap"><b>Fig 5.</b> HSRP. Hosts point at an address no physical box "owns." Missing <code>preempt</code> = no failback after recovery — the number-one HSRP interview gotcha. VRRP is the open-standard sibling (Master/Backup, 224.0.0.18); GLBP adds real per-host load-balancing.</div>
+</div>
+
+<h3>2.3 NAT/PAT in one line</h3>
+<p>PAT multiplexes an entire inside network onto one public IP by rewriting <code>src IP:port</code> and keeping a translation table — <code>show ip nat translations</code> is your truth. <span class="tag ot">OT</span> NAT at cell boundaries lets identical machine templates (same private IPs on every production line) coexist upstream.</p>
+
+<h2 id="s3">3 · Routing</h2>
+
+<h3>3.1 OSPF neighbor state machine <span class="tag pt">PACKET TRACER</span> <span class="tag gns">GNS3 for breakage labs</span></h3>
+<div class="fig">
+<svg viewBox="0 0 940 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="OSPF neighbor states">
+  <defs><marker id="a4" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1a2332"/></marker></defs>
+  <g font-size="11.5" text-anchor="middle">
+    <rect x="20"  y="60" width="100" height="40" rx="20" fill="#fee2e2" stroke="#b91c1c"/><text x="70"  y="85">Down</text>
+    <rect x="150" y="60" width="100" height="40" rx="20" fill="#fef3c7" stroke="#b45309"/><text x="200" y="85">Init</text>
+    <rect x="280" y="60" width="100" height="40" rx="20" fill="#fef3c7" stroke="#b45309"/><text x="330" y="85">2-Way</text>
+    <rect x="410" y="60" width="100" height="40" rx="20" fill="#e0f2fe" stroke="#075985"/><text x="460" y="85">ExStart</text>
+    <rect x="540" y="60" width="110" height="40" rx="20" fill="#e0f2fe" stroke="#075985"/><text x="595" y="85">Exchange</text>
+    <rect x="680" y="60" width="100" height="40" rx="20" fill="#e0f2fe" stroke="#075985"/><text x="730" y="85">Loading</text>
+    <rect x="810" y="60" width="100" height="40" rx="20" fill="#dcfce7" stroke="#15803d" stroke-width="2"/><text x="860" y="85" font-weight="bold">FULL</text>
+  </g>
+  <g stroke="#1a2332" stroke-width="1.8" fill="none">
+    <line x1="120" y1="80" x2="145" y2="80" marker-end="url(#a4)"/>
+    <line x1="250" y1="80" x2="275" y2="80" marker-end="url(#a4)"/>
+    <line x1="380" y1="80" x2="405" y2="80" marker-end="url(#a4)"/>
+    <line x1="510" y1="80" x2="535" y2="80" marker-end="url(#a4)"/>
+    <line x1="650" y1="80" x2="675" y2="80" marker-end="url(#a4)"/>
+    <line x1="780" y1="80" x2="805" y2="80" marker-end="url(#a4)"/>
+  </g>
+  <g font-size="10" fill="#64748b" text-anchor="middle">
+    <text x="132" y="65">hello rx</text>
+    <text x="262" y="65">see own RID</text>
+    <text x="392" y="65">adjacency?</text>
+    <text x="522" y="65">DBD</text>
+    <text x="662" y="65">LSR/LSU</text>
+    <text x="792" y="65">LSDB sync</text>
+  </g>
+  <!-- diagnostic strip -->
+  <g font-size="11">
+    <rect x="20" y="130" width="900" height="150" rx="8" fill="#fff" stroke="#c9d2dc"/>
+    <text x="36" y="154" font-weight="bold">Where it sticks = what's broken:</text>
+    <g fill="#b91c1c"><text x="36" y="180">■ stuck Init → one-way hellos (ACL, unidirectional link, auth mismatch one side)</text></g>
+    <g fill="#b45309"><text x="36" y="204">■ stuck 2-Way → normal for DROTHER↔DROTHER on broadcast nets — only DR/BDR go Full</text></g>
+    <g fill="#075985"><text x="36" y="228">■ stuck ExStart/Exchange → MTU mismatch (the classic) or duplicate router-ID</text></g>
+    <g fill="#64748b"><text x="36" y="252">■ no neighbor at all → hello/dead timers, area ID/type, subnet mask, or passive-interface mismatch — must-match list</text></g>
+    <text x="36" y="273" font-family="Consolas,monospace" font-size="10.5" fill="#0e7490">show ip ospf neighbor · show ip ospf interface · debug ip ospf adj</text>
+  </g>
+</svg>
+<div class="figcap"><b>Fig 6.</b> OSPF adjacency pipeline. Interviewers love "neighbor stuck in X — why?" This strip is the answer key. Deliberately break MTU in the lab and watch ExStart loop.</div>
+</div>
+
+<div class="fig">
+<svg viewBox="0 0 940 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="OSPF multi-area architecture">
+  <ellipse cx="470" cy="120" rx="180" ry="90" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <ellipse cx="150" cy="120" rx="120" ry="80" fill="#ecfeff" stroke="#0e7490" stroke-width="2"/>
+  <ellipse cx="790" cy="120" rx="120" ry="80" fill="#ecfeff" stroke="#0e7490" stroke-width="2"/>
+  <g font-size="12" text-anchor="middle">
+    <text x="470" y="60" font-weight="bold" fill="#b45309">AREA 0 — BACKBONE</text>
+    <text x="150" y="62" font-weight="bold" fill="#075985">AREA 1 (stub)</text>
+    <text x="790" y="62" font-weight="bold" fill="#075985">AREA 2</text>
+    <!-- routers -->
+    <rect x="255" y="95" width="80" height="50" rx="8" fill="#fff" stroke="#1a2332" stroke-width="2"/>
+    <text x="295" y="116" font-weight="bold">ABR</text><text x="295" y="133" font-size="10" fill="#64748b">Type-3 LSAs</text>
+    <rect x="605" y="95" width="80" height="50" rx="8" fill="#fff" stroke="#1a2332" stroke-width="2"/>
+    <text x="645" y="116" font-weight="bold">ABR</text><text x="645" y="133" font-size="10" fill="#64748b">summarize here</text>
+    <rect x="430" y="170" width="90" height="50" rx="8" fill="#fff" stroke="#b91c1c" stroke-width="2"/>
+    <text x="475" y="191" font-weight="bold">ASBR</text><text x="475" y="208" font-size="10" fill="#b91c1c">Type-5 external</text>
+    <rect x="90" y="95" width="90" height="50" rx="8" fill="#fff" stroke="#1a2332"/>
+    <text x="135" y="120" font-size="11">internal rtrs</text>
+    <rect x="760" y="95" width="90" height="50" rx="8" fill="#fff" stroke="#1a2332"/>
+    <text x="805" y="120" font-size="11">internal rtrs</text>
+  </g>
+  <line x1="475" y1="170" x2="475" y2="150" stroke="#b91c1c" stroke-width="2"/>
+  <text x="475" y="245" font-size="10.5" text-anchor="middle" fill="#64748b">LSA scopes: Type 1/2 stay inside an area · Type 3 crosses via ABR · Type 5 floods everywhere except stub areas · every area must touch Area 0</text>
+</svg>
+<div class="figcap"><b>Fig 7.</b> Multi-area OSPF. Areas bound LSA flooding and SPF scope; ABRs summarize, the ASBR injects redistributed routes. Stub areas swap externals for a default route.</div>
+</div>
+
+<h3>3.2 EIGRP — DUAL in one picture <span class="tag pt">PACKET TRACER</span></h3>
+<div class="fig">
+<svg viewBox="0 0 940 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="EIGRP successor and feasible successor">
+  <defs><marker id="a5" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#0e7490"/></marker></defs>
+  <g font-size="12" text-anchor="middle">
+    <rect x="40" y="95" width="110" height="56" rx="8" fill="#fff" stroke="#1a2332" stroke-width="2"/>
+    <text x="95" y="128" font-weight="bold">R1</text>
+    <rect x="420" y="25" width="130" height="56" rx="8" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
+    <text x="485" y="48" font-weight="bold" fill="#166534">R2 — Successor</text>
+    <text x="485" y="67" font-size="10.5">RD 20 (its own FD)</text>
+    <rect x="420" y="160" width="130" height="56" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+    <text x="485" y="183" font-weight="bold" fill="#92400e">R3 — Feasible Succ.</text>
+    <text x="485" y="202" font-size="10.5">RD 25</text>
+    <rect x="790" y="95" width="110" height="56" rx="8" fill="#fff" stroke="#1a2332" stroke-width="2"/>
+    <text x="845" y="123" font-weight="bold">Dest</text><text x="845" y="140" font-size="10.5" fill="#64748b">10.0.0.0/24</text>
+  </g>
+  <g stroke-width="2.5" fill="none">
+    <path d="M150 110 L420 55" stroke="#15803d"/>
+    <path d="M550 55 L790 110" stroke="#15803d" marker-end="url(#a5)"/>
+    <path d="M150 138 L420 188" stroke="#b45309" stroke-dasharray="6 4"/>
+    <path d="M550 188 L790 138" stroke="#b45309" stroke-dasharray="6 4" marker-end="url(#a5)"/>
+  </g>
+  <g font-size="11" text-anchor="middle">
+    <text x="280" y="70" fill="#166534" font-weight="bold">FD 30 → RIB (best path)</text>
+    <text x="280" y="180" fill="#92400e" font-weight="bold">via R3: metric 35</text>
+  </g>
+  <rect x="600" y="90" width="180" height="60" rx="8" fill="#ecfeff" stroke="#0e7490"/>
+  <text x="690" y="113" font-size="11.5" text-anchor="middle" font-weight="bold" fill="#075985">Feasibility Condition</text>
+  <text x="690" y="133" font-size="12" text-anchor="middle" fill="#075985">RD(25) &lt; FD(30) ✓</text>
+  <text x="470" y="232" font-size="10.5" text-anchor="middle" fill="#64748b">Successor dies → FS promoted instantly, no recompute. No FS → route goes ACTIVE, queries flood — unanswered queries = Stuck-In-Active. Bound queries with summarization.</text>
+</svg>
+<div class="figcap"><b>Fig 8.</b> DUAL. The whole protocol in one inequality: a neighbor whose own distance (RD) is less than your best (FD) can never be routing through you — mathematically loop-free backup.</div>
+</div>
+<h3>3.3 BGP best-path selection <span class="tag gns">GNS3 / CML</span></h3>
+<p>BGP is policy, not shortest-path. Neighbors are hand-configured over TCP/179; routes carry <b>path attributes</b>, and one deterministic list picks the winner. Memorize the order — it is asked in nearly every senior interview.</p>
+
+<div class="fig">
+<svg viewBox="0 0 940 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BGP best path decision funnel">
+  <defs><marker id="a6" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#64748b"/></marker></defs>
+  <!-- funnel -->
+  <g font-size="11.5">
+    <g text-anchor="middle">
+      <rect x="70" y="20" width="800" height="30" rx="6" fill="#ecfeff" stroke="#0e7490"/><text x="470" y="40">① highest <tspan font-weight="bold">WEIGHT</tspan> — Cisco-local, never advertised (this router only)</text>
+      <rect x="110" y="60" width="720" height="30" rx="6" fill="#ecfeff" stroke="#0e7490"/><text x="470" y="80">② highest <tspan font-weight="bold">LOCAL PREFERENCE</tspan> — AS-wide, iBGP-carried → outbound traffic control</text>
+      <rect x="150" y="100" width="640" height="30" rx="6" fill="#fff" stroke="#64748b"/><text x="470" y="120">③ locally originated (network / redistribute / aggregate)</text>
+      <rect x="190" y="140" width="560" height="30" rx="6" fill="#fffbeb" stroke="#b45309"/><text x="470" y="160">④ shortest <tspan font-weight="bold">AS_PATH</tspan> — prepend to repel inbound traffic</text>
+      <rect x="230" y="180" width="480" height="30" rx="6" fill="#fff" stroke="#64748b"/><text x="470" y="200">⑤ lowest ORIGIN (IGP &lt; EGP &lt; ?)  ⑥ lowest <tspan font-weight="bold">MED</tspan></text>
+      <rect x="270" y="220" width="400" height="30" rx="6" fill="#fff" stroke="#64748b"/><text x="470" y="240">⑦ eBGP over iBGP  ⑧ lowest IGP metric to next-hop</text>
+      <rect x="310" y="260" width="320" height="30" rx="6" fill="#f2f4f7" stroke="#64748b"/><text x="470" y="280">⑨ oldest eBGP  ⑩ lowest RID  ⑪ lowest peer IP</text>
+    </g>
+    <g stroke="#64748b" stroke-width="1.5" fill="none">
+      <line x1="470" y1="50" x2="470" y2="58" marker-end="url(#a6)"/><line x1="470" y1="90" x2="470" y2="98" marker-end="url(#a6)"/>
+      <line x1="470" y1="130" x2="470" y2="138" marker-end="url(#a6)"/><line x1="470" y1="170" x2="470" y2="178" marker-end="url(#a6)"/>
+      <line x1="470" y1="210" x2="470" y2="218" marker-end="url(#a6)"/><line x1="470" y1="250" x2="470" y2="258" marker-end="url(#a6)"/>
+    </g>
+  </g>
+  <g font-size="10.5" fill="#0e7490">
+    <text x="20" y="315">TE cheat: OUTBOUND = Weight / Local Pref (you choose the exit) · INBOUND = AS-path prepend / MED (you influence, neighbors decide)</text>
+  </g>
+</svg>
+<div class="figcap"><b>Fig 9.</b> The decision funnel — each tier eliminates candidates until one route survives. Ties rarely fall past step ⑧ in real networks.</div>
+</div>
+
+<div class="iv"><b>Peering states:</b> Idle → Connect → Active → OpenSent → OpenConfirm → <b>Established</b>. "Stuck in Active" = TCP/179 can't complete: wrong remote-as, ACL/firewall, or unreachable peer address. iBGP won't re-advertise iBGP-learned routes (split-horizon) — that's why full mesh or <b>route reflectors</b> exist.</div>
+
+<h3>3.4 MPLS L3VPN — the two-label stack <span class="tag gns">GNS3 / CML only</span></h3>
+<div class="fig">
+<svg viewBox="0 0 940 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MPLS L3VPN label stack">
+  <defs><marker id="a7" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#0e7490"/></marker></defs>
+  <!-- provider cloud -->
+  <ellipse cx="470" cy="110" rx="270" ry="85" fill="#f2f4f7" stroke="#64748b" stroke-dasharray="6 4"/>
+  <text x="470" y="42" font-size="11" text-anchor="middle" fill="#64748b">PROVIDER CORE — IGP + LDP · P routers know labels, zero customer routes</text>
+  <g font-size="11.5" text-anchor="middle">
+    <rect x="40" y="85" width="90" height="50" rx="8" fill="#fff" stroke="#1a2332"/><text x="85" y="114" font-weight="bold">CE-A</text>
+    <rect x="230" y="85" width="90" height="50" rx="8" fill="#dcfce7" stroke="#15803d" stroke-width="2"/><text x="275" y="108" font-weight="bold">PE1</text><text x="275" y="124" font-size="10">VRF A · push</text>
+    <rect x="425" y="85" width="90" height="50" rx="8" fill="#fff" stroke="#1a2332"/><text x="470" y="108" font-weight="bold">P</text><text x="470" y="124" font-size="10">swap outer</text>
+    <rect x="620" y="85" width="90" height="50" rx="8" fill="#dcfce7" stroke="#15803d" stroke-width="2"/><text x="665" y="108" font-weight="bold">PE2</text><text x="665" y="124" font-size="10">VRF A · pop</text>
+    <rect x="810" y="85" width="90" height="50" rx="8" fill="#fff" stroke="#1a2332"/><text x="855" y="114" font-weight="bold">CE-A'</text>
+  </g>
+  <g stroke="#0e7490" stroke-width="2.5" fill="none">
+    <line x1="130" y1="110" x2="225" y2="110" marker-end="url(#a7)"/><line x1="320" y1="110" x2="420" y2="110" marker-end="url(#a7)"/>
+    <line x1="515" y1="110" x2="615" y2="110" marker-end="url(#a7)"/><line x1="710" y1="110" x2="805" y2="110" marker-end="url(#a7)"/>
+  </g>
+  <!-- label stacks -->
+  <g font-size="10.5" text-anchor="middle">
+    <g><rect x="140" y="150" width="120" height="24" rx="4" fill="#dcfce7" stroke="#15803d"/><text x="200" y="166">IP packet</text></g>
+    <g>
+      <rect x="330" y="150" width="120" height="24" rx="4" fill="#fffbeb" stroke="#b45309"/><text x="390" y="166">Transport L=17</text>
+      <rect x="330" y="178" width="120" height="24" rx="4" fill="#e0f2fe" stroke="#075985"/><text x="390" y="194">VPN label L=88</text>
+      <rect x="330" y="206" width="120" height="24" rx="4" fill="#dcfce7" stroke="#15803d"/><text x="390" y="222">IP packet</text>
+    </g>
+    <g>
+      <rect x="525" y="150" width="120" height="24" rx="4" fill="#e0f2fe" stroke="#075985"/><text x="585" y="166">VPN label L=88</text>
+      <rect x="525" y="178" width="120" height="24" rx="4" fill="#dcfce7" stroke="#15803d"/><text x="585" y="194">IP packet</text>
+      <text x="585" y="222" fill="#64748b">(PHP popped outer)</text>
+    </g>
+    <g><rect x="720" y="150" width="120" height="24" rx="4" fill="#dcfce7" stroke="#15803d"/><text x="780" y="166">IP packet</text></g>
+  </g>
+  <text x="470" y="262" font-size="10.5" text-anchor="middle" fill="#64748b">Outer label = LDP path to PE2's loopback · Inner label = "which VRF at PE2" (from MP-BGP VPNv4) · RD makes overlapping 10.0.0.0/24s unique · RT controls import/export</text>
+  <text x="470" y="284" font-size="10.5" text-anchor="middle" fill="#0e7490" font-family="Consolas,monospace">show mpls ldp neighbor · show bgp vpnv4 unicast all · show ip route vrf CUSTOMER-A</text>
+</svg>
+<div class="figcap"><b>Fig 10.</b> The interview answer in one strip: PE1 pushes two labels; P routers swap only the outer and hold no customer state; the penultimate hop pops (PHP); PE2 reads the VPN label to pick the VRF.</div>
+</div>
+
+<h3>3.5 SD-WAN architecture <span class="tag gns">DevNet sandbox / CML</span></h3>
+<div class="fig">
+<svg viewBox="0 0 940 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cisco SD-WAN four planes">
+  <defs>
+    <marker id="a8" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#b45309"/></marker>
+    <marker id="a9" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#0e7490"/></marker>
+  </defs>
+  <!-- planes -->
+  <g font-size="11.5" text-anchor="middle">
+    <rect x="60" y="20" width="250" height="54" rx="8" fill="#fff" stroke="#1a2332" stroke-width="1.5"/>
+    <text x="185" y="42" font-weight="bold">vManage / Manager</text><text x="185" y="60" font-size="10.5" fill="#64748b">GUI · templates · CA · management plane</text>
+    <rect x="345" y="20" width="250" height="54" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+    <text x="470" y="42" font-weight="bold" fill="#92400e">vSmart / Controller</text><text x="470" y="60" font-size="10.5" fill="#92400e">OMP — routes · TLOCs · keys · policy</text>
+    <rect x="630" y="20" width="250" height="54" rx="8" fill="#fff" stroke="#1a2332" stroke-width="1.5"/>
+    <text x="755" y="42" font-weight="bold">vBond / Validator</text><text x="755" y="60" font-size="10.5" fill="#64748b">orchestration · authenticates edges · public IP</text>
+  </g>
+  <!-- edges -->
+  <g font-size="11.5" text-anchor="middle">
+    <rect x="130" y="210" width="180" height="60" rx="8" fill="#ecfeff" stroke="#0e7490" stroke-width="2"/>
+    <text x="220" y="235" font-weight="bold">WAN Edge — Site A</text><text x="220" y="254" font-size="10.5">MPLS + broadband + LTE</text>
+    <rect x="630" y="210" width="180" height="60" rx="8" fill="#ecfeff" stroke="#0e7490" stroke-width="2"/>
+    <text x="720" y="235" font-weight="bold">WAN Edge — Site B</text><text x="720" y="254" font-size="10.5">per-VRF service VPNs</text>
+  </g>
+  <!-- control DTLS -->
+  <g stroke="#b45309" stroke-width="2" stroke-dasharray="6 4" fill="none">
+    <line x1="230" y1="208" x2="440" y2="78" marker-end="url(#a8)"/>
+    <line x1="700" y1="208" x2="500" y2="78" marker-end="url(#a8)"/>
+  </g>
+  <text x="300" y="140" font-size="10.5" fill="#b45309">permanent DTLS/TLS — OMP</text>
+  <!-- data tunnels -->
+  <g stroke="#0e7490" fill="none">
+    <path d="M310 228 C 470 190, 470 190, 630 228" stroke-width="3" marker-end="url(#a9)"/>
+    <path d="M310 252 C 470 300, 470 300, 630 252" stroke-width="3" marker-end="url(#a9)"/>
+  </g>
+  <g font-size="10.5" fill="#0e7490" text-anchor="middle">
+    <text x="470" y="200">IPsec tunnel over MPLS — voice (SLA class)</text>
+    <text x="470" y="303">IPsec tunnel over broadband — bulk traffic</text>
+  </g>
+  <text x="470" y="318" font-size="10" text-anchor="middle" fill="#64748b">App-aware routing measures loss/latency/jitter per tunnel and steers per policy. Bring-up: edge → vBond auth → learns vSmart/vManage → DTLS up → config + policy → data tunnels.</text>
+</svg>
+<div class="figcap"><b>Fig 11.</b> Catalyst SD-WAN. Amber dashed = control plane (OMP over DTLS, a BGP-lookalike). Teal = transport-independent IPsec overlay. SD-WAN + cloud security stack = SASE.</div>
+</div>
+<h2 id="s4">4 · Security &amp; VPN</h2>
+
+<h3>4.1 IPsec / IKEv2 <span class="tag pt">PT basic</span> <span class="tag gns">GNS3 full</span></h3>
+<div class="fig">
+<svg viewBox="0 0 940 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="IKEv2 exchange and ESP modes">
+  <defs>
+    <marker id="b1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#b45309"/></marker>
+    <marker id="b2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#0e7490"/></marker>
+  </defs>
+  <g font-size="12" text-anchor="middle" font-weight="bold">
+    <text x="150" y="28">Initiator</text><text x="640" y="28">Responder</text>
+  </g>
+  <line x1="150" y1="38" x2="150" y2="180" stroke="#c9d2dc" stroke-width="2"/>
+  <line x1="640" y1="38" x2="640" y2="180" stroke="#c9d2dc" stroke-width="2"/>
+  <g font-size="11">
+    <line x1="150" y1="60" x2="635" y2="60" stroke="#b45309" stroke-width="2" marker-end="url(#b1)"/>
+    <text x="395" y="53" text-anchor="middle" fill="#b45309">IKE_SA_INIT — crypto proposals, DH key shares, nonces</text>
+    <line x1="640" y1="95" x2="155" y2="95" stroke="#b45309" stroke-width="2" marker-end="url(#b1)"/>
+    <text x="395" y="88" text-anchor="middle" fill="#b45309">IKE_SA_INIT reply → both derive keys · channel now encrypted</text>
+    <line x1="150" y1="130" x2="635" y2="130" stroke="#0e7490" stroke-width="2" marker-end="url(#b2)"/>
+    <text x="395" y="123" text-anchor="middle" fill="#0e7490">IKE_AUTH — identities, PSK/cert auth, first Child SA (IPsec SA)</text>
+    <line x1="640" y1="165" x2="155" y2="165" stroke="#0e7490" stroke-width="2" marker-end="url(#b2)"/>
+    <text x="395" y="158" text-anchor="middle" fill="#0e7490">IKE_AUTH reply → ESP tunnels up (4 messages vs IKEv1's 9+)</text>
+  </g>
+  <g font-size="10.5" fill="#64748b" text-anchor="middle">
+    <text x="395" y="195">NAT detected? → ESP wrapped in UDP/4500 (NAT-T) · PFS = fresh DH per Child SA rekey</text>
+  </g>
+  <!-- modes comparison -->
+  <g font-size="10.5" text-anchor="middle">
+    <text x="240" y="228" font-weight="bold" font-size="12">Tunnel mode (site-to-site)</text>
+    <rect x="60"  y="240" width="90" height="26" rx="4" fill="#fffbeb" stroke="#b45309"/><text x="105" y="257">New IP hdr</text>
+    <rect x="152" y="240" width="70" height="26" rx="4" fill="#e0f2fe" stroke="#075985"/><text x="187" y="257">ESP</text>
+    <rect x="224" y="240" width="90" height="26" rx="4" fill="#dcfce7" stroke="#15803d"/><text x="269" y="257">Orig IP hdr</text>
+    <rect x="316" y="240" width="100" height="26" rx="4" fill="#dcfce7" stroke="#15803d"/><text x="366" y="257">Payload</text>
+    <rect x="222" y="238" width="197" height="30" rx="5" fill="none" stroke="#0e7490" stroke-width="2" stroke-dasharray="4 3"/>
+    <text x="320" y="285" fill="#0e7490">← encrypted: whole original packet hidden</text>
+
+    <text x="700" y="228" font-weight="bold" font-size="12">Transport mode (host-to-host / inside GRE)</text>
+    <rect x="540" y="240" width="90" height="26" rx="4" fill="#dcfce7" stroke="#15803d"/><text x="585" y="257">Orig IP hdr</text>
+    <rect x="632" y="240" width="70" height="26" rx="4" fill="#e0f2fe" stroke="#075985"/><text x="667" y="257">ESP</text>
+    <rect x="704" y="240" width="100" height="26" rx="4" fill="#dcfce7" stroke="#15803d"/><text x="754" y="257">Payload</text>
+    <rect x="702" y="238" width="104" height="30" rx="5" fill="none" stroke="#0e7490" stroke-width="2" stroke-dasharray="4 3"/>
+    <text x="700" y="285" fill="#0e7490">← only payload encrypted; original header exposed</text>
+  </g>
+  <g font-size="10.5" fill="#b91c1c" text-anchor="middle">
+    <text x="470" y="318">Troubleshooting map: Phase-1 fails = proposal/PSK/DH mismatch · Phase-2 fails = transform-set or proxy-ID mismatch · SAs up but no traffic = routing or crypto-ACL</text>
+  </g>
+</svg>
+<div class="figcap"><b>Fig 12.</b> IKEv2's 4-message bring-up and ESP's two modes. AH is effectively dead (breaks NAT); ESP protocol 50, IKE UDP/500, NAT-T UDP/4500 — know the numbers.</div>
+</div>
+
+<h3>4.2 GRE-over-IPsec <span class="tag gns">GNS3</span></h3>
+<div class="fig">
+<svg viewBox="0 0 940 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="GRE over IPsec encapsulation">
+  <g font-size="11" text-anchor="middle">
+    <text x="470" y="26" font-size="12" font-weight="bold">Why both? GRE carries multicast + routing protocols (which IPsec can't) · IPsec encrypts (which GRE doesn't)</text>
+    <rect x="60"  y="50" width="110" height="34" rx="5" fill="#fffbeb" stroke="#b45309"/><text x="115" y="72">Outer IP hdr</text>
+    <rect x="172" y="50" width="80"  height="34" rx="5" fill="#e0f2fe" stroke="#075985"/><text x="212" y="72">ESP</text>
+    <rect x="254" y="50" width="90"  height="34" rx="5" fill="#f2f4f7" stroke="#64748b"/><text x="299" y="72">GRE hdr</text>
+    <rect x="346" y="50" width="120" height="34" rx="5" fill="#dcfce7" stroke="#15803d"/><text x="406" y="72">Inner IP (OSPF!)</text>
+    <rect x="468" y="50" width="110" height="34" rx="5" fill="#dcfce7" stroke="#15803d"/><text x="523" y="72">Payload</text>
+    <rect x="252" y="47" width="330" height="40" rx="6" fill="none" stroke="#0e7490" stroke-width="2" stroke-dasharray="4 3"/>
+    <text x="417" y="105" fill="#0e7490">encrypted by IPsec (tunnel protection profile)</text>
+  </g>
+  <g font-size="10.5" fill="#b91c1c">
+    <text x="620" y="60">Overhead tax → set:</text>
+    <text x="620" y="78" font-family="Consolas,monospace">ip mtu 1400</text>
+    <text x="620" y="96" font-family="Consolas,monospace">ip tcp adjust-mss 1360</text>
+    <text x="620" y="114">…or big packets silently die</text>
+  </g>
+  <text x="470" y="150" font-size="10.5" text-anchor="middle" fill="#64748b">Run OSPF/EIGRP *over* Tunnel0 — that's the whole point. Add GRE keepalives: if only IPsec dies, the tunnel line-protocol stays up and traffic black-holes.</text>
+  <text x="470" y="175" font-size="10.5" text-anchor="middle" fill="#64748b">Scale-out evolution: DMVPN (mGRE + NHRP) → FlexVPN (IKEv2 framework) → SD-WAN overlays.</text>
+</svg>
+<div class="figcap"><b>Fig 13.</b> The combined header stack and the two field-tested gotchas: MTU/MSS clamping and keepalives.</div>
+</div>
+
+<h3>4.3 TLS 1.2 vs TLS 1.3 <span class="tag pt">Wireshark lab</span></h3>
+<div class="fig">
+<svg viewBox="0 0 940 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TLS 1.2 vs 1.3 handshakes">
+  <defs>
+    <marker id="c1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#64748b"/></marker>
+    <marker id="c2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#15803d"/></marker>
+  </defs>
+  <!-- TLS 1.2 -->
+  <g font-size="11" text-anchor="middle">
+    <text x="240" y="26" font-size="12" font-weight="bold">TLS 1.2 — 2 round trips</text>
+    <text x="90" y="50" font-weight="bold">Client</text><text x="390" y="50" font-weight="bold">Server</text>
+    <line x1="90" y1="58" x2="90" y2="270" stroke="#c9d2dc" stroke-width="2"/>
+    <line x1="390" y1="58" x2="390" y2="270" stroke="#c9d2dc" stroke-width="2"/>
+    <line x1="90" y1="80" x2="385" y2="80" stroke="#64748b" stroke-width="2" marker-end="url(#c1)"/>
+    <text x="240" y="73">ClientHello (SNI, ciphers)</text>
+    <line x1="390" y1="125" x2="95" y2="125" stroke="#64748b" stroke-width="2" marker-end="url(#c1)"/>
+    <text x="240" y="118">ServerHello + Cert (cleartext!) + KeyExch</text>
+    <line x1="90" y1="170" x2="385" y2="170" stroke="#64748b" stroke-width="2" marker-end="url(#c1)"/>
+    <text x="240" y="163">ClientKeyExch + CCS + Finished</text>
+    <line x1="390" y1="215" x2="95" y2="215" stroke="#64748b" stroke-width="2" marker-end="url(#c1)"/>
+    <text x="240" y="208">CCS + Finished</text>
+    <rect x="60" y="235" width="360" height="26" rx="13" fill="#dcfce7" stroke="#15803d"/>
+    <text x="240" y="252" fill="#166534">application data (after 2 RTT)</text>
+  </g>
+  <!-- TLS 1.3 -->
+  <g font-size="11" text-anchor="middle">
+    <text x="700" y="26" font-size="12" font-weight="bold" fill="#166534">TLS 1.3 — 1 round trip</text>
+    <text x="550" y="50" font-weight="bold">Client</text><text x="850" y="50" font-weight="bold">Server</text>
+    <line x1="550" y1="58" x2="550" y2="270" stroke="#c9d2dc" stroke-width="2"/>
+    <line x1="850" y1="58" x2="850" y2="270" stroke="#c9d2dc" stroke-width="2"/>
+    <line x1="550" y1="90" x2="845" y2="90" stroke="#15803d" stroke-width="2.5" marker-end="url(#c2)"/>
+    <text x="700" y="83">ClientHello + key share (guess the group)</text>
+    <line x1="850" y1="145" x2="555" y2="145" stroke="#15803d" stroke-width="2.5" marker-end="url(#c2)"/>
+    <text x="700" y="130">ServerHello + key share</text>
+    <text x="700" y="162" fill="#0e7490">{cert + Finished — already encrypted}</text>
+    <rect x="520" y="185" width="360" height="26" rx="13" fill="#dcfce7" stroke="#15803d"/>
+    <text x="700" y="202" fill="#166534">application data (after 1 RTT)</text>
+    <text x="700" y="240" font-size="10.5" fill="#64748b">ephemeral DH only → forward secrecy mandatory</text>
+    <text x="700" y="258" font-size="10.5" fill="#64748b">5 AEAD suites total · 0-RTT resumption = replayable, idempotent only</text>
+  </g>
+</svg>
+<div class="figcap"><b>Fig 14.</b> Side-by-side handshakes. In Wireshark: TLS 1.2 shows the certificate in cleartext; in 1.3 everything after ServerHello is opaque — filter <code>tls.handshake.type==1</code> to read the ClientHello/SNI.</div>
+</div>
+
+<h3>4.4 ZTNA vs VPN <span class="tag ot">OT remote access</span></h3>
+<div class="fig">
+<svg viewBox="0 0 940 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="VPN vs ZTNA access models">
+  <defs><marker id="d1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#0e7490"/></marker></defs>
+  <!-- VPN side -->
+  <g font-size="11" text-anchor="middle">
+    <text x="235" y="28" font-size="13" font-weight="bold" fill="#b91c1c">Traditional VPN — network-level trust</text>
+    <rect x="40" y="50" width="110" height="46" rx="8" fill="#fff" stroke="#1a2332"/><text x="95" y="77">Remote user</text>
+    <rect x="190" y="50" width="120" height="46" rx="8" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+    <text x="250" y="70">VPN gateway</text><text x="250" y="87" font-size="9.5" fill="#b91c1c">internet-exposed target</text>
+    <line x1="150" y1="73" x2="185" y2="73" stroke="#0e7490" stroke-width="2.5" marker-end="url(#d1)"/>
+    <rect x="60" y="130" width="360" height="160" rx="10" fill="#fef2f2" stroke="#b91c1c" stroke-dasharray="6 4"/>
+    <text x="240" y="152" fill="#b91c1c" font-weight="bold">once in = flat network reach</text>
+    <g>
+      <rect x="85"  y="170" width="90" height="38" rx="6" fill="#fff" stroke="#64748b"/><text x="130" y="193">App 1</text>
+      <rect x="195" y="170" width="90" height="38" rx="6" fill="#fff" stroke="#64748b"/><text x="240" y="193">App 2</text>
+      <rect x="305" y="170" width="90" height="38" rx="6" fill="#fff" stroke="#64748b"/><text x="350" y="193">File srv</text>
+      <rect x="85"  y="230" width="90" height="38" rx="6" fill="#fff" stroke="#64748b"/><text x="130" y="253">HMI</text>
+      <rect x="195" y="230" width="90" height="38" rx="6" fill="#fff" stroke="#64748b"/><text x="240" y="253">Historian</text>
+      <rect x="305" y="230" width="90" height="38" rx="6" fill="#fff" stroke="#64748b"/><text x="350" y="253">PLC net!</text>
+    </g>
+    <path d="M250 96 L250 128" stroke="#b91c1c" stroke-width="2.5" marker-end="url(#d1)"/>
+    <text x="240" y="308" font-size="10" fill="#b91c1c">stolen credential → lateral movement everywhere</text>
+  </g>
+  <!-- ZTNA side -->
+  <g font-size="11" text-anchor="middle">
+    <text x="705" y="28" font-size="13" font-weight="bold" fill="#166534">ZTNA — per-app brokered access</text>
+    <rect x="510" y="50" width="110" height="46" rx="8" fill="#fff" stroke="#1a2332"/><text x="565" y="77">Remote user</text>
+    <rect x="660" y="42" width="150" height="62" rx="8" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
+    <text x="735" y="62" font-weight="bold" fill="#166534">Broker / PDP</text>
+    <text x="735" y="79" font-size="9.5">identity + device posture</text>
+    <text x="735" y="94" font-size="9.5">re-evaluated continuously</text>
+    <line x1="620" y1="73" x2="655" y2="73" stroke="#0e7490" stroke-width="2.5" marker-end="url(#d1)"/>
+    <g>
+      <rect x="545" y="170" width="100" height="40" rx="6" fill="#dcfce7" stroke="#15803d" stroke-width="2"/><text x="595" y="194" fill="#166534">HMI ✓</text>
+      <rect x="665" y="170" width="100" height="40" rx="6" fill="#f2f4f7" stroke="#c9d2dc"/><text x="715" y="194" fill="#94a3b8">Historian ✕</text>
+      <rect x="785" y="170" width="110" height="40" rx="6" fill="#f2f4f7" stroke="#c9d2dc"/><text x="840" y="194" fill="#94a3b8">PLC net ✕</text>
+    </g>
+    <path d="M720 104 L600 168" stroke="#15803d" stroke-width="2.5" marker-end="url(#d1)"/>
+    <text x="705" y="240" font-size="10.5" fill="#64748b">apps invisible unless authorized — network is never "joined"</text>
+    <text x="705" y="262" font-size="10.5" fill="#64748b">no inbound listener to exploit · least-privilege per session</text>
+    <text x="705" y="295" font-size="10" fill="#166534">OT: vendor gets the one HMI, never the plant · IEC 62443 conduit in practice</text>
+  </g>
+  <line x1="470" y1="40" x2="470" y2="300" stroke="#c9d2dc" stroke-width="1.5" stroke-dasharray="4 4"/>
+</svg>
+<div class="figcap"><b>Fig 15.</b> Why ZTNA is replacing VPN for remote access: identity + posture per application vs network-level trust. Context for interviews: internet-facing VPN gateways are now a top exploitation target (2025 DBIR), and Gartner forecast ≥70% of new remote-access deployments would be ZTNA by 2025.</div>
+</div>
+<h2 id="s5">5 · Design &amp; Architecture</h2>
+
+<h3>5.1 Three-tier campus <span class="tag pt">PACKET TRACER</span></h3>
+<div class="fig">
+<svg viewBox="0 0 940 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three tier campus design">
+  <g font-size="11.5" text-anchor="middle">
+    <!-- core -->
+    <rect x="330" y="20" width="130" height="46" rx="8" fill="#fff" stroke="#1a2332" stroke-width="2"/><text x="395" y="48" font-weight="bold">CORE 1</text>
+    <rect x="480" y="20" width="130" height="46" rx="8" fill="#fff" stroke="#1a2332" stroke-width="2"/><text x="545" y="48" font-weight="bold">CORE 2</text>
+    <!-- dist -->
+    <rect x="180" y="130" width="130" height="46" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2"/><text x="245" y="158" font-weight="bold">DIST A1</text>
+    <rect x="330" y="130" width="130" height="46" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2"/><text x="395" y="158" font-weight="bold">DIST A2</text>
+    <rect x="480" y="130" width="130" height="46" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2"/><text x="545" y="158" font-weight="bold">DIST B1</text>
+    <rect x="630" y="130" width="130" height="46" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2"/><text x="695" y="158" font-weight="bold">DIST B2</text>
+    <!-- access -->
+    <rect x="180" y="240" width="100" height="40" rx="8" fill="#ecfeff" stroke="#0e7490"/><text x="230" y="265">ACC 1</text>
+    <rect x="300" y="240" width="100" height="40" rx="8" fill="#ecfeff" stroke="#0e7490"/><text x="350" y="265">ACC 2</text>
+    <rect x="540" y="240" width="100" height="40" rx="8" fill="#ecfeff" stroke="#0e7490"/><text x="590" y="265">ACC 3</text>
+    <rect x="660" y="240" width="100" height="40" rx="8" fill="#ecfeff" stroke="#0e7490"/><text x="710" y="265">ACC 4</text>
+  </g>
+  <!-- links: redundant triangles -->
+  <g stroke="#64748b" stroke-width="1.8">
+    <line x1="395" y1="66" x2="245" y2="130"/><line x1="395" y1="66" x2="395" y2="130"/>
+    <line x1="395" y1="66" x2="545" y2="130"/><line x1="395" y1="66" x2="695" y2="130"/>
+    <line x1="545" y1="66" x2="245" y2="130"/><line x1="545" y1="66" x2="395" y2="130"/>
+    <line x1="545" y1="66" x2="545" y2="130"/><line x1="545" y1="66" x2="695" y2="130"/>
+    <line x1="460" y1="43" x2="480" y2="43"/>
+    <line x1="230" y1="240" x2="245" y2="176"/><line x1="230" y1="240" x2="385" y2="176"/>
+    <line x1="350" y1="240" x2="255" y2="176"/><line x1="350" y1="240" x2="395" y2="176"/>
+    <line x1="590" y1="240" x2="545" y2="176"/><line x1="590" y1="240" x2="690" y2="176"/>
+    <line x1="710" y1="240" x2="555" y2="176"/><line x1="710" y1="240" x2="700" y2="176"/>
+  </g>
+  <!-- role annotations -->
+  <g font-size="10" fill="#64748b">
+    <text x="20" y="46">CORE: fast + dumb —</text><text x="20" y="60">no ACLs, no policy</text>
+    <text x="20" y="150">DIST: L2/L3 boundary,</text><text x="20" y="164">ACL/QoS policy, FHRP,</text><text x="20" y="178">summarization</text>
+    <text x="20" y="258">ACCESS: PortFast+BPDU</text><text x="20" y="272">Guard, 802.1X, snooping</text>
+  </g>
+  <text x="790" y="46" font-size="10" fill="#64748b">triangles not squares →</text>
+  <text x="790" y="60" font-size="10" fill="#64748b">deterministic convergence</text>
+</svg>
+<div class="figcap"><b>Fig 16.</b> Hierarchical campus. Each layer has one job; policy lives at distribution, never in the core. Modern shift: push L3 to access (routed access) or replace with a fabric.</div>
+</div>
+
+<h3>5.2 Spine-leaf + VXLAN-EVPN overlay/underlay <span class="tag gns">CML / Nexus 9000v</span></h3>
+<div class="fig">
+<svg viewBox="0 0 940 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Spine leaf VXLAN EVPN">
+  <defs><marker id="e1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#0e7490"/></marker></defs>
+  <g font-size="11.5" text-anchor="middle">
+    <rect x="280" y="24" width="130" height="44" rx="8" fill="#fff" stroke="#1a2332" stroke-width="2"/><text x="345" y="51" font-weight="bold">SPINE 1</text>
+    <rect x="530" y="24" width="130" height="44" rx="8" fill="#fff" stroke="#1a2332" stroke-width="2"/><text x="595" y="51" font-weight="bold">SPINE 2</text>
+    <rect x="120" y="150" width="130" height="48" rx="8" fill="#ecfeff" stroke="#0e7490" stroke-width="2"/>
+    <text x="185" y="170" font-weight="bold">LEAF 1</text><text x="185" y="188" font-size="10">VTEP · lo0 1.1.1.1</text>
+    <rect x="405" y="150" width="130" height="48" rx="8" fill="#ecfeff" stroke="#0e7490" stroke-width="2"/>
+    <text x="470" y="170" font-weight="bold">LEAF 2</text><text x="470" y="188" font-size="10">VTEP · lo0 2.2.2.2</text>
+    <rect x="690" y="150" width="130" height="48" rx="8" fill="#ecfeff" stroke="#0e7490" stroke-width="2"/>
+    <text x="755" y="170" font-weight="bold">LEAF 3</text><text x="755" y="188" font-size="10">VTEP · lo0 3.3.3.3</text>
+  </g>
+  <!-- underlay links -->
+  <g stroke="#64748b" stroke-width="1.8">
+    <line x1="345" y1="68" x2="185" y2="150"/><line x1="345" y1="68" x2="470" y2="150"/><line x1="345" y1="68" x2="755" y2="150"/>
+    <line x1="595" y1="68" x2="185" y2="150"/><line x1="595" y1="68" x2="470" y2="150"/><line x1="595" y1="68" x2="755" y2="150"/>
+  </g>
+  <text x="60" y="105" font-size="10.5" fill="#64748b">UNDERLAY: all-L3 routed</text>
+  <text x="60" y="120" font-size="10.5" fill="#64748b">eBGP/OSPF + ECMP, no STP</text>
+  <!-- overlay tunnel -->
+  <path d="M185 205 C 185 265, 755 265, 755 205" stroke="#0e7490" stroke-width="3" fill="none" stroke-dasharray="8 5" marker-end="url(#e1)"/>
+  <text x="470" y="240" font-size="11" text-anchor="middle" fill="#0e7490" font-weight="bold">OVERLAY: VXLAN tunnel VTEP↔VTEP (UDP/4789) · VNI 10100</text>
+  <!-- hosts -->
+  <g font-size="10.5" text-anchor="middle">
+    <rect x="135" y="285" width="100" height="36" rx="6" fill="#dcfce7" stroke="#15803d"/><text x="185" y="307">VM-A · VNI 10100</text>
+    <rect x="705" y="285" width="100" height="36" rx="6" fill="#dcfce7" stroke="#15803d"/><text x="755" y="307">VM-B · VNI 10100</text>
+  </g>
+  <line x1="185" y1="285" x2="185" y2="198" stroke="#15803d" stroke-width="1.8"/>
+  <line x1="755" y1="285" x2="755" y2="198" stroke="#15803d" stroke-width="1.8"/>
+  <!-- vxlan frame -->
+  <g font-size="10" text-anchor="middle">
+    <rect x="240" y="330" width="95" height="24" rx="4" fill="#fffbeb" stroke="#b45309"/><text x="287" y="346">Outer IP: lo0→lo0</text>
+    <rect x="337" y="330" width="70" height="24" rx="4" fill="#fffbeb" stroke="#b45309"/><text x="372" y="346">UDP 4789</text>
+    <rect x="409" y="330" width="95" height="24" rx="4" fill="#e0f2fe" stroke="#075985"/><text x="456" y="346">VXLAN · VNI 24-bit</text>
+    <rect x="506" y="330" width="130" height="24" rx="4" fill="#dcfce7" stroke="#15803d"/><text x="571" y="346">Original L2 frame</text>
+  </g>
+  <text x="470" y="374" font-size="10.5" text-anchor="middle" fill="#64748b">Control plane: MP-BGP EVPN — Type-2 = MAC/IP, Type-5 = prefixes · replaces flood-and-learn · anycast gateway on every leaf · 16M VNIs vs 4094 VLANs</text>
+</svg>
+<div class="figcap"><b>Fig 17.</b> The underlay (grey, routed links) only knows how to reach loopbacks. The overlay (teal, VXLAN) makes VM-A and VM-B think they share a wire. One-liner: "underlay moves VTEP-to-VTEP packets; EVPN tells VTEPs where every MAC lives."</div>
+</div>
+
+<h3>5.3 Purdue model / IEC 62443 zones &amp; conduits <span class="tag ot">OT CORE</span></h3>
+<div class="fig">
+<svg viewBox="0 0 940 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Purdue model with IEC 62443 zones">
+  <g font-size="11.5">
+    <!-- Enterprise zone -->
+    <rect x="60" y="20" width="820" height="96" rx="10" fill="#eef2ff" stroke="#4338ca" stroke-width="2"/>
+    <text x="80" y="44" font-weight="bold" fill="#4338ca">ENTERPRISE ZONE</text>
+    <g text-anchor="middle">
+      <rect x="100" y="56" width="330" height="44" rx="6" fill="#fff" stroke="#4338ca"/><text x="265" y="76">Level 5 — Enterprise / Internet</text><text x="265" y="93" font-size="10" fill="#64748b">corporate IT, cloud, email</text>
+      <rect x="510" y="56" width="330" height="44" rx="6" fill="#fff" stroke="#4338ca"/><text x="675" y="76">Level 4 — Site business</text><text x="675" y="93" font-size="10" fill="#64748b">ERP, scheduling, logistics</text>
+    </g>
+    <!-- IDMZ -->
+    <rect x="60" y="136" width="820" height="64" rx="10" fill="#fef3c7" stroke="#b45309" stroke-width="3"/>
+    <text x="80" y="160" font-weight="bold" fill="#92400e">LEVEL 3.5 — INDUSTRIAL DMZ (the only IT↔OT path)</text>
+    <text x="80" y="182" font-size="10.5" fill="#92400e">brokers everything: jump hosts, patch relays, historian replicas, AV mirrors — no direct connection top-to-bottom</text>
+    <!-- Industrial zone -->
+    <rect x="60" y="220" width="820" height="220" rx="10" fill="#f0fdf4" stroke="#15803d" stroke-width="2"/>
+    <text x="80" y="244" font-weight="bold" fill="#166534">INDUSTRIAL ZONE</text>
+    <g text-anchor="middle">
+      <rect x="100" y="256" width="740" height="40" rx="6" fill="#fff" stroke="#15803d"/><text x="470" y="281">Level 3 — Site operations: MES, historian, plant AD/DNS/NTP, engineering</text>
+      <rect x="100" y="304" width="360" height="40" rx="6" fill="#fff" stroke="#15803d"/><text x="280" y="329">Level 2 — HMI, SCADA, EWS</text>
+      <rect x="480" y="304" width="360" height="40" rx="6" fill="#fff" stroke="#15803d"/><text x="660" y="329">Level 1 — PLCs, RTUs, DCS, SIS</text>
+      <rect x="100" y="352" width="740" height="40" rx="6" fill="#fff" stroke="#15803d"/><text x="470" y="377">Level 0 — sensors, actuators, drives (the physical process)</text>
+    </g>
+    <text x="80" y="428" font-size="10.5" fill="#166534">cell/area zones get their own sub-segmentation (small subnets, per-line VLANs + industrial firewall)</text>
+  </g>
+  <!-- conduits -->
+  <g stroke="#b91c1c" stroke-width="3">
+    <line x1="470" y1="116" x2="470" y2="136"/>
+    <line x1="470" y1="200" x2="470" y2="220"/>
+  </g>
+  <g font-size="10" fill="#b91c1c" font-weight="bold">
+    <text x="485" y="130">CONDUIT: firewall, inspected, logged</text>
+    <text x="485" y="216">CONDUIT: OT-DPI firewall (Modbus/DNP3 function codes)</text>
+  </g>
+</svg>
+<div class="figcap"><b>Fig 18.</b> Purdue levels grouped into IEC 62443 zones; every red crossing is a conduit secured to the level of the most critical zone it touches. Modbus TCP/502 and DNP3 TCP/20000 have no auth or crypto — the conduit <i>is</i> the security control. Make outbound rules as strict as inbound.</div>
+</div>
+
+<h2 id="s6">6 · Learning Order &amp; Lab Platform Map</h2>
+<div class="fig">
+<svg viewBox="0 0 940 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Learning path">
+  <defs><marker id="f1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1a2332"/></marker></defs>
+  <g font-size="10.5" text-anchor="middle">
+    <rect x="20"  y="40" width="130" height="60" rx="8" fill="#e0f2fe" stroke="#075985" stroke-width="2"/>
+    <text x="85" y="62" font-weight="bold">Wk 1–3</text><text x="85" y="78">Foundations</text><text x="85" y="93" fill="#64748b">subnet · VLAN · STP · LoP</text>
+    <rect x="172" y="40" width="130" height="60" rx="8" fill="#e0f2fe" stroke="#075985" stroke-width="2"/>
+    <text x="237" y="62" font-weight="bold">Wk 4–6</text><text x="237" y="78">Services + L2 HA</text><text x="237" y="93" fill="#64748b">DHCP · NAT · HSRP · LACP</text>
+    <rect x="324" y="40" width="130" height="60" rx="8" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+    <text x="389" y="62" font-weight="bold">Wk 7–11</text><text x="389" y="78">Routing</text><text x="389" y="93" fill="#64748b">OSPF · EIGRP · BGP · MPLS</text>
+    <rect x="476" y="40" width="130" height="60" rx="8" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
+    <text x="541" y="62" font-weight="bold">Wk 12–15</text><text x="541" y="78">Security/VPN ★</text><text x="541" y="93" fill="#64748b">ACL · IPsec · TLS · ZTNA</text>
+    <rect x="628" y="40" width="130" height="60" rx="8" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+    <text x="693" y="62" font-weight="bold">Wk 16–18</text><text x="693" y="78">Design/Fabric</text><text x="693" y="93" fill="#64748b">EVPN · QoS · SD-WAN</text>
+    <rect x="780" y="40" width="140" height="60" rx="8" fill="#fff" stroke="#1a2332" stroke-width="2"/>
+    <text x="850" y="62" font-weight="bold">Continuous</text><text x="850" y="78">Wireshark + war</text><text x="850" y="93">stories per topic</text>
+  </g>
+  <g stroke="#1a2332" stroke-width="2" fill="none">
+    <line x1="150" y1="70" x2="167" y2="70" marker-end="url(#f1)"/><line x1="302" y1="70" x2="319" y2="70" marker-end="url(#f1)"/>
+    <line x1="454" y1="70" x2="471" y2="70" marker-end="url(#f1)"/><line x1="606" y1="70" x2="623" y2="70" marker-end="url(#f1)"/>
+    <line x1="758" y1="70" x2="775" y2="70" marker-end="url(#f1)"/>
+  </g>
+  <g font-size="10.5" fill="#64748b" text-anchor="middle">
+    <text x="237" y="130">— Packet Tracer territory —</text>
+    <text x="541" y="130">— move to GNS3/CML from BGP onward —</text>
+  </g>
+  <g font-size="10.5" text-anchor="middle">
+    <text x="470" y="165" fill="#1a2332" font-weight="bold">Platform rule of thumb</text>
+    <text x="470" y="186" fill="#64748b">Packet Tracer: free, instant, concept-level · GNS3/EVE-NG: real IOS behavior, needs legal images (service contract or CML-P; CML images licensed for CML only) · CML free tier exists</text>
+  </g>
+</svg>
+<div class="figcap"><b>Fig 19.</b> The 18-week path from the research playbook, with the Packet Tracer → GNS3/CML handover point marked. ★ = your depth area for OT/security interviews.</div>
+</div>
+
+<p style="margin-top:2em;color:var(--dim);font-size:.9em;border-top:1px solid var(--line);padding-top:1em">Companion to the full text playbook (theory, configs, troubleshooting command references, interview Q&amp;A per topic). Diagrams are schematic — verify platform-specific timers/defaults against Cisco docs and the RFCs (2328, 4271, 4364, 7348, 8365, 8446).</p>
+</div></body></html>
