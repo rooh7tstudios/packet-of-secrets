@@ -1,0 +1,649 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Enterprise Data Center Architecture — Guided Walkthrough</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap');
+
+  :root{
+    --page:#F6F9FC;
+    --panel:#FFFFFF;
+    --panel-soft:#EEF3F8;
+    --canvas:#F3F7FA;
+    --dot:#E2EAF1;
+    --border:#DCE7F0;
+    --border-strong:#BCD0DF;
+    --fg:#10222F;
+    --body:#33465A;
+    --muted:#61748A;
+    --muted-2:#93A4B5;
+    --focus:#0F2A3D;
+    --accent:#0369A1;
+    --accent-soft:#0369A11A;
+
+    --z-wan:#64748B;     --z-wan-tx:#475569;
+    --z-perimeter:#D97706; --z-perimeter-tx:#B45309;
+    --z-dmz:#EA580C;     --z-dmz-tx:#C2410C;
+    --z-core:#0284C7;    --z-core-tx:#0369A1;
+    --z-access:#16A34A;  --z-access-tx:#15803D;
+    --z-compute:#0D9488; --z-compute-tx:#0F766E;
+    --z-mgmt:#7C3AED;    --z-mgmt-tx:#6D28D9;
+
+    --status-active:#16A34A;
+    --status-standby:#D97706;
+
+    color-scheme: light;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--page);
+    color:var(--fg);
+    font-family:'Fira Sans',system-ui,sans-serif;
+    padding:24px;
+  }
+
+  .wrap{max-width:1520px; margin:0 auto;}
+
+  header{margin-bottom:16px;}
+  header h1{font-size:22px; font-weight:600; margin:0 0 6px;}
+  header p{margin:0; color:var(--muted); font-size:14px; max-width:680px; line-height:1.55;}
+
+  .controls{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    flex-wrap:wrap; margin-top:16px; padding:12px 14px;
+    background:var(--panel); border:1px solid var(--border); border-radius:12px;
+    box-shadow:0 1px 2px rgba(15,42,61,0.04), 0 8px 20px -16px rgba(15,42,61,0.18);
+  }
+  .seg{display:flex; background:var(--panel-soft); border:1px solid var(--border); border-radius:9px; padding:3px; gap:2px;}
+  .seg button{
+    appearance:none; border:none; background:transparent; color:var(--muted);
+    font-family:inherit; font-size:13px; font-weight:500; padding:9px 16px;
+    border-radius:7px; cursor:pointer; transition:background 150ms, color 150ms;
+  }
+  .seg button.active{background:var(--panel); color:var(--fg); box-shadow:0 1px 3px rgba(15,42,61,0.14);}
+  .zt-toggle{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--fg);}
+  .zt-toggle input{accent-color:var(--accent); width:16px; height:16px; cursor:pointer;}
+  .zt-toggle label{cursor:pointer;}
+
+  .shell{
+    display:grid;
+    grid-template-columns:216px 1fr 360px;
+    gap:16px;
+    margin-top:16px;
+    align-items:start;
+  }
+  @media (max-width:1180px){
+    .shell{grid-template-columns:1fr;}
+    .rail{order:1;}
+    .diagram-card{order:2;}
+    .sidebar{order:3;}
+  }
+
+  .card{
+    background:var(--panel); border:1px solid var(--border); border-radius:14px;
+    box-shadow:0 1px 2px rgba(15,42,61,0.04), 0 10px 24px -18px rgba(15,42,61,0.20);
+  }
+
+  /* ---- Rail / stepper ---- */
+  .rail{padding:16px; position:sticky; top:24px;}
+  .rail h2, .sidebar h2{
+    font-size:11px; text-transform:uppercase; letter-spacing:0.8px; color:var(--muted-2);
+    margin:0 0 12px; font-weight:600;
+  }
+  .steps{list-style:none; margin:0; padding:0; display:flex; flex-direction:column;}
+  .step-item{position:relative; padding:0 0 6px 26px;}
+  .step-item:not(:last-child)::before{
+    content:''; position:absolute; left:9px; top:22px; bottom:-6px; width:2px; background:var(--border);
+  }
+  .step-item.done:not(:last-child)::before{background:var(--accent);}
+  .step-num{
+    position:absolute; left:0; top:0; width:19px; height:19px; border-radius:50%;
+    background:var(--panel); border:2px solid var(--border-strong); color:var(--muted);
+    font-family:'Fira Code',monospace; font-size:10px; font-weight:600;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .step-item.current .step-num{border-color:var(--focus); background:var(--focus); color:#fff;}
+  .step-item.done .step-num{border-color:var(--accent); background:var(--accent); color:#fff;}
+  .step-btn{
+    appearance:none; border:none; background:transparent; text-align:left; width:100%;
+    padding:1px 4px 15px 0; cursor:pointer; font-family:inherit; border-radius:5px;
+  }
+  .step-btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  .step-title{font-size:13px; font-weight:500; color:var(--fg); line-height:1.35;}
+  .step-item.current .step-title{font-weight:600;}
+  .step-item:not(.current) .step-title{color:var(--muted);}
+  .step-btn:hover .step-title{color:var(--fg);}
+
+  .legend-mini{margin-top:18px; padding-top:16px; border-top:1px solid var(--border);}
+  .legend-row{display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); margin-bottom:7px;}
+  .legend-dot{width:9px; height:9px; border-radius:3px; flex-shrink:0;}
+  .legend-line{width:20px; height:0; border-top:2px solid var(--muted-2); flex-shrink:0;}
+  .legend-line.dashed-ha{border-top-style:dashed;}
+  .legend-line.dashed-mgmt{border-top-style:dashed; border-color:var(--z-mgmt);}
+  .legend-line.dotted-policy{border-top-style:dotted; border-color:var(--z-core); border-top-width:2.5px;}
+
+  /* ---- Diagram ---- */
+  .diagram-card{padding:14px; overflow-x:auto;}
+  .diagram-canvas{
+    background-color:var(--canvas);
+    background-image:radial-gradient(var(--dot) 1.1px, transparent 1.1px);
+    background-size:22px 22px;
+    border-radius:9px;
+    border:1px solid var(--border);
+  }
+  svg{display:block; min-width:900px;}
+  .node-rect{fill:var(--panel); stroke:var(--border-strong); stroke-width:1.3; filter:url(#soft-shadow); transition:opacity 200ms ease, stroke 150ms ease;}
+  .node-group{cursor:pointer; transition:opacity 200ms ease;}
+  .node-group:hover .node-rect{stroke:var(--accent);}
+  .node-group:focus{outline:none;}
+  .node-group:focus .node-rect{stroke:var(--focus); stroke-width:2;}
+  .node-group.focused .node-rect{stroke:var(--focus); stroke-width:2.2;}
+  .node-group.selected .node-rect{stroke:var(--focus); stroke-width:2.6;}
+  .icon-chip{transition:opacity 200ms ease;}
+  .node-title{font-family:'Fira Code',monospace; font-size:13px; font-weight:600; fill:var(--fg); pointer-events:none;}
+  .node-sub{font-family:'Fira Sans',sans-serif; font-size:11px; fill:var(--muted); pointer-events:none;}
+  .section-label{font-family:'Fira Code',monospace; font-size:11px; font-weight:600; fill:var(--muted-2); letter-spacing:1px;}
+  .status-ring{fill:#fff; stroke-width:2;}
+  .status-dot{stroke:#fff; stroke-width:1.2;}
+  .port-dot{fill:#fff; stroke:#9FB0C2; stroke-width:1.2;}
+
+  .link-data{stroke:#93A5B8; stroke-width:1.6; fill:none; transition:opacity 200ms ease;}
+  .link-ha{stroke:#93A5B8; stroke-width:1.4; fill:none; stroke-dasharray:5 4; transition:opacity 200ms ease;}
+  .link-mgmt{stroke:var(--z-mgmt); stroke-width:1.3; fill:none; stroke-dasharray:6 3; opacity:0.7; transition:opacity 200ms ease;}
+  .link-policy{stroke:var(--z-core); stroke-width:1.3; fill:none; stroke-dasharray:2 3; opacity:0.8; transition:opacity 200ms ease;}
+
+  .trust-zone-rect{fill-opacity:0.055; stroke-width:1.4; stroke-dasharray:4 4;}
+  .trust-zone-label{font-family:'Fira Code',monospace; font-size:11px; font-weight:600; letter-spacing:0.6px;}
+
+  /* ---- Sidebar ---- */
+  .sidebar{padding:18px 20px; position:sticky; top:24px; max-height:calc(100vh - 48px); overflow-y:auto;}
+  .step-blurb{font-size:13px; line-height:1.6; color:var(--body); margin:0 0 18px;}
+  .placeholder{color:var(--muted); font-size:13px; line-height:1.6;}
+  .placeholder ul{padding-left:18px; margin:10px 0 0;}
+  .placeholder li{margin-bottom:6px;}
+
+  .back-link{
+    display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--accent);
+    background:none; border:none; cursor:pointer; padding:2px 0 16px; font-family:inherit; font-weight:500;
+  }
+
+  .node-card{padding:16px 0; border-bottom:1px solid var(--border);}
+  .node-card:first-child{padding-top:2px;}
+  .node-card:last-child{border-bottom:none; padding-bottom:2px;}
+  .node-card-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:9px;}
+  .tag{
+    font-family:'Fira Code',monospace; font-size:10px; font-weight:600; letter-spacing:0.5px;
+    padding:4px 8px; border-radius:6px;
+  }
+  .status-badge{font-size:11px; color:var(--muted); display:flex; align-items:center; gap:5px;}
+  .status-badge .dot{width:7px; height:7px; border-radius:50%; border:1.5px solid transparent;}
+  .node-card h4{font-size:14px; font-weight:600; margin:0 0 2px;}
+  .node-card-sub{font-family:'Fira Code',monospace; font-size:11px; color:var(--muted); margin:0 0 8px;}
+  .node-card-concise{font-size:13px; line-height:1.55; color:var(--body); margin:0;}
+
+  details.deeper{margin-top:9px;}
+  details.deeper summary{
+    font-size:12px; font-weight:600; color:var(--accent); cursor:pointer; list-style:none;
+    display:flex; align-items:center; gap:5px; padding:2px 0;
+  }
+  details.deeper summary::-webkit-details-marker{display:none;}
+  details.deeper summary::before{content:'+'; font-size:13px;}
+  details.deeper[open] summary::before{content:'–';}
+  details.deeper ul{margin:8px 0 0; padding-left:16px;}
+  details.deeper li{font-size:12.5px; line-height:1.55; color:#4B5C6E; margin-bottom:6px;}
+
+  .nav-buttons{display:flex; gap:8px; margin-top:20px; padding-top:18px; border-top:1px solid var(--border);}
+  .nav-buttons button{
+    flex:1; appearance:none; border:1px solid var(--border-strong); background:var(--panel);
+    color:var(--fg); font-family:inherit; font-size:13px; font-weight:500; padding:12px 12px;
+    border-radius:9px; cursor:pointer; transition:background 150ms;
+  }
+  .nav-buttons button:hover:not(:disabled){background:var(--panel-soft);}
+  .nav-buttons button:disabled{opacity:0.4; cursor:default;}
+  .nav-buttons button.primary{background:var(--focus); border-color:var(--focus); color:#fff;}
+  .nav-buttons button.primary:hover{background:#183048;}
+
+  footer{max-width:1520px; margin:16px auto 0; color:var(--muted-2); font-size:12px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Enterprise Data Center Architecture</h1>
+  <p>A layered network design from the WAN edge to compute and storage, with redundant paths, an out-of-band management plane, and Zero Trust segmentation points. Walk through it layer by layer, or explore freely.</p>
+</header>
+
+<div class="controls">
+  <div class="seg" id="mode-seg">
+    <button data-mode="guided" class="active">Guided walkthrough</button>
+    <button data-mode="explore">Explore freely</button>
+  </div>
+  <div class="zt-toggle">
+    <input type="checkbox" id="zt-toggle">
+    <label for="zt-toggle">Show Zero Trust boundaries</label>
+  </div>
+</div>
+
+<div class="shell">
+
+  <div class="card rail">
+    <h2>Layers</h2>
+    <ul class="steps" id="steps-list"></ul>
+    <div class="legend-mini">
+      <h2 style="margin-top:0;">Legend</h2>
+      <div class="legend-row"><span class="legend-dot" style="background:#64748B"></span> WAN edge</div>
+      <div class="legend-row"><span class="legend-dot" style="background:#D97706"></span> Perimeter</div>
+      <div class="legend-row"><span class="legend-dot" style="background:#EA580C"></span> DMZ</div>
+      <div class="legend-row"><span class="legend-dot" style="background:#0284C7"></span> Core</div>
+      <div class="legend-row"><span class="legend-dot" style="background:#16A34A"></span> Access</div>
+      <div class="legend-row"><span class="legend-dot" style="background:#0D9488"></span> Compute &amp; storage</div>
+      <div class="legend-row"><span class="legend-dot" style="background:#7C3AED"></span> Management</div>
+      <div class="legend-row" style="margin-top:9px;"><span class="legend-line"></span> Data path</div>
+      <div class="legend-row"><span class="legend-line dashed-ha"></span> HA sync</div>
+      <div class="legend-row"><span class="legend-line dashed-mgmt"></span> OOB mgmt</div>
+      <div class="legend-row"><span class="legend-line dotted-policy"></span> Identity / telemetry</div>
+    </div>
+  </div>
+
+  <div class="card diagram-card">
+    <div class="diagram-canvas">
+      <svg id="diagram" viewBox="0 0 1300 960" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+  </div>
+
+  <div class="card sidebar" id="sidebar"></div>
+
+</div>
+
+<footer>Illustrative reference architecture — adapt zone boundaries, redundancy, and specific products to your own risk assessment.</footer>
+</div>
+
+<script>
+const ZONE_COLORS = { wan:'#64748B', perimeter:'#D97706', dmz:'#EA580C', core:'#0284C7', access:'#16A34A', compute:'#0D9488', mgmt:'#7C3AED' };
+const ZONE_TEXT   = { wan:'#475569', perimeter:'#B45309', dmz:'#C2410C', core:'#0369A1', access:'#15803D', compute:'#0F766E', mgmt:'#6D28D9' };
+
+const ICONS = {
+  cloud: '<path d="M5.5 14.5a3 3 0 01-.4-5.98A4 4 0 0113.6 6.4a3.3 3.3 0 01-.6 6.6H5.5"/>',
+  router: '<rect x="3" y="9" width="14" height="6" rx="1.4"/><line x1="7" y1="9" x2="7" y2="4.5"/><line x1="13" y1="9" x2="13" y2="4.5"/><circle cx="7" cy="4" r="1"/><circle cx="13" cy="4" r="1"/>',
+  shield: '<path d="M10 2.3l6.2 2.5v5c0 4.3-2.6 7.6-6.2 8.9-3.6-1.3-6.2-4.6-6.2-8.9v-5L10 2.3z"/>',
+  radar: '<circle cx="10" cy="10" r="7"/><path d="M6.5 10l1.8-3 1.7 6 1.7-4.5 1.8 1.5"/>',
+  balance: '<line x1="10" y1="3.5" x2="10" y2="8"/><line x1="10" y1="8" x2="4.5" y2="14.5"/><line x1="10" y1="8" x2="10" y2="14.5"/><line x1="10" y1="8" x2="15.5" y2="14.5"/>',
+  lock: '<rect x="5" y="9" width="10" height="8" rx="1.5"/><path d="M7 9V6.3a3 3 0 016 0V9"/>',
+  globe: '<circle cx="10" cy="10" r="7"/><ellipse cx="10" cy="10" rx="3.2" ry="7"/><line x1="3" y1="10" x2="17" y2="10"/>',
+  switch: '<rect x="3" y="6.5" width="14" height="7" rx="1.2"/><line x1="6" y1="11" x2="6" y2="13"/><line x1="8.6" y1="11" x2="8.6" y2="13"/><line x1="11.4" y1="11" x2="11.4" y2="13"/><line x1="14" y1="11" x2="14" y2="13"/>',
+  badge: '<circle cx="10" cy="10" r="7"/><path d="M6.8 10.2l2 2 4.4-4.6"/>',
+  rack: '<rect x="4" y="3" width="12" height="5.2" rx="1"/><rect x="4" y="10.8" width="12" height="5.2" rx="1"/><circle cx="6.2" cy="5.6" r="0.8"/><circle cx="6.2" cy="13.4" r="0.8"/>',
+  cylinder: '<ellipse cx="10" cy="5.3" rx="6" ry="2.3"/><path d="M4 5.3v9.4c0 1.27 2.7 2.3 6 2.3s6-1.03 6-2.3V5.3"/>',
+  archive: '<rect x="3" y="4" width="14" height="4" rx="1"/><rect x="4" y="8.5" width="12" height="7.5" rx="1"/><line x1="8" y1="11.8" x2="12" y2="11.8"/>',
+  terminal: '<rect x="3" y="4" width="14" height="11.5" rx="1.4"/><path d="M6 8.2l2.3 1.9L6 12"/><line x1="10" y1="12" x2="13" y2="12"/>',
+  pulse: '<polyline points="3,14 6.5,14 8.4,7 10.6,15.5 12.6,9.5 17,9.5"/>',
+  key: '<circle cx="6.5" cy="13.5" r="3"/><line x1="8.7" y1="11.3" x2="16" y2="4"/><line x1="13.2" y1="6.8" x2="15" y2="5"/><line x1="15" y1="4.8" x2="16.5" y2="6.3"/>',
+};
+
+const NODES = [
+  {id:'isp-a', zone:'wan', step:1, icon:'cloud', x:60,y:30,w:180,h:70, title:'ISP A', sub:'Primary Uplink', status:'active'},
+  {id:'isp-b', zone:'wan', step:1, icon:'cloud', x:280,y:30,w:180,h:70, title:'ISP B', sub:'Backup Uplink', status:'standby'},
+  {id:'edge-a', zone:'wan', step:1, icon:'router', x:60,y:140,w:180,h:70, title:'Edge Router A', sub:'BGP Peering', status:'active'},
+  {id:'edge-b', zone:'wan', step:1, icon:'router', x:280,y:140,w:180,h:70, title:'Edge Router B', sub:'BGP Peering', status:'active'},
+
+  {id:'ngfw-a', zone:'perimeter', step:2, icon:'shield', x:60,y:250,w:180,h:90, title:'NGFW A · Active', sub:'HA Firewall Pair', status:'active'},
+  {id:'ngfw-b', zone:'perimeter', step:2, icon:'shield', x:280,y:250,w:180,h:90, title:'NGFW B · Standby', sub:'HA Firewall Pair', status:'standby'},
+  {id:'ddos', zone:'perimeter', step:2, icon:'radar', x:500,y:250,w:180,h:90, title:'DDoS Scrubbing', sub:'Inline IPS Sensor', status:'active'},
+
+  {id:'lb', zone:'dmz', step:3, icon:'balance', x:60,y:380,w:180,h:80, title:'Load Balancer', sub:'Reverse Proxy', status:'active'},
+  {id:'vpn', zone:'dmz', step:3, icon:'lock', x:280,y:380,w:180,h:80, title:'VPN Concentrator', sub:'Remote & Site-to-Site', status:'active'},
+  {id:'webproxy', zone:'dmz', step:3, icon:'globe', x:500,y:380,w:180,h:80, title:'Web/App Proxy', sub:'DMZ-Hosted Services', status:'active'},
+
+  {id:'core-a', zone:'core', step:4, icon:'switch', x:100,y:500,w:200,h:80, title:'Core Switch A', sub:'L3 · 100G Backbone', status:'active'},
+  {id:'core-b', zone:'core', step:4, icon:'switch', x:340,y:500,w:200,h:80, title:'Core Switch B', sub:'L3 · 100G Backbone (HA)', status:'standby'},
+
+  {id:'agg-a', zone:'core', step:5, icon:'switch', x:60,y:610,w:180,h:70, title:'Aggregation', sub:'Pod A', status:'active'},
+  {id:'agg-b', zone:'core', step:5, icon:'switch', x:280,y:610,w:180,h:70, title:'Aggregation', sub:'Pod B', status:'active'},
+  {id:'nac', zone:'core', step:5, icon:'badge', x:500,y:610,w:200,h:70, title:'NAC Gateway', sub:'Policy Manager', status:'active'},
+
+  {id:'tor-1', zone:'access', step:6, icon:'switch', x:60,y:710,w:160,h:60, title:'ToR Switch', sub:'Rack 1', status:'active'},
+  {id:'tor-2', zone:'access', step:6, icon:'switch', x:260,y:710,w:160,h:60, title:'ToR Switch', sub:'Rack 2', status:'active'},
+  {id:'tor-3', zone:'access', step:6, icon:'switch', x:460,y:710,w:160,h:60, title:'ToR Switch', sub:'Rack 3', status:'active'},
+
+  {id:'compute-web', zone:'compute', step:7, icon:'rack', x:60,y:800,w:190,h:100, title:'Compute Cluster', sub:'Web/App Tier', status:'active'},
+  {id:'compute-db', zone:'compute', step:7, icon:'rack', x:280,y:800,w:190,h:100, title:'Compute Cluster', sub:'DB Tier · Isolated VLAN', status:'active'},
+  {id:'san', zone:'compute', step:7, icon:'cylinder', x:500,y:800,w:190,h:100, title:'SAN Storage', sub:'Fibre Channel / iSCSI', status:'active'},
+  {id:'backup', zone:'compute', step:7, icon:'archive', x:710,y:800,w:190,h:100, title:'Backup Target', sub:'NAS / Object Store', status:'active'},
+
+  {id:'oob-switch', zone:'mgmt', step:8, icon:'switch', x:1000,y:250,w:220,h:70, title:'OOB Switch', sub:'Dedicated Mgmt VLAN', status:'active'},
+  {id:'jumphost', zone:'mgmt', step:8, icon:'terminal', x:1000,y:380,w:220,h:70, title:'Jump Host', sub:'Privileged Access (PAM)', status:'active'},
+  {id:'siem', zone:'mgmt', step:8, icon:'pulse', x:1000,y:500,w:220,h:70, title:'SIEM / Monitoring', sub:'Log Aggregation · NetFlow', status:'active'},
+  {id:'idp', zone:'mgmt', step:8, icon:'key', x:1000,y:610,w:220,h:70, title:'Identity Provider', sub:'SSO / MFA · Zero Trust PDP', status:'active'},
+];
+
+const SECTION_LABELS = [
+  {x:60,y:20,text:'INTERNET / WAN EDGE'},
+  {x:60,y:240,text:'PERIMETER SECURITY'},
+  {x:60,y:370,text:'DMZ'},
+  {x:100,y:490,text:'CORE LAYER'},
+  {x:60,y:600,text:'DISTRIBUTION & POLICY'},
+  {x:60,y:700,text:'ACCESS LAYER'},
+  {x:60,y:790,text:'COMPUTE & STORAGE'},
+  {x:1000,y:240,text:'OUT-OF-BAND MANAGEMENT'},
+];
+
+const LINKS = [
+  ...['isp-a>edge-a','isp-b>edge-b','edge-a>ddos','edge-b>ddos','ddos>ngfw-a','ddos>ngfw-b',
+     'ngfw-a>lb','ngfw-a>vpn','ngfw-a>webproxy','ngfw-b>lb','ngfw-b>vpn','ngfw-b>webproxy',
+     'lb>core-a','lb>core-b','vpn>core-a','vpn>core-b','webproxy>core-a','webproxy>core-b',
+     'core-a>agg-a','core-a>agg-b','core-a>nac','core-b>agg-a','core-b>agg-b','core-b>nac',
+     'agg-a>tor-1','agg-a>tor-2','agg-b>tor-2','agg-b>tor-3',
+     'tor-1>compute-web','tor-2>compute-db','tor-3>san','tor-3>backup'].map(s=>({from:s.split('>')[0],to:s.split('>')[1],type:'data'})),
+  ...['edge-a>edge-b','ngfw-a>ngfw-b','core-a>core-b','agg-a>agg-b','san>backup'].map(s=>({from:s.split('>')[0],to:s.split('>')[1],type:'ha'})),
+  ...['oob-switch>ngfw-a','oob-switch>core-a','oob-switch>agg-a','oob-switch>jumphost','jumphost>siem','siem>idp'].map(s=>({from:s.split('>')[0],to:s.split('>')[1],type:'mgmt'})),
+  ...['idp>nac','siem>ngfw-a','siem>core-a','vpn>nac'].map(s=>({from:s.split('>')[0],to:s.split('>')[1],type:'policy'})),
+];
+
+const TRUST_ZONES = [
+  {label:'UNTRUSTED / PERIMETER', x:35, y:12, w:670, h:335, color:'#DC2626'},
+  {label:'SEMI-TRUSTED DMZ', x:35, y:360, w:670, h:112, color:'#C2410C'},
+  {label:'TRUSTED INTERNAL', x:35, y:485, w:885, h:428, color:'#15803D'},
+  {label:'PRIVILEGED / MGMT PLANE', x:985, y:238, w:250, h:455, color:'#6D28D9'},
+];
+
+const STEPS = [
+  { title:'WAN Edge', nodes:['isp-a','isp-b','edge-a','edge-b'],
+    blurb:"This is where the network meets the outside world. Two separate ISP circuits, ideally over physically diverse paths, mean a single fiber cut or provider outage doesn't take the site offline. Border routers speak BGP with each ISP and do the first round of traffic filtering before anything reaches security gear." },
+  { title:'Perimeter Security', nodes:['ngfw-a','ngfw-b','ddos'],
+    blurb:"Every inbound and outbound packet crosses this line before touching internal systems. An active/standby firewall pair enforces the real security policy — application awareness, user identity, decryption — while a DDoS scrubbing sensor sits in front to absorb floods that would otherwise choke the firewalls." },
+  { title:'DMZ', nodes:['lb','vpn','webproxy'],
+    blurb:"Anything the internet needs to reach directly — public sites, VPN endpoints, published apps — lives here instead of inside the trusted network. If one of these services is compromised, the attacker lands in an isolated segment, not next to the database." },
+  { title:'Core Layer', nodes:['core-a','core-b'],
+    blurb:"A high-throughput backbone that moves traffic between every other part of the data center. It's built redundant on purpose: losing one core switch should never be visible to anyone using the network." },
+  { title:'Distribution & Policy', nodes:['agg-a','agg-b','nac'],
+    blurb:"This layer aggregates traffic from the racks below and is where access-control policy actually gets enforced. A NAC gateway checks identity before a device is allowed onto the trusted network at all." },
+  { title:'Access Layer', nodes:['tor-1','tor-2','tor-3'],
+    blurb:"The last hop before actual hardware. Top-of-rack switches connect directly to servers and storage, keeping each rack's traffic local before it heads up to aggregation." },
+  { title:'Compute & Storage', nodes:['compute-web','compute-db','san','backup'],
+    blurb:"Where the workloads actually live. Web and application servers sit in one segment, the database tier in another, kept apart so a compromised web server can't just walk over to the database. Storage traffic gets its own dedicated path since it's latency-sensitive, and backups exist so an outage or a ransomware hit doesn't mean total data loss." },
+  { title:'Out-of-Band Management', nodes:['oob-switch','jumphost','siem','idp'],
+    blurb:"A separate plane for actually running the place — reaching devices, logging in as admin, collecting logs — that stays up even if the production network is congested, misconfigured, or under attack. Nobody gets direct admin access from a user network; everything routes through a jump host first." },
+];
+
+const DETAILS = {
+  'isp-a': {tag:'WAN EDGE', concise:'Primary internet circuit terminating on the edge router. Carries the default path under normal conditions.',
+    deep:["Peers with the ISP over eBGP; the edge router advertises your prefixes and learns a default (or partial/full) route in return.",
+          "Should terminate on separate physical infrastructure from ISP B — different demarc, ideally different conduit — so one dig-up doesn't kill both."]},
+  'isp-b': {tag:'WAN EDGE', concise:'Backup circuit, ideally a different provider on a physically diverse path.',
+    deep:["BGP attributes (local preference, AS-path prepending) keep this path less preferred until the primary fails, so failover happens automatically.",
+          "Diverse routing matters more than a second contract with the same provider — a shared conduit defeats the point."]},
+  'edge-a': {tag:'WAN EDGE', concise:'Border router peering with the ISP. First policy point: prefix filtering, route summarization, basic ACLs.',
+    deep:["Runs uRPF and bogon/RPKI filtering to drop obviously spoofed or invalid source traffic before it reaches the firewall.",
+          "Often pairs with Edge Router B via HSRP/VRRP so the internal-facing default gateway survives a single router failure."]},
+  'edge-b': {tag:'WAN EDGE', concise:'Redundant border router for the backup circuit, synced with Edge Router A for fast failover.',
+    deep:["Runs the same BGP and filtering posture as Edge A — redundancy only works if both routers enforce identical policy.",
+          "Failover time here is usually the biggest factor in how long an outage actually lasts, so BGP timers get tuned deliberately."]},
+  'ngfw-a': {tag:'PERIMETER', concise:'Active member of the perimeter firewall HA pair. Enforces app-aware policy, TLS inspection, and IPS at the boundary.',
+    deep:["HA pairs sync session state continuously, so an active/passive failover doesn't drop established connections.",
+          "Zone-based policy here is the real access-control layer: untrust → DMZ → trust, with explicit rules rather than a flat allow-all."]},
+  'ngfw-b': {tag:'PERIMETER', concise:'Standby firewall, state-synced with the active unit — takes over transparently on failover.',
+    deep:["State sync is what actually makes this a redundant pair. Without it, Firewall B is just a spare box sitting idle.",
+          "Some deployments run active/active instead, trading a simpler failover story for extra throughput."]},
+  'ddos': {tag:'PERIMETER', concise:'Inline scrubbing/IPS sensor ahead of the firewalls, absorbing volumetric attacks before they reach policy-heavy devices.',
+    deep:["Targets high-volume floods (SYN floods, UDP amplification) that would exhaust firewall session tables rather than get blocked by policy.",
+          "Can be on-prem or a cloud scrubbing service reached via BGP redirect during an active attack — either way, garbage traffic never reaches the stateful gear."]},
+  'lb': {tag:'DMZ', concise:'Terminates and distributes inbound application traffic. Often doubles as a WAF/reverse proxy for published services.',
+    deep:["Typically does SSL/TLS termination, so backend servers don't each need to manage certificates.",
+          "Health checks pull unhealthy backends out of rotation automatically — as much an availability control as a security one."]},
+  'vpn': {tag:'DMZ', concise:'Remote-access and site-to-site VPN termination — site-to-site over IPsec, remote users over SSL/TLS.',
+    deep:["A remote session landing here still needs to clear NAC/identity before it's treated as trusted — it shouldn't get a straight path to the core.",
+          "Posture checks (patched OS, EDR running) at this point catch a compromised laptop before it becomes a foothold inside."]},
+  'webproxy': {tag:'DMZ', concise:"Hosts anything that must be internet-reachable directly, isolated so a compromise doesn't have a direct path inward.",
+    deep:["Classic DMZ principle: if this box gets popped, the blast radius is this segment, not the database two hops away.",
+          "Should run with minimal outbound access — a web server that can freely reach the internal network defeats the point of the DMZ."]},
+  'core-a': {tag:'CORE', concise:'High-throughput L3 backbone tying every part of the data center together.',
+    deep:["Runs internal routing (OSPF, EIGRP, or increasingly BGP even inside the DC) to move traffic between distribution blocks.",
+          "Modern leaf-spine fabrics often replace this with VXLAN/EVPN for scale — same role, different implementation."]},
+  'core-b': {tag:'CORE', concise:'Redundant core switch. Loss of one should not be visible to end users.',
+    deep:["Active/active is more common at this tier than active/standby — both switches carry live traffic, and losing one halves capacity instead of causing an outage.",
+          "Convergence time after a failure matters more here than almost anywhere else, since everything transits the core."]},
+  'agg-a': {tag:'DISTRIBUTION', concise:'Aggregation layer for one pod/block of racks. Boundary for VLANs and the fabric domain feeding that pod.',
+    deep:["Usually the L2/L3 boundary: access switches trunk VLANs up here, and this layer routes between them.",
+          "Uplinks to the core and downlinks to access switches are typically bundled (LACP) for both bandwidth and resilience."]},
+  'agg-b': {tag:'DISTRIBUTION', concise:'Aggregation for a second pod, mirrored for redundancy and scale.',
+    deep:["Splitting racks across multiple aggregation blocks limits how much of the data center a single aggregation failure can affect."]},
+  'nac': {tag:'DISTRIBUTION', concise:'Network Access Control gateway — checks device/user identity against the Identity Provider before granting access.',
+    deep:["Usually enforced via 802.1X at the access switch, with RADIUS talking back to this gateway for the decision.",
+          "Can assign VLAN, ACL, or port state dynamically based on who or what just plugged in — a laptop and an IP camera don't get the same access."]},
+  'tor-1': {tag:'ACCESS', concise:'Top-of-rack switch for Rack 1 — last hop before the actual compute/storage hardware.',
+    deep:["Whether this switch does L2 or L3 to the server depends on the fabric design; leaf-spine architectures increasingly push routing all the way down here."]},
+  'tor-2': {tag:'ACCESS', concise:'Top-of-rack switch for Rack 2.',
+    deep:["Same design as Rack 1 — uplinks bonded to aggregation, so no single NIC or cable failure takes the rack offline."]},
+  'tor-3': {tag:'ACCESS', concise:'Top-of-rack switch for Rack 3.',
+    deep:["Storage traffic riding through here often gets separated onto its own VLAN even at this layer, since it's more latency-sensitive than general server traffic."]},
+  'compute-web': {tag:'COMPUTE', concise:'Hypervisor/container cluster running web and application workloads, on its own VLAN and firewall policy.',
+    deep:["This tier is the one most directly exposed to attacker-controlled input via the DMZ/load balancer, so it's treated as less trusted than the database tier behind it."]},
+  'compute-db': {tag:'COMPUTE', concise:'Database tier, deliberately isolated in its own VLAN/segment — only the app tier should be able to reach it.',
+    deep:["This is where micro-segmentation earns its keep: an app-to-database rule scoped to specific ports and hosts, not a broad subnet-to-subnet allow.",
+          "Lateral movement from a compromised web server to the database is one of the most common real-world breach paths — this boundary is what's supposed to stop it."]},
+  'san': {tag:'STORAGE', concise:'Block storage for compute clusters — Fibre Channel or iSCSI, usually on a dedicated storage network.',
+    deep:["Storage traffic is latency-sensitive in a way general data traffic isn't, so a dedicated network protects performance as much as security.",
+          "Fibre Channel networks are typically air-gapped from the IP network entirely; iSCSI shares Ethernet but usually gets its own VLAN."]},
+  'backup': {tag:'STORAGE', concise:'Backup and archival target — NAS or object storage, replicating from primary storage.',
+    deep:["Following the 3-2-1 rule (3 copies, 2 media types, 1 offsite) is standard practice here.",
+          "Immutable or air-gapped backups matter specifically because ransomware increasingly targets backup infrastructure first, before triggering encryption."]},
+  'oob-switch': {tag:'MANAGEMENT', concise:'Dedicated management network, physically or logically separate from production.',
+    deep:["The point is staying reachable when the production path isn't — congested, misconfigured, or mid-incident.",
+          "Often rides a completely separate physical NIC on each device, not just a different VLAN on the same interface."]},
+  'jumphost': {tag:'MANAGEMENT', concise:'Bastion host / privileged access workstation. All admin sessions route through here.',
+    deep:["No direct admin access from a user network to core infrastructure — this chokepoint is what makes that rule enforceable rather than a policy document.",
+          "Session recording and MFA at this single point cover privileged access to everything behind it, which is a lot cheaper than instrumenting every device individually."]},
+  'siem': {tag:'MANAGEMENT', concise:'Central log and NetFlow/telemetry collection — feeds detection and audit.',
+    deep:["In a real deployment, essentially every device in this diagram ships logs here, not just the two or three shown — the diagram simplifies the fan-in for clarity.",
+          "Detection is only as good as coverage: a segment that isn't logging to the SIEM is a blind spot, full stop."]},
+  'idp': {tag:'MANAGEMENT', concise:'Identity provider issuing SSO/MFA-backed identity — the Zero Trust policy decision point.',
+    deep:["NAC, VPN, and jump host access all ultimately check back against this — the single source of truth for who someone is and what they should be allowed to touch.",
+          "MFA here is one of the highest-leverage controls in the whole architecture — most credential-based breaches don't survive a second factor."]},
+};
+
+const svgNS = 'http://www.w3.org/2000/svg';
+const svg = document.getElementById('diagram');
+const nodeById = Object.fromEntries(NODES.map(n=>[n.id,n]));
+const stepOf = Object.fromEntries(NODES.map(n=>[n.id,n.step]));
+
+const state = { mode:'guided', step:1, selected:null };
+
+function el(tag, attrs){ const e=document.createElementNS(svgNS, tag); for(const k in attrs) e.setAttribute(k, attrs[k]); return e; }
+function centerOf(n){ return {cx:n.x+n.w/2, cy:n.y+n.h/2}; }
+
+function connector(a,b){
+  const ca=centerOf(a), cb=centerOf(b);
+  const dx=cb.cx-ca.cx, dy=cb.cy-ca.cy;
+  let p1,p2,c1,c2;
+  if(Math.abs(dy) >= Math.abs(dx)){
+    if(dy>0){ p1={x:ca.cx,y:a.y+a.h}; p2={x:cb.cx,y:b.y}; } else { p1={x:ca.cx,y:a.y}; p2={x:cb.cx,y:b.y+b.h}; }
+    const off = Math.max(18, Math.min(70, Math.abs(p2.y-p1.y)*0.5));
+    const s = p2.y>=p1.y ? 1 : -1;
+    c1 = {x:p1.x, y:p1.y + s*off}; c2 = {x:p2.x, y:p2.y - s*off};
+  } else {
+    if(dx>0){ p1={x:a.x+a.w,y:ca.cy}; p2={x:b.x,y:cb.cy}; } else { p1={x:a.x,y:ca.cy}; p2={x:b.x+b.w,y:cb.cy}; }
+    const off = Math.max(18, Math.min(70, Math.abs(p2.x-p1.x)*0.5));
+    const s = p2.x>=p1.x ? 1 : -1;
+    c1 = {x:p1.x + s*off, y:p1.y}; c2 = {x:p2.x - s*off, y:p2.y};
+  }
+  return {p1,p2,c1,c2};
+}
+
+const defs = el('defs',{});
+const filter = el('filter',{id:'soft-shadow', x:'-40%', y:'-40%', width:'180%', height:'180%'});
+filter.appendChild(el('feDropShadow',{dx:0, dy:1.5, stdDeviation:2.2, 'flood-color':'#0F2A3D', 'flood-opacity':0.12}));
+defs.appendChild(filter);
+svg.appendChild(defs);
+
+const ztGroup = el('g', {id:'trust-zones', style:'display:none;'});
+TRUST_ZONES.forEach(z=>{
+  ztGroup.appendChild(el('rect', {x:z.x,y:z.y,width:z.w,height:z.h, rx:16, class:'trust-zone-rect', stroke:z.color, fill:z.color}));
+  const t = el('text', {x:z.x+14, y:z.y+20, class:'trust-zone-label', fill:z.color});
+  t.textContent = z.label;
+  ztGroup.appendChild(t);
+});
+svg.appendChild(ztGroup);
+
+const linkGroup = el('g', {});
+const portGroup = el('g', {});
+const linkEls = {};
+LINKS.forEach((l,i)=>{
+  const a = nodeById[l.from], b = nodeById[l.to];
+  if(!a||!b) return;
+  const {p1,p2,c1,c2} = connector(a,b);
+  const path = el('path', {d:`M ${p1.x} ${p1.y} C ${c1.x} ${c1.y}, ${c2.x} ${c2.y}, ${p2.x} ${p2.y}`, class:'link-'+l.type});
+  linkGroup.appendChild(path);
+  linkEls[i] = {path, from:l.from, to:l.to};
+  portGroup.appendChild(el('circle',{cx:p1.x, cy:p1.y, r:2.4, class:'port-dot'}));
+  portGroup.appendChild(el('circle',{cx:p2.x, cy:p2.y, r:2.4, class:'port-dot'}));
+});
+svg.appendChild(linkGroup);
+svg.appendChild(portGroup);
+
+const labelGroup = el('g', {});
+SECTION_LABELS.forEach(s=>{ const t=el('text',{x:s.x,y:s.y,class:'section-label'}); t.textContent=s.text; labelGroup.appendChild(t); });
+svg.appendChild(labelGroup);
+
+const nodeGroup = el('g', {});
+const nodeEls = {};
+NODES.forEach(n=>{
+  const g = el('g', {class:'node-group', id:'node-'+n.id, tabindex:'0', role:'button', 'aria-label':n.title+', '+n.sub+', status '+n.status});
+  g.appendChild(el('rect', {x:n.x,y:n.y,width:n.w,height:n.h, rx:10, class:'node-rect'}));
+
+  const chip = el('g', {transform:`translate(${n.x+8},${n.y+8})`});
+  chip.appendChild(el('rect',{width:26,height:26,rx:7,class:'icon-chip', fill:ZONE_COLORS[n.zone]+'1F'}));
+  const iconInner = el('g', {transform:'translate(3,3) scale(0.78)', stroke:ZONE_TEXT[n.zone], 'stroke-width':1.7, fill:'none', 'stroke-linecap':'round','stroke-linejoin':'round'});
+  iconInner.innerHTML = ICONS[n.icon] || '';
+  chip.appendChild(iconInner);
+  g.appendChild(chip);
+
+  const title = el('text', {x:n.x+44, y:n.y+22, class:'node-title'}); title.textContent = n.title; g.appendChild(title);
+  const sub = el('text', {x:n.x+44, y:n.y+39, class:'node-sub'}); sub.textContent = n.sub; g.appendChild(sub);
+
+  if(n.status==='standby'){
+    g.appendChild(el('circle', {cx:n.x+n.w-13, cy:n.y+14, r:4, class:'status-ring', stroke:'#D97706'}));
+  } else {
+    g.appendChild(el('circle', {cx:n.x+n.w-13, cy:n.y+14, r:4, class:'status-dot', fill:'#16A34A'}));
+  }
+
+  g.addEventListener('click', ()=>selectNode(n.id));
+  g.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); selectNode(n.id); }});
+  nodeGroup.appendChild(g);
+  nodeEls[n.id] = g;
+});
+svg.appendChild(nodeGroup);
+
+function selectNode(id){ state.mode='explore'; state.selected=id; renderAll(); }
+function setMode(mode){ state.mode=mode; if(mode==='guided') state.selected=null; renderAll(); }
+function goStep(n){ state.mode='guided'; state.step=Math.max(1, Math.min(STEPS.length, n)); state.selected=null; renderAll(); }
+
+function renderStepper(){
+  const list = document.getElementById('steps-list');
+  list.innerHTML = '';
+  STEPS.forEach((s,i)=>{
+    const num = i+1;
+    const li = document.createElement('li');
+    li.className = 'step-item' + (state.mode==='guided' && num===state.step ? ' current' : '') + (state.mode==='guided' && num<state.step ? ' done' : '');
+    li.innerHTML = `<span class="step-num">${num}</span><button class="step-btn"><span class="step-title">${s.title}</span></button>`;
+    li.querySelector('.step-btn').addEventListener('click', ()=>goStep(num));
+    list.appendChild(li);
+  });
+}
+
+function renderDiagram(){
+  const activeSet = state.mode==='guided' ? new Set(STEPS[state.step-1].nodes) : null;
+  NODES.forEach(n=>{
+    const g = nodeEls[n.id];
+    g.classList.remove('focused','selected');
+    if(state.mode==='guided'){
+      const active = activeSet.has(n.id);
+      g.style.opacity = active ? '1' : '0.32';
+      if(active) g.classList.add('focused');
+    } else {
+      g.style.opacity = '1';
+      if(state.selected===n.id) g.classList.add('selected');
+    }
+  });
+  Object.values(linkEls).forEach(({path,from,to})=>{
+    if(state.mode==='guided'){
+      const bothActive = activeSet.has(from) && activeSet.has(to);
+      path.style.opacity = bothActive ? '1' : '0.1';
+    } else {
+      path.style.opacity = '';
+    }
+  });
+  portGroup.style.opacity = state.mode==='guided' ? '0.5' : '0.9';
+}
+
+function renderSidebar(){
+  const sb = document.getElementById('sidebar');
+  if(state.mode==='guided'){
+    const s = STEPS[state.step-1];
+    let html = `<h2>Layer ${state.step} of ${STEPS.length}</h2><p class="step-blurb">${s.blurb}</p>`;
+    s.nodes.forEach(id=>{ html += nodeCardHTML(id); });
+    html += `<div class="nav-buttons">
+      <button id="prev-btn" ${state.step===1?'disabled':''}>← Previous</button>
+      <button id="next-btn" class="primary" ${state.step===STEPS.length?'disabled':''}>Next →</button>
+    </div>`;
+    sb.innerHTML = html;
+    document.getElementById('prev-btn').addEventListener('click', ()=>goStep(state.step-1));
+    document.getElementById('next-btn').addEventListener('click', ()=>goStep(state.step+1));
+  } else if(state.selected){
+    const stepNum = stepOf[state.selected];
+    let html = `<button class="back-link" id="back-link">← Back to Layer ${stepNum}: ${STEPS[stepNum-1].title}</button>`;
+    html += nodeCardHTML(state.selected);
+    sb.innerHTML = html;
+    document.getElementById('back-link').addEventListener('click', ()=>goStep(stepNum));
+  } else {
+    sb.innerHTML = `<h2>Explore freely</h2>
+      <p class="placeholder">Click any box in the diagram to see its role, and expand "Go deeper" for protocols and real-world notes.</p>
+      <ul class="placeholder">
+        <li>Redundant HA pairs sit at every tier that can't fail silently: edge, firewall, core, aggregation.</li>
+        <li>The DMZ isolates anything internet-facing from the trusted core.</li>
+        <li>NAC and the Identity Provider act as the Zero Trust policy decision point before access is granted.</li>
+        <li>A dedicated out-of-band plane keeps management and logging reachable even if the data path is down.</li>
+      </ul>`;
+  }
+}
+
+function nodeCardHTML(id){
+  const n = nodeById[id], d = DETAILS[id];
+  const statusColor = n.status==='standby' ? 'var(--status-standby)' : 'var(--status-active)';
+  const dotStyle = n.status==='standby' ? `background:#fff; border-color:${statusColor};` : `background:${statusColor};`;
+  return `<div class="node-card">
+    <div class="node-card-head">
+      <span class="tag" style="background:${ZONE_COLORS[n.zone]}1F; color:${ZONE_TEXT[n.zone]}">${d.tag}</span>
+      <span class="status-badge"><span class="dot" style="${dotStyle}"></span>${n.status}</span>
+    </div>
+    <h4>${n.title}</h4>
+    <p class="node-card-sub">${n.sub}</p>
+    <p class="node-card-concise">${d.concise}</p>
+    <details class="deeper"><summary>Go deeper</summary><ul>${d.deep.map(x=>`<li>${x}</li>`).join('')}</ul></details>
+  </div>`;
+}
+
+function renderAll(){
+  document.querySelectorAll('#mode-seg button').forEach(b=>b.classList.toggle('active', b.dataset.mode===state.mode));
+  renderStepper();
+  renderDiagram();
+  renderSidebar();
+}
+
+document.getElementById('mode-seg').addEventListener('click', e=>{
+  const btn = e.target.closest('button[data-mode]');
+  if(btn) setMode(btn.dataset.mode);
+});
+document.getElementById('zt-toggle').addEventListener('change', e=>{
+  document.getElementById('trust-zones').style.display = e.target.checked ? 'block' : 'none';
+});
+
+renderAll();
+</script>
+</body>
+</html>
