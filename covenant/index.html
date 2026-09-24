@@ -1,0 +1,841 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The New Covenant — A Reformed Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--parchment:#f4efe4;--parchment-deep:#ebe3d3;--ink:#22201c;--ink-soft:#4a453d;--ink-faint:#7a7266;--gold:#a5822f;--gold-light:#c9a961;--oxblood:#6d2c26;--rule:#d6cbb4;--shadow:rgba(60,50,35,.10);}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--parchment);color:var(--ink);font-family:'EB Garamond',Georgia,serif;font-size:19px;line-height:1.72;-webkit-font-smoothing:antialiased;}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;background-image:radial-gradient(circle at 18% 22%,rgba(180,160,120,.07) 0 2px,transparent 3px),radial-gradient(circle at 72% 68%,rgba(160,140,100,.06) 0 2px,transparent 3px),radial-gradient(circle at 45% 88%,rgba(190,170,130,.05) 0 2px,transparent 3px);background-size:180px 180px,240px 240px,300px 300px;}
+#progress{position:fixed;top:0;left:0;height:2px;width:0;background:linear-gradient(90deg,var(--gold),var(--gold-light));z-index:100;transition:width .1s linear;}
+.wrap{position:relative;z-index:1;max-width:1220px;margin:0 auto;padding:0 28px;display:flex;gap:52px}
+nav#toc{width:250px;flex:none;position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;padding:52px 0 60px;}
+nav#toc::-webkit-scrollbar{width:5px}nav#toc::-webkit-scrollbar-thumb{background:var(--rule);border-radius:3px}
+nav#toc .toc-head{font-family:'Cormorant Garamond',serif;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--rule);}
+nav#toc a{display:block;text-decoration:none;color:var(--ink-soft);font-size:.87rem;line-height:1.35;padding:7px 0 7px 14px;border-left:2px solid transparent;transition:all .18s;}
+nav#toc a:hover{color:var(--oxblood);border-left-color:var(--gold-light)}
+nav#toc a.active{color:var(--oxblood);border-left-color:var(--gold);font-weight:500}
+nav#toc a .num{font-family:'Cormorant Garamond',serif;color:var(--gold);font-size:.75rem;letter-spacing:.1em;margin-right:7px;}
+main{flex:1;min-width:0;padding:52px 0 140px;max-width:760px}
+header.front{text-align:center;padding:80px 0 72px;margin-bottom:64px;border-bottom:1px solid var(--rule);position:relative;}
+header.front::after{content:"";position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:70px;height:7px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.crux{color:var(--gold);font-size:1.6rem;letter-spacing:.5em;margin-bottom:26px;padding-left:.5em}
+header.front h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(2.5rem,6vw,4rem);line-height:1.08;margin:0 0 20px;letter-spacing:.01em;}
+header.front h1 em{font-style:italic;color:var(--oxblood)}
+header.front .sub{font-size:1.02rem;color:var(--ink-faint);font-style:italic;max-width:480px;margin:0 auto 26px;line-height:1.6;}
+header.front .epigraph{font-family:'Cormorant Garamond',serif;font-size:1.12rem;color:var(--ink-soft);max-width:440px;margin:0 auto;padding-top:24px;border-top:1px solid var(--rule);font-style:italic;line-height:1.55;}
+header.front .epigraph .cref{display:block;font-style:normal;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-top:12px;}
+section.part{padding-top:36px;margin-bottom:24px;scroll-margin-top:24px}
+.part-label{font-family:'Cormorant Garamond',serif;font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+section.part>h2{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(2rem,4.4vw,2.9rem);line-height:1.12;margin:0 0 30px;padding-bottom:22px;position:relative;}
+section.part>h2::after{content:"";position:absolute;bottom:0;left:0;width:88px;height:2px;background:linear-gradient(90deg,var(--gold),transparent);}
+h3{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.5rem;line-height:1.25;margin:46px 0 16px;}
+h4{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.16rem;margin:32px 0 12px;color:var(--oxblood);}
+p{margin:0 0 20px}strong{font-weight:600;color:var(--ink)}
+section.part>h2+p::first-letter{font-family:'Cormorant Garamond',serif;float:left;font-size:3.5rem;line-height:.82;padding:6px 10px 0 0;color:var(--oxblood);font-weight:500;}
+.ref{font-variant:small-caps;letter-spacing:.05em;color:var(--ink-faint);font-size:.94em;}
+.sc{font-variant:small-caps}
+blockquote.scripture{margin:32px 0;padding:24px 30px 24px 34px;background:var(--parchment-deep);border-left:3px solid var(--gold);border-radius:0 3px 3px 0;font-family:'Cormorant Garamond',serif;font-size:1.24rem;line-height:1.55;color:var(--ink);box-shadow:0 1px 3px var(--shadow);}
+blockquote.scripture p{margin:0 0 10px}blockquote.scripture p:last-of-type{margin-bottom:0}
+blockquote.scripture cite{display:block;margin-top:14px;font-style:normal;font-family:'EB Garamond',serif;font-size:.74rem;letter-spacing:.19em;text-transform:uppercase;color:var(--gold);}
+.callout{margin:32px 0;padding:22px 26px;border:1px solid var(--rule);background:rgba(255,252,245,.55);border-radius:3px;font-size:.97rem;}
+.callout .tag{font-family:'Cormorant Garamond',serif;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:9px;}
+.callout p:last-child{margin-bottom:0}
+.callout.warn{border-left:3px solid var(--oxblood);background:rgba(109,44,38,.045)}
+.callout.warn .tag{color:var(--oxblood)}
+.pillar{margin:44px 0;padding:28px 30px;border:1px solid var(--rule);background:rgba(255,252,245,.6);border-radius:3px;box-shadow:0 1px 4px var(--shadow);scroll-margin-top:24px;}
+.pillar>h3{margin:0 0 20px;padding-bottom:14px;border-bottom:1px solid var(--rule);display:flex;align-items:baseline;gap:14px;font-size:1.6rem;}
+.pillar>h3 .pnum{font-family:'Cormorant Garamond',serif;color:var(--gold);font-size:1.05rem;letter-spacing:.06em;flex:none;}
+.pillar dt{font-family:'Cormorant Garamond',serif;font-weight:600;color:var(--oxblood);font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;margin:20px 0 7px;}
+.pillar dt:first-child{margin-top:0}
+.pillar dd{margin:0}.pillar dd p:last-child{margin-bottom:0}
+.pillar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:10px;margin:30px 0 44px;}
+.pillar-grid a{text-decoration:none;color:var(--ink-soft);border:1px solid var(--rule);padding:11px 13px;border-radius:3px;font-size:.9rem;line-height:1.25;background:rgba(255,252,245,.6);transition:all .18s;display:block;}
+.pillar-grid a:hover{border-color:var(--gold);color:var(--oxblood);background:var(--parchment-deep)}
+.pillar-grid a .n{display:block;font-family:'Cormorant Garamond',serif;color:var(--gold);font-size:.72rem;letter-spacing:.14em;margin-bottom:2px;}
+main ul,main ol{margin:0 0 20px;padding-left:24px}main li{margin-bottom:9px}main li::marker{color:var(--gold)}
+.ornament{text-align:center;color:var(--gold);letter-spacing:.7em;font-size:.85rem;margin:54px 0;padding-left:.7em;opacity:.75;}
+.closing-q{counter-reset:q;list-style:none;padding-left:0}
+.closing-q li{counter-increment:q;position:relative;padding-left:44px;margin-bottom:20px;}
+.closing-q li::before{content:counter(q);position:absolute;left:0;top:-2px;font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--gold);line-height:1;}
+.memo{margin:26px 0;padding:22px 26px;border:1px solid var(--gold-light);background:var(--parchment-deep);border-radius:3px;}
+.memo p{font-family:'Cormorant Garamond',serif;font-size:1.14rem;line-height:1.5;margin-bottom:8px}
+.memo .why{font-family:'EB Garamond',serif;font-size:.92rem;color:var(--ink-faint);font-style:italic;margin:0}
+.memo .mref{color:var(--gold);font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;}
+.books h4{margin-top:26px}.books ul{list-style:none;padding-left:0}
+.books li{padding-left:18px;position:relative;margin-bottom:7px;font-size:.97rem}
+.books li::before{content:"\2014";position:absolute;left:0;color:var(--gold)}
+footer.colophon{margin-top:80px;padding-top:32px;border-top:1px solid var(--rule);text-align:center;color:var(--ink-faint);font-size:.85rem;font-style:italic;}
+@media(max-width:940px){
+.wrap{flex-direction:column;gap:0;padding:0 22px}
+nav#toc{position:relative;width:100%;height:auto;top:auto;padding:22px 0 18px;border-bottom:1px solid var(--rule);margin-bottom:10px;}
+nav#toc .toc-inner{display:flex;flex-wrap:wrap;gap:5px}
+nav#toc a{border-left:none;border:1px solid var(--rule);border-radius:3px;padding:6px 11px;font-size:.8rem}
+nav#toc a.active{border-color:var(--gold);background:var(--parchment-deep)}
+main{padding-top:20px;max-width:none}body{font-size:18px}
+blockquote.scripture{padding:20px 22px;font-size:1.14rem}.pillar{padding:22px 20px}}
+@media print{
+body{background:#fff;font-size:11pt;line-height:1.45}
+body::before,#progress,nav#toc,.pillar-grid{display:none!important}
+.wrap{display:block;max-width:none;padding:0}main{max-width:none;padding:0}
+section.part{page-break-before:always;padding-top:0}section.part:first-of-type{page-break-before:avoid}
+h3,h4{page-break-after:avoid}
+blockquote.scripture,.callout,.pillar,.memo{page-break-inside:avoid;box-shadow:none;background:#fafafa}
+header.front{page-break-after:always}a{color:inherit;text-decoration:none}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div class="wrap">
+<nav id="toc">
+<div class="toc-head">Contents</div>
+<div class="toc-inner">
+<a href="#p1"><span class="num">I</span>Who God Is</a>
+<a href="#p2"><span class="num">II</span>What Is Wrong With Us</a>
+<a href="#p3"><span class="num">III</span>The Center</a>
+<a href="#p4"><span class="num">IV</span>Covenant as the Spine</a>
+<a href="#p5"><span class="num">V</span>What Makes It New</a>
+<a href="#p6"><span class="num">VI</span>The Benefits Applied</a>
+<a href="#p7"><span class="num">VII</span>The Pillars</a>
+<a href="#p8"><span class="num">VIII</span>Where People Go Wrong</a>
+<a href="#p9"><span class="num">IX</span>Self-Examination</a>
+<a href="#p10"><span class="num">X</span>Where It Is All Going</a>
+<a href="#p11"><span class="num">XI</span>Living In It</a>
+<a href="#close"><span class="num">&#10013;</span>Closing</a>
+</div>
+</nav>
+<main>
+<header class="front">
+<div class="crux">&#10013;</div>
+<h1>The New Covenant<br><em>and the Pillars of the Christian Life</em></h1>
+<p class="sub">A Reformed study in eleven parts &mdash; on who God is, what is wrong with us, what Christ has done, and how a life is actually built on it.</p>
+<div class="epigraph">&ldquo;And this is eternal life, that they know you, the only true God, and Jesus Christ whom you have sent.&rdquo;<span class="cref">John 17:3</span></div>
+</header>
+
+<section class="part" id="p1">
+<div class="part-label">Part One</div>
+<h2>Who God Is</h2>
+<h3>He Simply Is</h3>
+<p>When Moses asks for a name, God answers with a sentence that refuses to be a definition: &ldquo;I AM WHO I AM&rdquo; <span class="ref">(Ex 3:14)</span>. Every other being in existence is derivative &mdash; contingent, dependent, held in being by something outside itself. God is not. He has no cause, no origin, no source of life outside Himself. Theologians call this <em>aseity</em>, from <em>a se</em>, &ldquo;from Himself.&rdquo; Jesus states it directly: &ldquo;For as the Father has life in himself, so he has granted the Son also to have life in himself&rdquo; <span class="ref">(John 5:26)</span>.</p>
+<p>This is not abstract. It means God does not need you. Isaiah 40 hammers this: He measures the waters in the hollow of His hand, weighs the mountains in scales, counts the nations as a drop from a bucket and the dust on the scales <span class="ref">(Isa 40:12&ndash;15)</span>. No one instructed Him <span class="ref">(vv. 13&ndash;14)</span>. He is not a bigger version of us. Everything you love about your own life &mdash; your existence, your breath, your capacity to think this sentence &mdash; is on loan.</p>
+<p>And yet the same chapter ends with Him giving power to the faint <span class="ref">(Isa 40:29&ndash;31)</span>. The God who needs nothing stoops to sustain. That combination is the entire shape of Christianity.</p>
+
+<h3>Holy</h3>
+<p>Isaiah 6 is the most important passage in the Bible on this. Isaiah sees the Lord enthroned, and the seraphim &mdash; creatures who have never sinned, who cover their faces in His presence &mdash; cry out:</p>
+<blockquote class="scripture"><p>Holy, holy, holy is the <span class="sc">Lord</span> of hosts; the whole earth is full of his glory!</p><cite>Isaiah 6:3</cite></blockquote>
+<p>Hebrew has no superlative suffix; it triples a word to say <em>utterly</em>, <em>absolutely</em>. This is the only attribute of God repeated three times in Scripture.</p>
+<p>Isaiah&rsquo;s response is not warmth. It is: &ldquo;Woe is me! For I am lost; for I am a man of unclean lips&rdquo; <span class="ref">(Isa 6:5)</span>. He is the best man in Judah, and in the presence of God he pronounces a funeral curse over himself. Note this carefully, because modern religion has almost entirely lost it: <strong>the immediate effect of seeing God clearly is the conviction that you cannot survive Him.</strong></p>
+<p>Holiness means two things together. First, otherness &mdash; God is in a category by Himself, separate from all creation. Second, moral purity &mdash; He is untainted, and He is opposed to sin not by policy but by nature. &ldquo;You shall be holy, for I the <span class="sc">Lord</span> your God am holy&rdquo; <span class="ref">(Lev 19:2)</span> is not a self-improvement slogan; it is the demand that His people bear His character because they bear His name.</p>
+<p>Only after the coal touches Isaiah&rsquo;s lips &mdash; atonement applied from outside him, which he did not initiate and could not perform &mdash; can he speak <span class="ref">(Isa 6:6&ndash;7)</span>. The pattern of the whole Bible is in those two verses.</p>
+
+<h3>Sovereign</h3>
+<p>God &ldquo;works all things according to the counsel of his will&rdquo; <span class="ref">(Eph 1:11)</span>. <em>All things</em> &mdash; not most things, not the big things while leaving the rest to chance. Nebuchadnezzar, the most powerful man alive, is reduced to an animal and restored only when he confesses that God does according to His will among the host of heaven and the inhabitants of the earth, and none can stay His hand or say to Him, &ldquo;What have you done?&rdquo; <span class="ref">(Dan 4:35)</span>.</p>
+<p>Romans 9 is where this becomes uncomfortable, and Paul knows it. He raises the objection himself: &ldquo;Is there injustice on God&rsquo;s part?&rdquo; <span class="ref">(Rom 9:14)</span>. His answer is not a philosophical defense. It is a rebuke: &ldquo;Who are you, O man, to answer back to God?&rdquo; <span class="ref">(v. 20)</span>. The potter has authority over the clay <span class="ref">(v. 21)</span>.</p>
+<p>Two things must be held here. God&rsquo;s sovereignty is comprehensive, extending even to evil acts which He ordains without Himself sinning <span class="ref">(Gen 50:20; Acts 2:23)</span>. And human beings remain genuinely responsible. Scripture asserts both and never resolves the tension into a formula.</p>
+<div class="callout"><span class="tag">Where Christians Disagree</span><p>Arminian theology limits God&rsquo;s decree to allow libertarian free will a decisive role. Reformed theology does not. The Reformed reading takes Ephesians 1 and Romans 9 at face value rather than as hyperbole.</p></div>
+
+<h3>Good and Loving</h3>
+<p>God names Himself a second time in Exodus 34:</p>
+<blockquote class="scripture"><p>The <span class="sc">Lord</span>, the <span class="sc">Lord</span>, a God merciful and gracious, slow to anger, and abounding in steadfast love and faithfulness, keeping steadfast love for thousands, forgiving iniquity and transgression and sin, but who will by no means clear the guilty.</p><cite>Exodus 34:6&ndash;7</cite></blockquote>
+<p>Read that last clause again. It is in the <em>same sentence</em> as the mercy. This is God&rsquo;s own self-description, and He will not let His love be quoted without His justice attached.</p>
+<p>&ldquo;God is love&rdquo; <span class="ref">(1 John 4:8)</span> is the most abused verse in the English-speaking world. In context John defines the love immediately &mdash; &ldquo;In this is love, not that we have loved God but that he loved us and sent his Son to be the propitiation for our sins&rdquo; <span class="ref">(1 John 4:10)</span>. <em>Propitiation</em> means a sacrifice that absorbs wrath. You cannot keep 1 John 4:8 and discard the mechanism John uses to explain it.</p>
+
+<h3>Wrath and Justice</h3>
+<p>&ldquo;For the wrath of God is revealed from heaven against all ungodliness and unrighteousness of men&rdquo; <span class="ref">(Rom 1:18)</span>. Paul places this at the head of his argument because wrath is the problem the gospel exists to solve.</p>
+<p>God&rsquo;s wrath is not divine temper. It is His settled, holy, personal opposition to evil. Nahum: the <span class="sc">Lord</span> is jealous and avenging, slow to anger and great in power, and He will by no means clear the guilty <span class="ref">(Nah 1:2&ndash;3)</span>.</p>
+<div class="callout warn"><span class="tag">What Collapses If Either Is Dropped</span>
+<p><strong>Drop wrath</strong> and love becomes sentiment. The cross becomes a pointless death, and there is no justice for the murdered, the abused, the trafficked. A God who shrugs at atrocity is not good.</p>
+<p><strong>Drop love</strong> and you have raw power without goodness &mdash; a God to be placated, not trusted.</p>
+<p>The cross is where both are held without compromise: God&rsquo;s wrath fully executed, God&rsquo;s love fully displayed, in the same event.</p></div>
+
+<h3>The Trinity</h3>
+<p>&ldquo;Hear, O Israel: The <span class="sc">Lord</span> our God, the <span class="sc">Lord</span> is one&rdquo; <span class="ref">(Deut 6:4)</span>. Christianity is uncompromisingly monotheistic. And yet the New Testament speaks of Father, Son and Spirit as distinct persons who are each God.</p>
+<p>John 1:1: &ldquo;In the beginning was the Word, and the Word was <em>with</em> God, and the Word <em>was</em> God.&rdquo; With &mdash; distinct in person. Was &mdash; identical in essence. Jesus commands baptism &ldquo;in the name&rdquo; &mdash; singular &mdash; &ldquo;of the Father and of the Son and of the Holy Spirit&rdquo; <span class="ref">(Matt 28:19)</span>. One name, three persons.</p>
+<p>The formula: <strong>one God in three persons, the same in substance, equal in power and glory.</strong></p>
+<h4>Why this is the foundation of the gospel</h4>
+<p><strong>The Father sends.</strong> &ldquo;For God so loved the world, that he gave his only Son&rdquo; <span class="ref">(John 3:16)</span>. The cross is not the Son placating a reluctant Father &mdash; it is the Father&rsquo;s own idea.</p>
+<p><strong>The Son accomplishes.</strong> Only one who is truly God can bear infinite wrath; only one who is truly man can stand in man&rsquo;s place.</p>
+<p><strong>The Spirit applies.</strong> The work done outside you two thousand years ago is brought into you by the Spirit, who regenerates, indwells, and seals <span class="ref">(John 16:8&ndash;15; Eph 1:13&ndash;14)</span>.</p>
+<p>And if God were a solitary monad, He would have had no one to love before creation. But the Father has loved the Son from before the foundation of the world <span class="ref">(John 17:24)</span>. &ldquo;God is love&rdquo; is a statement about His eternal nature only if God is triune.</p>
+</section>
+<div class="ornament">&#10013; &#10013; &#10013;</div>
+
+<section class="part" id="p2">
+<div class="part-label">Part Two</div>
+<h2>What Is Wrong With Us</h2>
+<h3>Made in His Image</h3>
+<p>Start where Scripture starts, not with the fall. &ldquo;Let us make man in our image, after our likeness&rdquo; <span class="ref">(Gen 1:26)</span>. Nothing else in creation gets this. The image means at minimum three things. <strong>Representation</strong>: man is placed in the garden as God&rsquo;s vice-regent <span class="ref">(Gen 1:28)</span>. <strong>Relation</strong>: &ldquo;male and female he created them&rdquo; <span class="ref">(Gen 1:27)</span> &mdash; the image is expressed in relationship. <strong>Resemblance</strong>: capacity for reason, moral judgment, worship, love.</p>
+<p>Psalm 8 stares at this and finds it absurd: &ldquo;What is man that you are mindful of him?&rdquo; <span class="ref">(Ps 8:4)</span>. Set against the night sky, man is nothing. And yet he is crowned with glory and honor <span class="ref">(v. 5)</span>. Both are true.</p>
+<p>Sin is not the destruction of the image but its corruption &mdash; which is why fallen men are still murder-worthy to kill <span class="ref">(Gen 9:6)</span> and still not to be cursed <span class="ref">(Jas 3:9)</span>. <strong>You are not garbage. You are a ruined masterpiece, which is a far worse thing to be.</strong></p>
+
+<h3>The Fall</h3>
+<p>Genesis 3 is not a myth about growing up. It is an account of covenant treason.</p>
+<p>The serpent&rsquo;s first move is not a lie but a <strong>question</strong>: &ldquo;Did God actually say&hellip;?&rdquo; <span class="ref">(Gen 3:1)</span>. Doubt about God&rsquo;s <em>word</em> precedes doubt about God&rsquo;s <em>character</em>. Then Eve&rsquo;s subtle addition &mdash; &ldquo;neither shall you touch it&rdquo; <span class="ref">(v. 3)</span>, which God never said. Then the flat contradiction: &ldquo;You will not surely die&rdquo; <span class="ref">(v. 4)</span>. And finally the bait: &ldquo;you will be like God, knowing good and evil&rdquo; <span class="ref">(v. 5)</span>.</p>
+<p>The sin was not appetite. It was the desire to be the one who determines good and evil rather than the one who receives that determination from God. Every sin since is a variation on it.</p>
+<p>The consequences are immediate: shame <span class="ref">(v. 7)</span>, hiding <span class="ref">(v. 8)</span>, blame <span class="ref">(v. 12)</span>, curse <span class="ref">(vv. 16&ndash;19)</span>, exile <span class="ref">(v. 24)</span>.</p>
+<div class="callout"><span class="tag">The First Promise</span><p>Do not miss <span class="ref">Genesis 3:15</span> &mdash; the first announcement of the gospel, spoken to the serpent: the seed of the woman will crush his head, and be bruised in the heel doing it. Before the curse is finished being pronounced, a rescuer has been promised. The entire Bible is the unfolding of that verse.</p></div>
+
+<h3>One Man, Everyone</h3>
+<p>Romans 5:12&ndash;21 makes the fall your problem: &ldquo;Sin came into the world through one man, and death through sin, and so death spread to all men because all sinned&rdquo; <span class="ref">(Rom 5:12)</span>. Adam acted as covenant head &mdash; a representative whose act counted for all he represented.</p>
+<p><strong>If you reject representation in Adam, you have no mechanism for representation in Christ.</strong> &ldquo;For as by the one man&rsquo;s disobedience the many were made sinners, so by the one man&rsquo;s obedience the many will be made righteous&rdquo; <span class="ref">(v. 19)</span>. The structure that condemns you is the structure that saves you.</p>
+<p>And Paul&rsquo;s point is not symmetry but <em>asymmetry</em>. Five times he says the gift is &ldquo;much more&rdquo; <span class="ref">(vv. 15, 17, 20)</span>. Grace ends further ahead than the fall reached back.</p>
+
+<h3>Sin Is Not a Mistake</h3>
+<p>Romans 1:18&ndash;32 defines sin at its root: <strong>suppression</strong>. Men &ldquo;by their unrighteousness suppress the truth&rdquo; <span class="ref">(v. 18)</span>. The knowledge of God is available and clear <span class="ref">(v. 20)</span> &mdash; the response is active repression. They are &ldquo;without excuse.&rdquo;</p>
+<p>Then the exchange: glory for images <span class="ref">(v. 23)</span>, truth for a lie <span class="ref">(v. 25)</span>. Idolatry is the fundamental sin; everything in the list that follows is downstream consequence.</p>
+<p>Three times, &ldquo;God gave them up&rdquo; <span class="ref">(vv. 24, 26, 28)</span>. The judgment is God handing people over to what they already wanted. <strong>Hell begins as getting your way.</strong></p>
+<p>David after adultery and murder: &ldquo;Against you, you only, have I sinned&rdquo; <span class="ref">(Ps 51:4)</span>. Sin is vertical before it is horizontal &mdash; personal offense against a person, not violation of an abstract standard.</p>
+
+<h3>Dead, Not Sick</h3>
+<blockquote class="scripture"><p>And you were dead in the trespasses and sins in which you once walked&hellip; and were by nature children of wrath, like the rest of mankind.</p><cite>Ephesians 2:1&ndash;3</cite></blockquote>
+<p>Not weakened. Not sick. <strong>Dead.</strong> And <em>by nature</em> &mdash; this is not merely what we did, it is what we were.</p>
+<p>Romans 3:9&ndash;20: &ldquo;None is righteous, no, not one; no one understands; no one seeks for God&rdquo; <span class="ref">(vv. 10&ndash;11)</span>. The purpose of the law is not to fix you but to silence you.</p>
+<p>Jeremiah: &ldquo;The heart is deceitful above all things, and desperately sick; who can understand it?&rdquo; <span class="ref">(Jer 17:9)</span>. Your self-assessment is itself compromised by the thing being assessed.</p>
+<div class="callout"><span class="tag">Total Depravity, Properly Defined</span>
+<p><strong>No part of the human person is untouched by sin</strong> &mdash; mind, will, affections, conscience. The will is not free with respect to God. A dead man cannot partly raise himself. &ldquo;No one can come to me unless the Father who sent me draws him&rdquo; <span class="ref">(John 6:44)</span>. Grace must be sovereign and unilateral. Being dead, man requires resurrection &mdash; and resurrection is something done <em>to</em> you.</p></div>
+
+<h3>Judgment Is Real</h3>
+<p>&ldquo;It is appointed for man to die once, and after that comes judgment&rdquo; <span class="ref">(Heb 9:27)</span>. Revelation 20:11&ndash;15: the great white throne, books opened, and whoever&rsquo;s name was not found in the book of life was thrown into the lake of fire <span class="ref">(v. 15)</span>.</p>
+<p>The most sustained teaching on hell comes from Jesus <span class="ref">(Matt 25:46; Mark 9:47&ndash;48; Luke 16:19&ndash;31)</span>. <strong>Only someone who loves you tells you the building is on fire.</strong></p>
+<p>You cannot be your own rescuer. Not because rescue is difficult, but because you are the wrong kind of thing to perform it. That is the precondition for hearing good news as <em>news</em>.</p>
+</section>
+<div class="ornament">&#10013; &#10013; &#10013;</div>
+
+<section class="part" id="p3">
+<div class="part-label">Part Three</div>
+<h2>The Center</h2>
+<h3>In One Paragraph</h3>
+<p>The center of Christianity is this: God the Son took on human flesh, lived the perfectly obedient life that Adam and Israel and you failed to live, died under the wrath of God as a substitute bearing the guilt of His people, was raised bodily from the dead as public vindication that the debt was paid and death defeated, ascended to the right hand of the Father where He now reigns and intercedes, and will return to judge the living and the dead and make all things new. Everything given to a Christian is given because of union with <em>this person</em>, received by faith alone. <strong>It is a report about something God did in history, in public, at a datable time, to rescue people who could not rescue themselves.</strong></p>
+
+<h3>The Oldest Summary</h3>
+<blockquote class="scripture"><p>For I delivered to you as of first importance what I also received: that Christ died for our sins in accordance with the Scriptures, that he was buried, that he was raised on the third day in accordance with the Scriptures, and that he appeared to Cephas, then to the twelve.</p><cite>1 Corinthians 15:3&ndash;5</cite></blockquote>
+<p><strong>Death</strong> &mdash; with an interpretation (<em>for our sins</em>). <strong>Burial</strong> &mdash; He was genuinely dead. <strong>Resurrection</strong> &mdash; a datable claim. <strong>Appearances</strong> &mdash; named witnesses, including more than five hundred at once <span class="ref">(v. 6)</span>.</p>
+<p>Notice what is <em>not</em> in it: no ethical program, no spiritual practice, no instruction. It is entirely a report of events. <em>Gospel</em> &mdash; <em>euangelion</em> &mdash; is the announcement a herald brings from a battlefield. The herald does not give advice. He reports the outcome.</p>
+
+<h3>He Was Always God</h3>
+<p>&ldquo;In the beginning was the Word, and the Word was with God, and the Word was God&rdquo; <span class="ref">(John 1:1)</span>. &ldquo;The Word became flesh and dwelt among us&rdquo; <span class="ref">(v. 14)</span> &mdash; <em>dwelt</em> is literally <em>tabernacled</em>. The glory that filled the tabernacle now walks around in a body.</p>
+<p>Colossians 1:15&ndash;20: He is before all things and in Him all things hold together <span class="ref">(v. 17)</span>. The incarnation is one person with two natures, fully God and fully man. <strong>If He is not truly God, His death is one more execution. If He is not truly man, He is not a substitute for men.</strong></p>
+
+<h3>The Life He Lived</h3>
+<p>Christ came to <strong>obey</strong>. &ldquo;By the one man&rsquo;s obedience the many will be made righteous&rdquo; <span class="ref">(Rom 5:19)</span>. His <strong>active obedience</strong> &mdash; perfect law-keeping. His <strong>passive obedience</strong> &mdash; submission to the penalty at the cross. Both are necessary:</p>
+<blockquote class="scripture"><p>For our sake he made him to be sin who knew no sin, so that in him we might become the righteousness of God.</p><cite>2 Corinthians 5:21</cite></blockquote>
+<p>A <strong>double transfer</strong> &mdash; your guilt to Him, His righteousness to you. You are not returned to neutral. You are credited with an obedience you never performed.</p>
+
+<h3>The Death He Died</h3>
+<p>Romans 3:21&ndash;26: the problem is not &ldquo;how can God forgive?&rdquo; but <strong>how can God forgive without ceasing to be just?</strong> God put Christ forward as a propitiation by His blood <span class="ref">(vv. 25&ndash;26)</span>, &ldquo;so that he might be just and the justifier of the one who has faith in Jesus&rdquo; <span class="ref">(v. 26)</span>.</p>
+<p>The cross is God satisfying justice, and <em>thereby</em> demonstrating love. <em>Propitiation</em> (<em>hilast&#275;rion</em>) means a sacrifice that turns away wrath.</p>
+<div class="callout"><span class="tag">Where Christians Disagree</span><p>Some prefer &ldquo;expiation&rdquo; (cleansing of sin) to &ldquo;propitiation&rdquo; (turning away wrath). The Reformed position: Romans 1:18 announces wrath as the problem the letter exists to answer. A solution that does not address wrath does not answer Romans.</p></div>
+
+<h3>The Resurrection</h3>
+<p>&ldquo;If Christ has not been raised, your faith is futile and you are still in your sins&rdquo; <span class="ref">(1 Cor 15:17)</span>. Paul stakes everything on a falsifiable historical claim.</p>
+<ul>
+<li><strong>It is the receipt.</strong> Christ &ldquo;was raised for our justification&rdquo; <span class="ref">(Rom 4:25)</span>.</li>
+<li><strong>It is the defeat of the last enemy.</strong> &ldquo;Death is swallowed up in victory&rdquo; <span class="ref">(1 Cor 15:54)</span>.</li>
+<li><strong>It is the first installment.</strong> Christ is &ldquo;the firstfruits of those who have fallen asleep&rdquo; <span class="ref">(1 Cor 15:20)</span>.</li>
+</ul>
+
+<h3>He Is Not Absent</h3>
+<p>Christ ascended bodily <span class="ref">(Acts 1:9&ndash;11)</span>. A human body sits at the right hand of the Father right now. And He intercedes: &ldquo;He is able to save to the uttermost those who draw near to God through him, since he always lives to make intercession for them&rdquo; <span class="ref">(Heb 7:25)</span>.</p>
+<p>At the moment you sin, the Son, in a body that still bears the wounds, presents Himself on your behalf. <strong>Your standing does not fluctuate with your week.</strong></p>
+
+<h3>News, Not Advice</h3>
+<blockquote class="scripture"><p>For by grace you have been saved through faith. And this is not your own doing; it is the gift of God, not a result of works, so that no one may boast.</p><cite>Ephesians 2:8&ndash;9</cite></blockquote>
+<div class="callout warn"><span class="tag">Test Yourself Here</span><p>If your functional sense of your standing before God rises and falls with how you have performed recently, you have converted the news back into advice. That is the default gravity of the human heart.</p></div>
+</section>
+<div class="ornament">&#10013; &#10013; &#10013;</div>
+
+<section class="part" id="p4">
+<div class="part-label">Part Four</div>
+<h2>Covenant as the Spine of Scripture</h2>
+<h3>Why Covenant</h3>
+<p>A covenant is a binding relationship established by a sovereign, sealed by oath and sign, carrying stipulations and sanctions. It is not a contract between equals. In every biblical instance God sets the terms and man receives them. Covenant is the structure Scripture uses to organize its own story.</p>
+
+<h3>The Covenant of Works &mdash; Adam</h3>
+<p><strong>Parties:</strong> God and Adam, with Adam as head of all humanity. <strong>Promise:</strong> continued life, and by implication confirmed and unlosable life &mdash; the tree of life stands in the garden <span class="ref">(Gen 2:9)</span>, barred only after the fall <span class="ref">(Gen 3:22&ndash;24)</span>. <strong>Condition:</strong> perfect obedience &mdash; &ldquo;of the tree of the knowledge of good and evil you shall not eat&rdquo; <span class="ref">(Gen 2:17)</span>. <strong>Sanction:</strong> &ldquo;in the day that you eat of it you shall surely die.&rdquo; <strong>Sign:</strong> the two trees.</p>
+<p>The word <em>covenant</em> does not appear in Genesis 2. Hosea 6:7 says &ldquo;like Adam they transgressed the covenant&rdquo; (ESV). Romans 5 treats Adam as a covenant head whose act is imputed to those he represents. <strong>The covenant of works was never repealed.</strong> Its demand for perfect obedience still stands. It is not set aside by grace; it is <em>met</em> by Christ.</p>
+
+<h3>Noah</h3>
+<p><strong>Parties:</strong> God, Noah, all descendants, every living creature <span class="ref">(Gen 9:9&ndash;10)</span>. <strong>Promise:</strong> never again to destroy the earth by flood <span class="ref">(v. 11)</span>; stability of created order <span class="ref">(Gen 8:22)</span>. <strong>Condition:</strong> none for its continuance &mdash; unilateral. <strong>Sign:</strong> the bow in the cloud <span class="ref">(Gen 9:13)</span> &mdash; a weapon, hung up, pointed away from earth. This is a covenant of common grace, not saving grace. It secures the stage on which redemption is worked out.</p>
+
+<h3>Abraham</h3>
+<p><strong>Parties:</strong> God and Abram and his offspring <span class="ref">(Gen 12, 15, 17)</span>. <strong>Promises:</strong> land, offspring, blessing &mdash; &ldquo;in you all the families of the earth shall be blessed&rdquo; <span class="ref">(Gen 12:3)</span>. <strong>Sign:</strong> circumcision <span class="ref">(Gen 17:11)</span>.</p>
+<p>Genesis 15 is the passage to sit with. Animals cut in half, pieces laid opposite. God puts Abram into deep sleep <span class="ref">(v. 12)</span> and <strong>God alone passes between the pieces</strong> <span class="ref">(v. 17)</span>. He swears that if this covenant fails, He will be torn apart. At Golgotha He was.</p>
+<p>And note Genesis 15:6 &mdash; Abraham was justified by faith <em>before</em> circumcision in chapter 17. Paul builds an entire argument on that sequence <span class="ref">(Rom 4:9&ndash;12)</span>. Justification by faith is not a New Testament innovation. Galatians 3:16 draws the line to Christ: the promises were made to Abraham &ldquo;and to his offspring&hellip; who is Christ.&rdquo;</p>
+
+<h3>Moses and Sinai</h3>
+<p><strong>Parties:</strong> God and Israel <span class="ref">(Ex 19&ndash;24)</span>. <strong>Promise:</strong> &ldquo;you shall be my treasured possession&hellip; a kingdom of priests and a holy nation&rdquo; <span class="ref">(Ex 19:5&ndash;6)</span>. <strong>Condition:</strong> &ldquo;if you will indeed obey my voice&rdquo; <span class="ref">(Ex 19:5)</span>. <strong>Sign:</strong> the Sabbath <span class="ref">(Ex 31:13&ndash;17)</span>. <strong>Sanctions:</strong> Deuteronomy 28 &mdash; blessings for obedience <span class="ref">(vv. 1&ndash;14)</span> and curses four times longer <span class="ref">(vv. 15&ndash;68)</span>.</p>
+<p>Two errors to avoid. Treating Sinai as a covenant of works offering salvation by law-keeping misreads the sequence &mdash; redemption from Egypt came <em>first</em>, then the law. Grace precedes command. But flattening Sinai into pure grace ignores Deuteronomy 28: tenure in the land was conditioned on obedience, and Israel was expelled for failure. The Reformed reading: the Mosaic covenant is an administration of the covenant of grace which <em>republishes</em> the works principle at the national level &mdash; so that Israel&rsquo;s failure would prove publicly what individuals refuse to admit: no one can keep it <span class="ref">(Rom 3:19)</span>.</p>
+
+<h3>David</h3>
+<p><strong>Parties:</strong> God and David and his house <span class="ref">(2 Sam 7)</span>. <strong>Promise:</strong> an offspring whose kingdom and throne will be established &ldquo;forever&rdquo; <span class="ref">(vv. 12&ndash;13)</span>. The covenant itself is unconditional even where individual kings are disciplined: &ldquo;my steadfast love will not depart from him&rdquo; <span class="ref">(v. 15)</span>.</p>
+<p>David offers to build God a house, and God replies that He will build David a house instead <span class="ref">(vv. 5, 11)</span>. Man&rsquo;s offer of service answered by God&rsquo;s promise of grace. Hence the first sentence of the New Testament: &ldquo;the book of the genealogy of Jesus Christ, the son of David&rdquo; <span class="ref">(Matt 1:1)</span>.</p>
+
+<h3>The New Covenant Promised</h3>
+<p>Jeremiah 31:31&ndash;34 gives four promises, each addressing a specific failure of the old:</p>
+<blockquote class="scripture"><p>I will put my law within them, and I will write it on their hearts&hellip; I will be their God, and they shall be my people&hellip; They shall all know me, from the least of them to the greatest&hellip; I will forgive their iniquity, and I will remember their sin no more.</p><cite>Jeremiah 31:33&ndash;34</cite></blockquote>
+<p><strong>Condition:</strong> none stated. The verbs are all <em>I will</em>. Ezekiel adds the mechanism: &ldquo;I will give you a new heart&hellip; I will put my Spirit within you, and <strong>cause</strong> you to walk in my statutes&rdquo; <span class="ref">(Ezek 36:26&ndash;27)</span>. Not <em>urge</em>, not <em>enable you to choose</em> &mdash; <strong>cause</strong>.</p>
+
+<h3>The Two-Covenant Framework</h3>
+<p><strong>The covenant of works:</strong> made with Adam, requiring perfect obedience, broken, never repealed. <strong>The covenant of grace:</strong> announced in Genesis 3:15, progressively administered through Noah, Abraham, Moses, David, and finally in Christ. One covenant, multiple administrations.</p>
+<p>And behind both: the <strong>covenant of redemption</strong> &mdash; the eternal agreement within the Trinity, the Father giving a people to the Son, the Son undertaking to redeem them, the Spirit to apply it <span class="ref">(John 6:37&ndash;39; 17:2, 6, 9, 24)</span>. Salvation is secure before you exist because it rests on an agreement between divine persons.</p>
+
+<h3>The Second Adam</h3>
+<p>&ldquo;As one trespass led to condemnation for all men, so one act of righteousness leads to justification and life for all men&rdquo; <span class="ref">(Rom 5:18)</span>. Two men, two acts, two outcomes. Where Adam grasped at equality with God, Christ &ldquo;did not count equality with God a thing to be grasped, but emptied himself&rdquo; <span class="ref">(Phil 2:6&ndash;7)</span>. &ldquo;The first man Adam became a living being; the last Adam became a life-giving spirit&rdquo; <span class="ref">(1 Cor 15:45)</span>. Adam received life. Christ <em>gives</em> it.</p>
+</section>
+<div class="ornament">&#10013; &#10013; &#10013;</div>
+
+<section class="part" id="p5">
+<div class="part-label">Part Five</div>
+<h2>What Makes the New Covenant New</h2>
+
+<h3>Where It Was Instituted</h3>
+<p>&ldquo;This cup that is poured out for you is the new covenant in my blood&rdquo; <span class="ref">(Luke 22:20)</span>. At a Passover meal, Christ announces the covenant Jeremiah promised six centuries earlier &mdash; inaugurated in His blood, hours before it is shed.</p>
+
+<h3>Written on Hearts, Not Stone</h3>
+<p>2 Corinthians 3: the Corinthians themselves are a letter &ldquo;written not with ink but with the Spirit of the living God, not on tablets of stone but on tablets of human hearts&rdquo; <span class="ref">(v. 3)</span>. The old covenant was external &mdash; it told Israel what to do without giving the capacity to do it. Paul calls it &ldquo;the ministry of death, carved in letters on stone&rdquo; <span class="ref">(v. 7)</span> and &ldquo;the ministry of condemnation&rdquo; <span class="ref">(v. 9)</span>. A perfect standard given to a corrupt heart produces condemnation, not obedience.</p>
+<p>But the old had glory &mdash; Moses&rsquo; face shone <span class="ref">(v. 7)</span>. Paul&rsquo;s argument is not old-bad/new-good but glory surpassed by greater glory <span class="ref">(v. 10)</span>.</p>
+
+<h3>Transformation, Not Conformity</h3>
+<p>The old could compel behavior but could not produce love. The New Covenant works from the inside: &ldquo;we all, with unveiled face, beholding the glory of the Lord, are being transformed into the same image from one degree of glory to another&rdquo; <span class="ref">(2 Cor 3:18)</span>. Note the mechanism: transformation happens through <strong>beholding</strong>, not through gritted effort. You become like what you worship.</p>
+
+<h3>Once for All</h3>
+<p>The old priests offered daily, &ldquo;first for his own sins and then for those of the people&rdquo; <span class="ref">(Heb 7:27)</span>. Christ &ldquo;did this once for all when he offered up himself.&rdquo;</p>
+<blockquote class="scripture"><p>But when Christ had offered for all time a single sacrifice for sins, he sat down at the right hand of God.</p><cite>Hebrews 10:12</cite></blockquote>
+<p><strong>He sat down.</strong> There were no chairs in the tabernacle. A priest never sat, because the work was never done. The posture is the doctrine.</p>
+<p>&ldquo;By a single offering he has perfected for all time those who are being sanctified&rdquo; <span class="ref">(Heb 10:14)</span>. Hold both halves: <em>perfected for all time</em> &mdash; your standing, complete. <em>Being sanctified</em> &mdash; your condition, in progress. Confusing these two is the source of enormous Christian misery.</p>
+
+<h3>Access</h3>
+<p>Under the old: one man, one day a year, with blood, behind a curtain <span class="ref">(Heb 9:7)</span>. At the cross: &ldquo;the curtain of the temple was torn in two, from top to bottom&rdquo; <span class="ref">(Mark 15:38)</span>. From the top. Not opened from man&rsquo;s side.</p>
+<blockquote class="scripture"><p>Let us then with confidence draw near to the throne of grace, that we may receive mercy and find grace to help in time of need.</p><cite>Hebrews 4:16</cite></blockquote>
+<p>The time to come is precisely the time you feel least qualified.</p>
+
+<h3>They Shall All Know Me</h3>
+<p>Under the old covenant, membership was national and physical. Under the new, covenant membership and knowledge of God coincide. This is the distinction between the visible and invisible church, and it explains 1 John 2:19: &ldquo;they went out from us, but they were not of us.&rdquo;</p>
+
+<h3>Continuity or Discontinuity?</h3>
+<p>Jesus: &ldquo;Do not think that I have come to abolish the Law or the Prophets; I have not come to abolish them but to fulfill them&rdquo; <span class="ref">(Matt 5:17)</span>.</p>
+<p><strong>Genuinely discontinued:</strong> the sacrificial system <span class="ref">(Heb 8:13; 10:18)</span>, the Levitical priesthood <span class="ref">(Heb 7:11&ndash;12)</span>, the food laws <span class="ref">(Mark 7:19; Acts 10)</span>, the temple as God&rsquo;s dwelling <span class="ref">(John 2:19&ndash;21)</span>, circumcision as covenant sign <span class="ref">(Gal 5:6)</span>, and Israel&rsquo;s civil-judicial code.</p>
+<p><strong>Fulfilled and transformed:</strong> Passover becomes the Lord&rsquo;s Supper. Circumcision carries into baptism <span class="ref">(Col 2:11&ndash;12)</span>. Sabbath rest finds its substance in Christ <span class="ref">(Heb 4:9&ndash;10)</span>. The temple becomes the church and the believer.</p>
+<p><strong>Continuous:</strong> the moral law, which reflects God&rsquo;s character and cannot expire. Jesus intensifies rather than relaxes it <span class="ref">(Matt 5:21&ndash;48)</span>.</p>
+
+<h3>The Threefold Use of the Law</h3>
+<p><strong>First use (civil):</strong> restraining evil in society <span class="ref">(Rom 13:3&ndash;4; 1 Tim 1:9&ndash;10)</span>. <strong>Second use (pedagogical):</strong> exposing sin, driving to Christ &mdash; &ldquo;the law was our guardian until Christ came&rdquo; <span class="ref">(Gal 3:24)</span>. <strong>Third use (normative):</strong> guiding the believer&rsquo;s life. Calvin called it the principal use.</p>
+<p><strong>You are not under the law for justification. You are under it for direction.</strong> Obedience motivated by fear of losing standing is the law used wrongly. Obedience flowing from secured standing is the third use working properly.</p>
+
+<h3>Where Reformed and Dispensational Diverge</h3>
+<p>Reformed covenant theology holds <strong>one people of God</strong> across both testaments. Jeremiah&rsquo;s promise &ldquo;to the house of Israel&rdquo; is applied directly to the church in Hebrews 8:8&ndash;12. Gentile believers are grafted into Israel&rsquo;s own olive tree <span class="ref">(Rom 11:17&ndash;24)</span>. The church is called &ldquo;the Israel of God&rdquo; <span class="ref">(Gal 6:16)</span>, &ldquo;a chosen race, a royal priesthood, a holy nation&rdquo; <span class="ref">(1 Pet 2:9)</span>. Believers are Abraham&rsquo;s offspring by faith <span class="ref">(Gal 3:7, 29)</span>.</p>
+<p>Why it matters practically: if there is one covenant of grace, then the Old Testament is your book, its promises are your promises, and the Psalms are your prayers.</p>
+</section>
+<div class="ornament">&#10013; &#10013; &#10013;</div>
+
+<section class="part" id="p6">
+<div class="part-label">Part Six</div>
+<h2>The Benefits Applied</h2>
+
+<h3>Effectual Calling and Regeneration</h3>
+<p>The Spirit sovereignly imparts spiritual life to the spiritually dead, enabling faith. Jesus to Nicodemus: &ldquo;unless one is born again he cannot see the kingdom of God&rdquo; <span class="ref">(John 3:3)</span>. Not <em>will not</em> &mdash; <em>cannot</em>. Ezekiel 36:26: heart of stone removed, heart of flesh given. Peter: &ldquo;he has caused us to be born again to a living hope&rdquo; <span class="ref">(1 Pet 1:3)</span>.</p>
+<p><strong>Regeneration precedes faith.</strong> You do not believe and then get a new heart; you get a new heart and therefore believe. Your faith, however weak, is evidence God has already acted on you unilaterally.</p>
+
+<h3>Union with Christ &mdash; The Hinge</h3>
+<p>This is not one benefit among others; it is the reality <em>in which</em> all others are given. Paul&rsquo;s phrase &ldquo;in Christ&rdquo; appears over 160 times.</p>
+<blockquote class="scripture"><p>Blessed be the God and Father of our Lord Jesus Christ, who has blessed us in Christ with every spiritual blessing in the heavenly places.</p><cite>Ephesians 1:3</cite></blockquote>
+<p>Romans 6: &ldquo;all of us who have been baptized into Christ Jesus were baptized into his death&rdquo; <span class="ref">(v. 3)</span>. His death counted as yours. His resurrection counts as yours. John 15: &ldquo;apart from me you can do nothing&rdquo; <span class="ref">(v. 5)</span>.</p>
+<p><strong>Why this is the hinge:</strong> justification, adoption, sanctification, perseverance and glorification are not separate transactions. They are what it means to be joined to Christ. You cannot have His righteousness without having Him. Your identity is not your performance. It is your location &mdash; you are <em>in Christ</em>.</p>
+
+<h3>Justification by Faith Alone</h3>
+<p>God declares the ungodly righteous, on the basis of Christ&rsquo;s imputed righteousness, received through faith alone. It is <strong>forensic</strong> &mdash; a legal verdict, not a moral improvement.</p>
+<p>&ldquo;To the one who does not work but believes in him who justifies the ungodly, his faith is counted as righteousness&rdquo; <span class="ref">(Rom 4:5)</span>. God does not justify the improving. He justifies the <em>ungodly</em>.</p>
+<p><strong>Faith is not the ground; it is the instrument.</strong> Empty hands. Its value is entirely in what it grasps. Weak faith in Christ saves; strong faith in your faith saves no one.</p>
+<p><strong>On James:</strong> &ldquo;a person is justified by works and not by faith alone&rdquo; <span class="ref">(Jas 2:24)</span> is not a contradiction of Paul. Paul asks how a sinner gets right with God: faith alone. James asks how you tell a living faith from a dead one: by works. We are justified by faith alone, but the faith that justifies is never alone.</p>
+<p><strong>Tomorrow morning:</strong> your verdict has already been announced. You are not on trial.</p>
+
+<h3>Adoption</h3>
+<p>God takes enemies and makes them sons. &ldquo;You have received the Spirit of adoption as sons, by whom we cry, &lsquo;Abba! Father!&rsquo;&rdquo; <span class="ref">(Rom 8:15)</span>. And the consequence: &ldquo;heirs of God and fellow heirs with Christ&rdquo; <span class="ref">(v. 17)</span>.</p>
+<p>Justification makes you <em>not guilty</em>. Adoption makes you <em>family</em>. A pardoned criminal walks out free and goes home alone. Adoption brings him into the judge&rsquo;s house as a son. When you pray, the relationship is child-to-father, and the access is permanent.</p>
+
+<h3>Sanctification by the Spirit</h3>
+<p>The ongoing, Spirit-worked transformation of the believer into Christ&rsquo;s likeness. Unlike justification, it is progressive, involves your effort, and is never complete in this life.</p>
+<p>&ldquo;There is therefore now no condemnation for those who are in Christ Jesus&rdquo; <span class="ref">(Rom 8:1)</span> &mdash; Paul begins the sanctification chapter with the verdict. Sanctification proceeds from a settled standing or it becomes law-keeping under another name.</p>
+<p>&ldquo;Work out your own salvation with fear and trembling, for it is God who works in you, both to will and to work for his good pleasure&rdquo; <span class="ref">(Phil 2:12&ndash;13)</span>. You work <em>because</em> He works.</p>
+<p>Expect slow progress and repeated failure. Neither disproves the work is real. The presence of the fight is itself evidence &mdash; dead men do not struggle.</p>
+
+<h3>Perseverance</h3>
+<blockquote class="scripture"><p>My sheep hear my voice, and I know them, and they follow me. I give them eternal life, and they will never perish, and no one will snatch them out of my hand.</p><cite>John 10:27&ndash;28</cite></blockquote>
+<p>Romans 8:38&ndash;39: neither death, nor life, nor angels, nor rulers, nor things present, nor things to come, nor powers, nor height, nor depth, nor anything in all creation can separate us from the love of God in Christ Jesus. Paul deliberately exhausts the categories.</p>
+<p>Romans 8:30: &ldquo;those whom he justified he also glorified&rdquo; &mdash; past tense. It has not happened yet, and Paul writes it as though it were finished, because from God&rsquo;s side it is.</p>
+<p>Your salvation does not depend on the strength of your grip. If it did, you would have lost it already.</p>
+
+<h3>Glorification</h3>
+<p>&ldquo;We know that when he appears we shall be like him, because we shall see him as he is&rdquo; <span class="ref">(1 John 3:2)</span>. The transformation that has been happening slowly through beholding dimly <span class="ref">(2 Cor 3:18)</span> completes instantly when the seeing becomes direct.</p>
+<p>Every failure of holiness you experience is temporary. There is a fixed date on which you will stop sinning permanently. That is not wishful thinking; it is a promise attached to God&rsquo;s own predestining purpose <span class="ref">(Rom 8:29)</span>.</p>
+</section>
+<div class="ornament">&#10013; &#10013; &#10013;</div>
+
+<section class="part" id="p7">
+<div class="part-label">Part Seven</div>
+<h2>The Pillars of the Christian Life</h2>
+<p>Before the sixteen: these are not sixteen projects. Several cannot be built at all &mdash; only received. The &ldquo;how to build it&rdquo; sections describe where to stand so that God can work, not levers that produce results.</p>
+
+<div class="pillar-grid">
+<a href="#pil1"><span class="n">01</span>Faith</a>
+<a href="#pil2"><span class="n">02</span>Repentance</a>
+<a href="#pil3"><span class="n">03</span>Fear of the Lord</a>
+<a href="#pil4"><span class="n">04</span>Love</a>
+<a href="#pil5"><span class="n">05</span>Forgiveness</a>
+<a href="#pil6"><span class="n">06</span>Hope</a>
+<a href="#pil7"><span class="n">07</span>Obedience</a>
+<a href="#pil8"><span class="n">08</span>Humility</a>
+<a href="#pil9"><span class="n">09</span>Gratitude &amp; Worship</a>
+<a href="#pil10"><span class="n">10</span>Prayer</a>
+<a href="#pil11"><span class="n">11</span>Scripture Intake</a>
+<a href="#pil12"><span class="n">12</span>Community</a>
+<a href="#pil13"><span class="n">13</span>Generosity</a>
+<a href="#pil14"><span class="n">14</span>Witness</a>
+<a href="#pil15"><span class="n">15</span>Perseverance</a>
+<a href="#pil16"><span class="n">16</span>Assurance</a>
+</div>
+
+<div class="pillar" id="pil1"><h3><span class="pnum">01</span>Faith</h3><dl>
+<dt>What it actually is</dt><dd><p>Trust in a person on the basis of testimony. Three parts: <em>notitia</em> (knowledge), <em>assensus</em> (assent), <em>fiducia</em> (personal trust). &ldquo;Faith is the assurance of things hoped for, the conviction of things not seen&rdquo; <span class="ref">(Heb 11:1)</span>.</p></dd>
+<dt>What it is not</dt><dd><p>Not optimism or willed belief. Not bare assent &mdash; &ldquo;Even the demons believe &mdash; and shudder!&rdquo; <span class="ref">(Jas 2:19)</span>. The demons have perfect theology. What they lack is trust and love.</p></dd>
+<dt>Where it comes from</dt><dd><p>A gift. &ldquo;By grace you have been saved through faith. And this is not your own doing; it is the gift of God&rdquo; <span class="ref">(Eph 2:8&ndash;9)</span>. Its ordinary means: &ldquo;faith comes from hearing, and hearing through the word of Christ&rdquo; <span class="ref">(Rom 10:17)</span>.</p></dd>
+<dt>Key texts</dt><dd><p>Hebrews 11:6 &mdash; without faith it is impossible to please Him. Hebrews 11 defines faith by biography &mdash; people who acted on God&rsquo;s word against present evidence.</p></dd>
+<dt>How to build it</dt><dd><p>Faith grows by exposure to its object, not introspection. Sit under the preached Word. Read Scripture consecutively. Rehearse God&rsquo;s past faithfulness in writing. Take small obedient risks on His promises. Pray: &ldquo;I believe; help my unbelief!&rdquo; <span class="ref">(Mark 9:24)</span>.</p></dd>
+<dt>How to tell it is growing</dt><dd><p>You turn to God earlier in trouble. Obedience costs you something and you do it anyway. <strong>False signals:</strong> emotional intensity during worship, absence of doubt, confidence about outcomes you want.</p></dd>
+</dl></div>
+
+<div class="pillar" id="pil2"><h3><span class="pnum">02</span>Repentance</h3><dl>
+<dt>What it actually is</dt><dd><p>A change of mind producing a change of direction &mdash; turning from sin to God. &ldquo;Repent therefore, and turn back, that your sins may be blotted out&rdquo; <span class="ref">(Acts 3:19)</span>.</p></dd>
+<dt>What it is not</dt><dd><p>Not remorse. &ldquo;Godly grief produces a repentance that leads to salvation without regret, whereas worldly grief produces death&rdquo; <span class="ref">(2 Cor 7:10)</span>. Judas felt terrible and hanged himself. Peter wept bitterly and was restored. Godly grief mourns the offence against God; worldly grief mourns consequences to self.</p></dd>
+<dt>Where it comes from</dt><dd><p>A gift: &ldquo;God may perhaps grant them repentance&rdquo; <span class="ref">(2 Tim 2:25)</span>. &ldquo;God&rsquo;s kindness is meant to lead you to repentance&rdquo; <span class="ref">(Rom 2:4)</span>.</p></dd>
+<dt>Key texts</dt><dd><p>Psalm 51: appeal to God&rsquo;s character <span class="ref">(v. 1)</span>, full ownership <span class="ref">(v. 3)</span>, correct location of the offence <span class="ref">(v. 4)</span>, request for cleansing <em>and</em> a new heart <span class="ref">(v. 10)</span>. &ldquo;The sacrifices of God are a broken spirit&rdquo; <span class="ref">(v. 17)</span>.</p></dd>
+<dt>How to build it</dt><dd><p>Daily and specific rather than annual and vague. Confess actual sins by name. Confess to another believer when sin is habitual or hidden <span class="ref">(Jas 5:16)</span>. Do not delay until you feel sorry enough. &ldquo;If we confess our sins, he is faithful and just to forgive us&rdquo; <span class="ref">(1 John 1:9)</span>.</p></dd>
+<dt>How to tell it is growing</dt><dd><p>The gap between sinning and confessing shortens. You start seeing motives, not just actions. <strong>False signals:</strong> intensity of self-loathing, frequent dramatic recommitment.</p></dd>
+</dl></div>
+
+<div class="pillar" id="pil3"><h3><span class="pnum">03</span>Fear of the Lord</h3><dl>
+<dt>What it actually is</dt><dd><p>Reverent awe before God&rsquo;s holiness, majesty and power. &ldquo;The fear of the <span class="sc">Lord</span> is the beginning of wisdom&rdquo; <span class="ref">(Prov 9:10)</span>.</p></dd>
+<dt>What it is not</dt><dd><p>Not terror of punishment: &ldquo;perfect love casts out fear&rdquo; <span class="ref">(1 John 4:18)</span>. Nor domesticated &ldquo;respect.&rdquo; Isaiah&rsquo;s response in the throne room was not polite respect &mdash; it was undoing.</p></dd>
+<dt>Where it comes from</dt><dd><p>A gift and command together. &ldquo;I will put the fear of me in their hearts, that they may not turn from me&rdquo; <span class="ref">(Jer 32:40)</span>.</p></dd>
+<dt>Key texts</dt><dd><p>Hebrews 12:28&ndash;29: &ldquo;let us offer to God acceptable worship, with reverence and awe, for our God is a consuming fire.&rdquo; Grace does not lower God&rsquo;s temperature; it makes it approachable. The fear of the Lord keeps adoption from curdling into presumption.</p></dd>
+<dt>How to build it</dt><dd><p>Read the passages that show God unmediated &mdash; Exodus 19, Isaiah 6, Ezekiel 1, Job 38&ndash;41, Revelation 1. Spend time in creation. Do not use God&rsquo;s name casually. Take sin&rsquo;s cost seriously by looking at the cross.</p></dd>
+<dt>How to tell it is growing</dt><dd><p>You are less impressed by human opinion. Sin looks more serious. Worship becomes weightier. <strong>False signals:</strong> anxiety about God&rsquo;s disposition, scrupulosity.</p></dd>
+</dl></div>
+
+<div class="pillar" id="pil4"><h3><span class="pnum">04</span>Love</h3><dl>
+<dt>What it actually is</dt><dd><p>Committed, self-giving action for the good of another. 1 Corinthians 13 defines it entirely by behaviour &mdash; patient, kind, not envious, not boastful, not irritable. Not one word about feeling.</p></dd>
+<dt>What it is not</dt><dd><p>Not affection, chemistry, or approval. Not sentimentality &mdash; emotion about people rather than action toward them.</p></dd>
+<dt>Where it comes from</dt><dd><p>A fruit of the Spirit <span class="ref">(Gal 5:22)</span> and a command <span class="ref">(John 13:34)</span>. &ldquo;We love because he first loved us&rdquo; <span class="ref">(1 John 4:19)</span>.</p></dd>
+<dt>Key texts</dt><dd><p>Matthew 22:37&ndash;40 &mdash; the whole law hangs on love of God and neighbour. John 13:35 &mdash; love as the identifying mark. 1 John 4:20 &mdash; &ldquo;If anyone says, &lsquo;I love God,&rsquo; and hates his brother, he is a liar.&rdquo;</p></dd>
+<dt>How to build it</dt><dd><p>Start with receiving rather than producing. Do concrete good for someone you dislike this week. Pray for people by name, especially those who have wronged you. Bind yourself to people in ways you cannot easily exit.</p></dd>
+<dt>How to tell it is growing</dt><dd><p>You are inconvenienced on purpose. You are less interested in whether people notice. <strong>False signals:</strong> feeling loving, being widely liked, avoiding conflict.</p></dd>
+</dl></div>
+
+<div class="pillar" id="pil5"><h3><span class="pnum">05</span>Forgiveness</h3><dl>
+<dt>What it actually is</dt><dd><p>Releasing a debt &mdash; surrendering your right to exact payment. &ldquo;Forgiving one another, as God in Christ forgave you&rdquo; <span class="ref">(Eph 4:32)</span>.</p></dd>
+<dt>What it is not</dt><dd><p>Not saying the wrong did not matter. Not forgetting. Not restoration of trust, and not necessarily reconciliation. <strong>Forgiveness</strong> is unilateral. <strong>Reconciliation</strong> requires repentance from the offender <span class="ref">(Luke 17:3)</span>. <strong>Trust</strong> is rebuilt over time. Forgiving an abuser does not require returning to him.</p></dd>
+<dt>Where it comes from</dt><dd><p>Commanded and enabled by having received it. The parable of the unforgiving servant <span class="ref">(Matt 18:21&ndash;35)</span>: every offence against you is a hundred denarii. Yours against God was ten thousand talents.</p></dd>
+<dt>Key texts</dt><dd><p>Matthew 6:14&ndash;15 &mdash; settled unwillingness to forgive reveals the ten thousand talents were never really felt. Colossians 3:13 &mdash; &ldquo;as the Lord has forgiven you, so you also must forgive.&rdquo;</p></dd>
+<dt>How to build it</dt><dd><p>Name the debt precisely. State before God that you surrender your right to collect. Expect to do this repeatedly. Pray for the person&rsquo;s actual good. Distinguish releasing your claim from restoring proximity or trust.</p></dd>
+<dt>How to tell it is growing</dt><dd><p>Rehearsing the offence loses its appeal. You can hear the person praised without flinching. <strong>False signals:</strong> no longer feeling anything (may be numbness), premature reconciliation that skips repentance.</p></dd>
+</dl></div>
+
+<div class="pillar" id="pil6"><h3><span class="pnum">06</span>Hope</h3><dl>
+<dt>What it actually is</dt><dd><p>Confident expectation of a promised future, grounded in the character of the one who promised. Certainty about what has not yet happened.</p></dd>
+<dt>What it is not</dt><dd><p>Not wishing. Not optimism about circumstances. Hope is often held precisely when circumstances are hopeless.</p></dd>
+<dt>Where it comes from</dt><dd><p>Given through the resurrection: &ldquo;he has caused us to be born again to a living hope through the resurrection of Jesus Christ&rdquo; <span class="ref">(1 Pet 1:3)</span>. Also <em>produced</em> through suffering <span class="ref">(Rom 5:3&ndash;5)</span>.</p></dd>
+<dt>Key texts</dt><dd><p>Hebrews 6:19 &mdash; hope as &ldquo;a sure and steadfast anchor of the soul&rdquo; entering the inner place behind the curtain, anchored to a person already there. Romans 8:24&ndash;25 &mdash; &ldquo;hope that is seen is not hope.&rdquo;</p></dd>
+<dt>How to build it</dt><dd><p>Fix attention on the specific promised future &mdash; read Revelation 21&ndash;22. Rehearse the resurrection as the historical guarantee. Endure rather than escape difficulty, since Romans 5 says that is the factory where hope is made.</p></dd>
+<dt>How to tell it is growing</dt><dd><p>Present suffering feels genuinely temporary. You make decisions with a longer horizon than your lifespan. <strong>False signals:</strong> cheerfulness, expecting circumstances to improve, denial about the present.</p></dd>
+</dl></div>
+
+<div class="pillar" id="pil7"><h3><span class="pnum">07</span>Obedience</h3><dl>
+<dt>What it actually is</dt><dd><p>Doing what God commands, out of love, from a standing already secured. &ldquo;If you love me, you will keep my commandments&rdquo; <span class="ref">(John 14:15)</span>.</p></dd>
+<dt>What it is not</dt><dd><p>Not earning. Not maintaining standing. And not optional &mdash; &ldquo;Whoever says &lsquo;I know him&rsquo; but does not keep his commandments is a liar&rdquo; <span class="ref">(1 John 2:4)</span>.</p></dd>
+<dt>Where it comes from</dt><dd><p>Commanded and produced by the Spirit. Everyone is a slave to something <span class="ref">(Rom 6:16)</span>. Freedom to obey no one is not on the menu.</p></dd>
+<dt>Key texts</dt><dd><p>Romans 6:14 &mdash; grace is the <em>reason</em> sin loses power. 1 John 2:3&ndash;6 &mdash; obedience as <em>evidence</em> rather than ground.</p></dd>
+<dt>How to build it</dt><dd><p>Obey in the specific thing you already know and are avoiding. Deal with the pattern, not the incident. Remove access and occasion. Obey immediately rather than after resolving your feelings. When you fail, return to Christ rather than to resolutions.</p></dd>
+<dt>How to tell it is growing</dt><dd><p>Commands feel less like restrictions. Sins that used to be invisible become visible. <strong>False signals:</strong> external compliance without changed desire, comparison to others.</p></dd>
+</dl></div>
+
+<div class="pillar" id="pil8"><h3><span class="pnum">08</span>Humility</h3><dl>
+<dt>What it actually is</dt><dd><p>Accurate self-assessment before God, resulting in self-forgetfulness. &ldquo;Count others more significant than yourselves&rdquo; <span class="ref">(Phil 2:3)</span>.</p></dd>
+<dt>What it is not</dt><dd><p>Not self-hatred or low self-esteem. Self-hatred is still self-absorption &mdash; pride with the sign flipped. Genuine humility thinks about itself less rather than worse.</p></dd>
+<dt>Where it comes from</dt><dd><p>Commanded <span class="ref">(Jas 4:10)</span> and produced by God, often through humbling circumstances. &ldquo;God opposes the proud but gives grace to the humble&rdquo; <span class="ref">(Jas 4:6)</span>.</p></dd>
+<dt>Key texts</dt><dd><p>Philippians 2:5&ndash;8 &mdash; Christ, possessing equality with God, emptied Himself. The way up is down, and God does the lifting <span class="ref">(v. 9)</span>. Micah 6:8 &mdash; &ldquo;walk humbly with your God.&rdquo;</p></dd>
+<dt>How to build it</dt><dd><p>Serve where no one sees. Accept criticism without defending yourself. Confess sin to another person. Take the lower place. Notice which humiliations sting most &mdash; that reveals where your identity is invested.</p></dd>
+<dt>How to tell it is growing</dt><dd><p>Being overlooked bothers you less. You can celebrate a rival&rsquo;s success. <strong>False signals:</strong> self-deprecating speech, refusing compliments, talking about unworthiness.</p></dd>
+</dl></div>
+
+<div class="pillar" id="pil9"><h3><span class="pnum">09</span>Gratitude &amp; Worship</h3><dl>
+<dt>What it actually is</dt><dd><p>The response of the redeemed to God for who He is and what He has done. Romans 12:1 &mdash; &ldquo;present your bodies as a living sacrifice, holy and acceptable to God, which is your spiritual worship.&rdquo; Your whole embodied life, not an hour on Sunday.</p></dd>
+<dt>What it is not</dt><dd><p>Not music. Not emotional experience. Not forced cheerfulness. 1 Thessalonians 5:18 &mdash; &ldquo;give thanks <em>in</em> all circumstances,&rdquo; not <em>for</em> all circumstances.</p></dd>
+<dt>Where it comes from</dt><dd><p>Commanded, and the natural overflow of understanding what you have received. Ingratitude is named in Romans 1:21 as one of the first symptoms of the fall.</p></dd>
+<dt>Key texts</dt><dd><p>Psalm 100:3 &mdash; &ldquo;Know that the <span class="sc">Lord</span>, he is God! It is he who made us, and we are his.&rdquo; Colossians 3:17 &mdash; &ldquo;whatever you do, in word or deed, do everything in the name of the Lord Jesus, giving thanks.&rdquo; If everything is gift, gratitude is simply accuracy.</p></dd>
+<dt>How to build it</dt><dd><p>Name specific mercies aloud or in writing. Give thanks in a hard circumstance without pretending it is good. Sing. Take the Lord&rsquo;s Supper with attention. Gather weekly with the church.</p></dd>
+<dt>How to tell it is growing</dt><dd><p>Ordinary things provoke thanks. Complaint decreases. You notice gifts you previously assumed were entitlements. <strong>False signals:</strong> emotional highs in worship, gratitude only when circumstances are good.</p></dd>
+</dl></div>
+
+<div class="pillar" id="pil10"><h3><span class="pnum">10</span>Prayer</h3><dl>
+<dt>What it actually is</dt><dd><p>Communion with God &mdash; a child speaking to a Father who has commanded him to come. Adoration, confession, thanksgiving, petition.</p></dd>
+<dt>What it is not</dt><dd><p>Not a technique for obtaining outcomes. Not performance. Jesus warns against showmanship and verbosity <span class="ref">(Matt 6:7)</span>. Not a way of informing God <span class="ref">(v. 8)</span>.</p></dd>
+<dt>Where it comes from</dt><dd><p>Commanded <span class="ref">(1 Thess 5:17)</span> and enabled by the Spirit, who prays in you when you cannot.</p></dd>
+<dt>Key texts</dt><dd><p>Matthew 6:9&ndash;13 &mdash; God&rsquo;s name, kingdom and will come before your bread. Philippians 4:6&ndash;7 &mdash; the promised result is not the thing requested but &ldquo;the peace of God.&rdquo; Romans 8:26&ndash;27 &mdash; &ldquo;the Spirit himself intercedes for us with groanings too deep for words.&rdquo; When prayer feels dead, the Spirit is praying in you and the Son is interceding for you <span class="ref">(Heb 7:25)</span>.</p></dd>
+<dt>How to build it</dt><dd><p>Fix a time and place. Pray Scripture, especially the Psalms. Keep a written list. Pray briefly and often. Pray aloud if your mind wanders. When you have not prayed in weeks, start today rather than doing penance first.</p></dd>
+<dt>How to tell it is growing</dt><dd><p>You turn to God reflexively in small things. Your requests shift toward God&rsquo;s concerns. Silence with God becomes bearable. <strong>False signals:</strong> length, felt emotion, answered requests.</p></dd>
+</dl></div>
+
+<div class="pillar" id="pil11"><h3><span class="pnum">11</span>Scripture Intake</h3><dl>
+<dt>What it actually is</dt><dd><p>Receiving God&rsquo;s own speech as the means by which He forms you. &ldquo;All Scripture is breathed out by God and profitable for teaching, for reproof, for correction, and for training in righteousness&rdquo; <span class="ref">(2 Tim 3:16&ndash;17)</span>.</p></dd>
+<dt>What it is not</dt><dd><p>Not information gathering. Not a devotional lucky dip for a daily feeling. The Pharisees knew the text better than you ever will <span class="ref">(John 5:39&ndash;40)</span>.</p></dd>
+<dt>Where it comes from</dt><dd><p>Commanded, and a means of grace.</p></dd>
+<dt>Key texts</dt><dd><p>Psalm 1 &mdash; the blessed man meditates day and night and is &ldquo;like a tree planted by streams of water&rdquo; <span class="ref">(vv. 2&ndash;3)</span>. Slow, constant, unspectacular absorption producing fruit in season.</p></dd>
+<dt>How to build it</dt><dd><p>Read consecutively through books. Read the same passage across days. Ask three questions: what does this say about God, about man, about me &mdash; in that order. Read the Old Testament looking for Christ <span class="ref">(Luke 24:27)</span>. Memorise. Read with the church and under preaching.</p></dd>
+<dt>How to tell it is growing</dt><dd><p>Scripture comes to mind unbidden. You find yourself corrected, not only comforted. <strong>False signals:</strong> volume read, familiarity with obscure content.</p></dd>
+</dl></div>
+
+<div class="pillar" id="pil12"><h3><span class="pnum">12</span>Community &amp; the Local Church</h3><dl>
+<dt>What it actually is</dt><dd><p>Covenanted membership in a visible body under recognised leadership, where the Word is preached, the sacraments administered, and discipline exercised. &ldquo;They devoted themselves to the apostles&rsquo; teaching and the fellowship, to the breaking of bread and the prayers&rdquo; <span class="ref">(Acts 2:42)</span>.</p></dd>
+<dt>What it is not</dt><dd><p>Not attendance. Not friendship with Christians. Not online content consumption.</p></dd>
+<dt>Where it comes from</dt><dd><p>Commanded and constitutive &mdash; you are placed into the body at conversion <span class="ref">(1 Cor 12:13)</span>.</p></dd>
+<dt>Key texts</dt><dd><p>Hebrews 10:24&ndash;25 &mdash; &ldquo;not neglecting to meet together.&rdquo; Ephesians 4:11&ndash;16 &mdash; the body grows only when each part is working properly. Nearly every New Testament command is plural and reciprocal &mdash; love, bear, confess, forgive, submit <em>one another</em>. These are unperformable alone.</p></dd>
+<dt>How to build it</dt><dd><p>Join a church formally. Commit before you feel belonging. Attend consistently. Serve in something unglamorous. Give financially. Let people close enough to say hard things. Submit to leadership <span class="ref">(Heb 13:17)</span>.</p></dd>
+<dt>How to tell it is growing</dt><dd><p>People know your actual sins. You are missed when absent. You are burdened for others&rsquo; needs. <strong>False signals:</strong> liking the preaching, enjoying the music.</p></dd>
+</dl></div>
+
+<div class="pillar" id="pil13"><h3><span class="pnum">13</span>Generosity &amp; Service</h3><dl>
+<dt>What it actually is</dt><dd><p>The outward direction of a life that has received everything. &ldquo;God loves a cheerful giver&rdquo; <span class="ref">(2 Cor 9:7)</span>.</p></dd>
+<dt>What it is not</dt><dd><p>Not transactional &mdash; giving to obtain. Not a guilt tax. Not a substitute for personal involvement.</p></dd>
+<dt>Where it comes from</dt><dd><p>Commanded and a fruit of grasping grace. Paul&rsquo;s motive: &ldquo;though he was rich, yet for your sake he became poor, so that you by his poverty might become rich&rdquo; <span class="ref">(2 Cor 8:9)</span>.</p></dd>
+<dt>Key texts</dt><dd><p>Matthew 25:31&ndash;46 &mdash; Christ identifies with the hungry, the stranger, the sick. Matthew 6:21 &mdash; &ldquo;where your treasure is, there your heart will be also.&rdquo; Money promises exactly what God promises &mdash; security, freedom, standing. That is why it is called a rival master <span class="ref">(Matt 6:24)</span>.</p></dd>
+<dt>How to build it</dt><dd><p>Give regularly, planned and first. Give an amount you notice. Give some anonymously. Serve in person where poverty is visible. Practise hospitality. Examine your budget &mdash; it is a more reliable statement of your beliefs than anything you would say.</p></dd>
+<dt>How to tell it is growing</dt><dd><p>Less anxious about money while giving more. Possessions hold you more loosely. <strong>False signals:</strong> amounts given, generosity that is always publicly known.</p></dd>
+</dl></div>
+
+<div class="pillar" id="pil14"><h3><span class="pnum">14</span>Witness</h3><dl>
+<dt>What it actually is</dt><dd><p>Telling the truth about Christ &mdash; reporting news, honestly, and living a life that makes the report credible. &ldquo;You will be my witnesses&rdquo; <span class="ref">(Acts 1:8)</span>.</p></dd>
+<dt>What it is not</dt><dd><p>Not salesmanship, manipulation, or merely &ldquo;living a good life&rdquo; without speaking &mdash; &ldquo;how are they to believe in him of whom they have never heard?&rdquo; <span class="ref">(Rom 10:14)</span>.</p></dd>
+<dt>Where it comes from</dt><dd><p>Commanded <span class="ref">(Matt 28:18&ndash;20)</span> and empowered by the Spirit <span class="ref">(Acts 1:8)</span>.</p></dd>
+<dt>Key texts</dt><dd><p>The Great Commission is bracketed by &ldquo;All authority&hellip; has been given to me&rdquo; and &ldquo;I am with you always&rdquo; <span class="ref">(Matt 28:18, 20)</span>. 1 Peter 3:15 &mdash; &ldquo;with gentleness and respect.&rdquo;</p></dd>
+<dt>How to build it</dt><dd><p>Be able to say the gospel in three minutes. Live in genuine friendship with non-Christians. Answer honestly, including &ldquo;I don&rsquo;t know.&rdquo; Tell what God has done in you. Pray for specific people. Accept that conversion is not your work.</p></dd>
+<dt>How to tell it is growing</dt><dd><p>The subject comes up naturally. You care about the person&rsquo;s good rather than winning. <strong>False signals:</strong> number of conversations, conversions, boldness that is insensitivity.</p></dd>
+</dl></div>
+
+<div class="pillar" id="pil15"><h3><span class="pnum">15</span>Perseverance &amp; Suffering</h3><dl>
+<dt>What it actually is</dt><dd><p>Continuing in faith through difficulty over time. Not gritted stoicism, but sustained trust in God&rsquo;s character when circumstances contradict it.</p></dd>
+<dt>What it is not</dt><dd><p>Not the absence of pain, doubt or complaint &mdash; the Psalms are full of all three. Not a guarantee that suffering will be explained.</p></dd>
+<dt>Where it comes from</dt><dd><p>God&rsquo;s preserving work producing our persevering. &ldquo;He who began a good work in you will bring it to completion&rdquo; <span class="ref">(Phil 1:6)</span>.</p></dd>
+<dt>Key texts</dt><dd><p>James 1:2&ndash;4 &mdash; &ldquo;count it all joy&hellip; for you know that the testing of your faith produces steadfastness.&rdquo; <em>Count</em> is an act of judgment, not a feeling. 2 Corinthians 12:9 &mdash; God&rsquo;s answer to three prayers for removal: &ldquo;My grace is sufficient for you, for my power is made perfect in weakness.&rdquo; God refused the request and Paul calls the refusal grace.</p></dd>
+<dt>How to build it</dt><dd><p>You do not build it; it is built on you. Establish habits before the trial arrives. During: keep showing up to the ordinary means. Lament honestly <span class="ref">(Ps 13, 22, 88)</span>. Take the next small obedience. Refuse isolation.</p></dd>
+<dt>How to tell it is growing</dt><dd><p>You still turn to God when it does not help immediately. Others&rsquo; suffering draws you rather than repelling you. <strong>False signals:</strong> stoicism, absence of tears, quick recovery.</p></dd>
+</dl></div>
+
+<div class="pillar" id="pil16"><h3><span class="pnum">16</span>Assurance</h3><dl>
+<dt>What it actually is</dt><dd><p>Settled confidence that you belong to Christ, grounded in His finished work and God&rsquo;s promise, confirmed by the Spirit&rsquo;s witness and evidence of new life. &ldquo;I write these things to you who believe&hellip; that you may know that you have eternal life&rdquo; <span class="ref">(1 John 5:13)</span>.</p></dd>
+<dt>What it is not</dt><dd><p>Not a feeling, though feelings may accompany it. Not presumption. Not certainty about your own strength.</p></dd>
+<dt>Where it comes from</dt><dd><p>Given by the Spirit: &ldquo;The Spirit himself bears witness with our spirit that we are children of God&rdquo; <span class="ref">(Rom 8:16)</span>. Three grounds held together: the objective promises of God (primary), the internal witness of the Spirit, and evidence of grace in a changed life (secondary).</p></dd>
+<dt>Key texts</dt><dd><p>Romans 8:15&ndash;16. The whole of 1 John supplies tests: belief in Christ&rsquo;s incarnation <span class="ref">(4:2)</span>, obedience <span class="ref">(2:3)</span>, love of the brothers <span class="ref">(3:14)</span>. These tests exist to produce assurance, not to withhold it.</p></dd>
+<dt>How to build it</dt><dd><p>Look outward before inward. The primary ground is Christ&rsquo;s work, not your inventory. Deal with unconfessed sin. Use the sacraments &mdash; baptism as an objective event your mood cannot revise, and the Supper as a repeated tangible pledge. Do not seek assurance by introspection; it is found by looking at Christ.</p></dd>
+<dt>How to tell it is growing</dt><dd><p>You can consider your sin without despair. Death is less frightening. Obedience becomes freer. <strong>False signals:</strong> never doubting, emotional highs, absence of struggle.</p></dd>
+</dl></div>
+
+<h3>How They Interlock</h3>
+<p>The root beneath all is <strong>union with Christ</strong> &mdash; not on the list because it is not a pillar but the ground the pillars stand on. <strong>Received, not built:</strong> faith, repentance, regeneration, adoption, assurance. <strong>Roots:</strong> faith, repentance, fear of the Lord. <strong>Trunk:</strong> love and hope. <strong>Fruits:</strong> obedience, humility, gratitude, generosity, forgiveness, witness, perseverance. <strong>Means and channels:</strong> prayer, Scripture intake, community &mdash; the pipes through which grace flows.</p>
+<p><strong>Order of dependence:</strong> Union &rarr; faith and repentance &rarr; love, hope, fear &rarr; everything else, sustained by Word, sacrament and prayer within the church.</p>
+<p>If love is cold, do not resolve to love more. Go back to whether you actually believe you are loved. If obedience is failing, do not add rules. Look at whether justification is functionally believed. Fruit problems are almost always root problems.</p>
+
+<h3>The Means of Grace</h3>
+<p>Reformed theology identifies three ordinary channels: <strong>the Word</strong>, <strong>the sacraments</strong> (baptism and the Lord&rsquo;s Supper), and <strong>prayer</strong>. They are <em>ordinary</em> &mdash; God works through them, so neglecting them while expecting growth is incoherent. And they are <em>means</em>, not causes; the pipe does not manufacture the water.</p>
+
+<h3>Receiving vs. Performance</h3>
+<p>The same activity can be either. The difference is not the act but its function.</p>
+<p><strong>As receiving:</strong> you come empty, expecting God to give. Missing a day means you missed a meal. Your standing is untouched by performance.</p>
+<p><strong>As performance:</strong> you come to produce. Missing a day generates guilt and debt. Your felt standing rises and falls with compliance.</p>
+<p>The tests: <strong>When you miss, do you feel hungry or guilty? When you succeed, do you feel fed or accomplished?</strong> If the second column describes you, the problem is not discipline. It is that justification has not yet reached your reflexes.</p>
+</section>
+<div class="ornament">&#10013; &#10013; &#10013;</div>
+
+<section class="part" id="p8">
+<div class="part-label">Part Eight</div>
+<h2>Where People Go Wrong</h2>
+
+<h3>Legalism</h3>
+<p>Adding conditions to grace &mdash; treating obedience as the ground of acceptance rather than its fruit. Paul&rsquo;s response to the Galatians: &ldquo;if righteousness were through the law, then Christ died for no purpose&rdquo; <span class="ref">(Gal 2:21)</span>. Legalism does not merely add to the cross; it empties it. It also generates its own rules where Scripture is silent, and Paul notes the irony: such regulations &ldquo;have indeed an appearance of wisdom&hellip; but they are of no value in stopping the indulgence of the flesh&rdquo; <span class="ref">(Col 2:23)</span>.</p>
+
+<h3>Antinomianism</h3>
+<p>Treating grace as making obedience irrelevant. Paul anticipates it: &ldquo;Are we to continue in sin that grace may abound? By no means!&rdquo; <span class="ref">(Rom 6:1&ndash;2)</span>. His answer is from identity, not threat: &ldquo;How can we who died to sin still live in it?&rdquo;</p>
+
+<h3>Cheap Grace</h3>
+<p>Forgiveness detached from repentance, discipleship and cost. The New Testament never separates justification from union, and union always brings the Spirit, and the Spirit always produces change. Grace that leaves you exactly as you were was not grace.</p>
+
+<h3>Moralistic Therapeutic Deism</h3>
+<p>The default religion of the modern West, and <strong>by far the most likely to infect you</strong>: God exists and wants people to be nice; the goal of life is to be happy; God is not particularly involved except when needed. Test it against Parts 1&ndash;3 &mdash; no holiness, no wrath, no substitution, no resurrection, no fear of the Lord. It is Christianity with the load-bearing walls removed, and it can be held for decades by someone attending church weekly.</p>
+
+<h3>Prosperity Teaching</h3>
+<p>The claim that faith secures health and wealth. It contradicts the New Testament shape of discipleship: &ldquo;If anyone would come after me, let him deny himself and take up his cross&rdquo; <span class="ref">(Mark 8:34)</span>. Paul&rsquo;s thorn was not removed <span class="ref">(2 Cor 12:8&ndash;9)</span>. &ldquo;All who desire to live a godly life in Christ Jesus will be persecuted&rdquo; <span class="ref">(2 Tim 3:12)</span>. It is pastorally lethal because it makes suffering the sufferer&rsquo;s fault.</p>
+
+<h3>Assurance as Feeling</h3>
+<p>Grounding confidence in emotional state produces oscillation. Your standing is not a mood.</p>
+
+<h3>Emotional Intensity Mistaken for Maturity</h3>
+<p>The seed on rocky ground &ldquo;receives it with joy&rdquo; <span class="ref">(Matt 13:20)</span> and has no root. Maturity is measured by love, endurance, doctrinal stability and the fruit of the Spirit <span class="ref">(Eph 4:14&ndash;15; Gal 5:22&ndash;23)</span>, never by intensity of experience.</p>
+
+<h3>The Pillars as a Checklist</h3>
+<p>Sixteen items with build instructions is an invitation to construct a scoring system. If you find yourself auditing your performance across the sixteen, you have converted the Christian life into what Part 3 said it is not. The correction is never <em>try to stop auditing</em>. It is to look at Christ until the auditing loses its function.</p>
+
+<h3>Conviction vs. Self-Condemnation</h3>
+<p>They can feel identical. They are not the same thing.</p>
+<p><strong>Conviction</strong> is the Spirit&rsquo;s work <span class="ref">(John 16:8)</span>. It is <em>specific</em> &mdash; names an actual sin. It is <em>hopeful</em> &mdash; includes the way out. It <em>drives you toward God</em>. It <em>ends</em> once you confess. It produces energy <span class="ref">(2 Cor 7:11)</span>.</p>
+<p><strong>Self-condemnation</strong> is <em>vague</em> &mdash; indicts your whole self. It is <em>hopeless</em>. It <em>drives you away from God</em> into hiding. It <em>does not end</em>. It produces paralysis.</p>
+<p>The clearest tell: <strong>conviction says &ldquo;you did this and there is a remedy.&rdquo; Self-condemnation says &ldquo;you are this and there is not.&rdquo;</strong></p>
+<blockquote class="scripture"><p>There is therefore now no condemnation for those who are in Christ Jesus.</p><cite>Romans 8:1</cite></blockquote>
+<p>That verdict follows Romans 7, where Paul describes his own ongoing failure in the present tense &mdash; &ldquo;Wretched man that I am!&rdquo; <span class="ref">(v. 24)</span>. The no-condemnation verdict is announced <em>over a man in the middle of that struggle</em>. Accepting self-condemnation is not humility. It is unbelief with a pious face.</p>
+</section>
+<div class="ornament">&#10013; &#10013; &#10013;</div>
+
+<section class="part" id="p9">
+<div class="part-label">Part Nine</div>
+<h2>Honest Self-Examination</h2>
+
+<h3>Why This Part Is Dangerous, and Why It Is Commanded</h3>
+<p>&ldquo;Examine yourselves, to see whether you are in the faith. Test yourselves&rdquo; <span class="ref">(2 Cor 13:5)</span>. Paul commands it. But it can fail in two directions: <strong>false assurance</strong> and <strong>manufactured doubt</strong>. The point is to reach a conclusion, not maintain a permanent inquiry. &ldquo;I write these things to you who believe&hellip; that you may know that you have eternal life&rdquo; <span class="ref">(1 John 5:13)</span>.</p>
+
+<h3>The Warning</h3>
+<p>&ldquo;Not everyone who says to me, &lsquo;Lord, Lord,&rsquo; will enter the kingdom of heaven&rdquo; <span class="ref">(Matt 7:21)</span>. On that day many will claim they prophesied and cast out demons in His name &mdash; and He will say, &ldquo;I never knew you&rdquo; <span class="ref">(v. 23)</span>. Not &ldquo;you failed&rdquo; &mdash; <strong>&ldquo;I never knew you.&rdquo;</strong> The issue is not performance quality but the absence of relationship.</p>
+
+<h3>Marks of Genuine Conversion</h3>
+<p>From 1 John primarily:</p>
+<ul>
+<li><strong>Belief in Jesus as the Christ come in the flesh</strong> <span class="ref">(1 John 4:2; 5:1)</span>.</li>
+<li><strong>A pattern of obedience</strong> &mdash; not perfection but direction of life <span class="ref">(2:3; 3:9)</span>.</li>
+<li><strong>Love for other Christians</strong> &mdash; &ldquo;We know that we have passed out of death into life, because we love the brothers&rdquo; <span class="ref">(3:14)</span>.</li>
+<li><strong>Ongoing repentance</strong> &mdash; grief over sin that turns to God <span class="ref">(1:9; 2 Cor 7:10)</span>.</li>
+<li><strong>The witness of the Spirit</strong> &mdash; the instinct to call God <em>Father</em> <span class="ref">(Rom 8:15&ndash;16)</span>.</li>
+<li><strong>Perseverance over time</strong> &mdash; &ldquo;if they had been of us, they would have continued with us&rdquo; <span class="ref">(1 John 2:19)</span>.</li>
+<li><strong>A different relationship to the world&rsquo;s values</strong> <span class="ref">(2:15)</span>.</li>
+</ul>
+
+<h3>Marks of Mere Religious Affiliation</h3>
+<ul>
+<li>Confidence resting on a past event with no present relationship.</li>
+<li>Doctrinal accuracy with no affection <span class="ref">(Jas 2:19)</span>.</li>
+<li>Behaviour maintained by social environment that dissolves when it changes.</li>
+<li>Service and activity without communion &mdash; the Matthew 7:22 profile.</li>
+<li>No grief over sin, only over consequences.</li>
+<li>Christianity held as one component of a good life rather than its axis.</li>
+<li>The absence of any cost <span class="ref">(Mark 8:34)</span>.</li>
+</ul>
+
+<h3>If This Unsettles You</h3>
+<p><strong>First:</strong> notice that you are unsettled. People with no spiritual life do not lie awake worried about whether they have one.</p>
+<p><strong>Second:</strong> the answer is never &ldquo;try harder.&rdquo; Assurance is not earned by improvement. It is found by looking away from yourself.</p>
+<p><strong>Third:</strong> go to Christ directly, now, as you are. &ldquo;Whoever comes to me I will never cast out&rdquo; <span class="ref">(John 6:37)</span>. Nothing is lost by coming again.</p>
+<p><strong>Fourth:</strong> pray honestly rather than correctly. Something like: <em>God, I do not know if I am Yours. I know I cannot make myself Yours. I am trusting Christ and nothing in myself. Have mercy on me.</em></p>
+<p><strong>Fifth:</strong> tell a pastor. Do not carry this alone. This is precisely what the local church exists for.</p>
+<p><strong>Sixth:</strong> if the unsettlement does not lift, consider whether it is spiritual at all. Depression, anxiety disorders and scrupulosity all produce exactly these symptoms and do not respond to theology. If that is you, see a doctor as well as a pastor. That is not a failure of faith.</p>
+</section>
+<div class="ornament">&#10013; &#10013; &#10013;</div>
+
+<section class="part" id="p10">
+<div class="part-label">Part Ten</div>
+<h2>Where It Is All Going</h2>
+
+<h3>He Is Coming Back</h3>
+<p>&ldquo;The Lord himself will descend from heaven with a cry of command, with the voice of an archangel, and with the sound of the trumpet of God. And the dead in Christ will rise first&rdquo; <span class="ref">(1 Thess 4:16)</span>. The angels at the ascension: &ldquo;This Jesus&hellip; will come in the same way as you saw him go&rdquo; <span class="ref">(Acts 1:11)</span>. Bodily, visibly, personally.</p>
+<p>Paul&rsquo;s purpose: &ldquo;that you may not grieve as others do who have no hope&rdquo; <span class="ref">(1 Thess 4:13)</span>. Not <em>not grieve</em> &mdash; grieve differently.</p>
+<div class="callout"><span class="tag">Where Christians Disagree</span><p>There is genuine disagreement on the millennium. The Reformed tradition has historically been predominantly amillennial with a significant postmillennial minority. Premillennialism is held by many faithful Christians. What is not in dispute: He returns personally and bodily, the dead are raised, all are judged, and the new creation follows.</p></div>
+
+<h3>You Will Get Your Body Back</h3>
+<p><strong>The Christian hope is not a disembodied soul floating in a spiritual realm forever.</strong> That is Platonism. There is an intermediate state &mdash; to be absent from the body is to be at home with the Lord <span class="ref">(2 Cor 5:8)</span>. But that is the waiting room, not the destination.</p>
+<p>1 Corinthians 15:42&ndash;44: &ldquo;It is sown a perishable body; it is raised imperishable&hellip; It is sown a natural body; it is raised a spiritual body.&rdquo; &ldquo;Spiritual body&rdquo; does not mean made-of-spirit &mdash; it means animated by the Spirit. The risen Christ ate fish <span class="ref">(Luke 24:42&ndash;43)</span>, was touchable <span class="ref">(John 20:27)</span>, bore wounds.</p>
+<p>Your body is not a temporary container. It is part of what God made, what Christ redeemed, and what will be raised. Physical suffering is not trivial.</p>
+
+<h3>Judgment</h3>
+<p>&ldquo;We must all appear before the judgment seat of Christ, so that each one may receive what is due for what he has done in the body&rdquo; <span class="ref">(2 Cor 5:10)</span>. The believer&rsquo;s <em>verdict</em> is settled <span class="ref">(Rom 8:1)</span> &mdash; the book of life determines destiny <span class="ref">(Rev 20:15)</span>. But works are evaluated and Scripture speaks of differing reward <span class="ref">(1 Cor 3:12&ndash;15)</span>. Your salvation is not at stake. The value of what you built with it is.</p>
+
+<h3>The New Heavens and New Earth</h3>
+<p>The direction of travel is <strong>downward</strong>: &ldquo;I saw the holy city, new Jerusalem, coming down out of heaven from God&rdquo; <span class="ref">(Rev 21:2)</span>. We do not evacuate to heaven; heaven comes here.</p>
+<blockquote class="scripture"><p>He will wipe away every tear from their eyes, and death shall be no more, neither shall there be mourning, nor crying, nor pain anymore, for the former things have passed away.</p><cite>Revelation 21:4</cite></blockquote>
+<p>&ldquo;Behold, I am making all things new&rdquo; <span class="ref">(v. 5)</span> &mdash; <em>new</em>, not <em>new things</em>. This is renovation, not replacement. Romans 8:19&ndash;23: creation itself is groaning, waiting to be set free.</p>
+<p>Isaiah 65:21&ndash;23: people build houses, plant vineyards, work that is not futile. This is not disembodied contemplation. It is embodied life on a healed earth.</p>
+<p>And at the centre: &ldquo;They will see his face&rdquo; <span class="ref">(Rev 22:4)</span>. What Moses was denied, what Isaiah could not survive, is given. The tree of life is there again <span class="ref">(Rev 22:2)</span>, and &ldquo;no longer will there be anything accursed&rdquo; <span class="ref">(v. 3)</span>.</p>
+
+<h3>Living With the End in View</h3>
+<p><strong>Suffering:</strong> &ldquo;This light momentary affliction is preparing for us an eternal weight of glory beyond all comparison&rdquo; <span class="ref">(2 Cor 4:17)</span>. Paul, who was beaten, stoned, shipwrecked and imprisoned, calls it <em>light</em> and <em>momentary</em> because he has something real to weigh it against.</p>
+<p><strong>Ambition:</strong> if the assessment that matters is at the judgment seat of Christ, then building a reputation with people who will not conduct that assessment is a strange use of a life.</p>
+<p><strong>Money:</strong> &ldquo;Do not lay up for yourselves treasures on earth&hellip; but lay up for yourselves treasures in heaven&rdquo; <span class="ref">(Matt 6:19&ndash;20)</span>. Christ&rsquo;s argument is not that money is bad; it is that earthly treasure is badly secured.</p>
+<p><strong>Death:</strong> &ldquo;O death, where is your victory?&rdquo; <span class="ref">(1 Cor 15:55)</span>. Death remains an enemy &mdash; the last to be destroyed <span class="ref">(v. 26)</span> &mdash; but a defeated one. Christians may hate death and not fear it at the same time.</p>
+</section>
+<div class="ornament">&#10013; &#10013; &#10013;</div>
+
+<section class="part" id="p11">
+<div class="part-label">Part Eleven</div>
+<h2>Living In It</h2>
+
+<h3>Prayer, Reshaped</h3>
+<p>You approach as a son, through a mediator who is currently interceding, with permanent access <span class="ref">(Heb 10:19&ndash;22)</span>. <strong>This week:</strong> begin prayer by stating what is already true &mdash; <em>Father, I come through Christ, and there is no condemnation.</em> When you have sinned, pray <em>first</em> and confess <em>as</em> you come, rather than delaying until you feel presentable.</p>
+
+<h3>Scripture, Reshaped</h3>
+<p>The law is no longer a standard you must meet to be accepted. It is the shape of a life that pleases the Father who has already accepted you. <strong>This week:</strong> read one gospel slowly, ten to fifteen verses a day. When you hit a command, ask: <em>am I reading this as a condition of acceptance or as a description of the life I have been given?</em></p>
+
+<h3>Repentance, Reshaped</h3>
+<p>The sacrifice has been made once for all <span class="ref">(Heb 10:12)</span>. Repentance is not payment; it is agreement with God and return to what is already secured. <strong>This week:</strong> confess specifically and daily, and then <em>stop</em>. Do not add a period of self-punishment. The instinct to serve a sentence after confession is the old covenant reasserting itself.</p>
+
+<h3>Corporate Worship, Reshaped</h3>
+<p>You do not attend to secure anything. You attend to receive. <strong>This week:</strong> go, and go early enough not to arrive frazzled. Sing even if you cannot sing. Listen expecting God to address you. Speak to one person you do not know well.</p>
+
+<h3>The Sacraments</h3>
+<p><strong>Baptism</strong> is a one-time sign of union with Christ in death and resurrection <span class="ref">(Rom 6:3&ndash;4)</span>, replacing circumcision as the sign of covenant belonging <span class="ref">(Col 2:11&ndash;12)</span>. On days when your feelings testify against you, it stands as an event in history that your mood cannot revise.</p>
+<p><strong>The Lord&rsquo;s Supper</strong> is the repeated sign: &ldquo;this cup is the new covenant in my blood&rdquo; <span class="ref">(Luke 22:20)</span>; &ldquo;as often as you eat this bread and drink the cup, you proclaim the Lord&rsquo;s death until he comes&rdquo; <span class="ref">(1 Cor 11:26)</span>. It is a <em>means of grace</em> &mdash; you come away with something you did not bring.</p>
+<p><strong>This week:</strong> when you take it, come hungry rather than qualified. The table is for sinners trusting Christ, not for those who have had a good week.</p>
+
+<h3>Work</h3>
+<p>&ldquo;Whatever you do, work heartily, as for the Lord and not for men&rdquo; <span class="ref">(Col 3:23)</span> &mdash; written to slaves. <strong>This week:</strong> name who your work actually serves and do one thing well that nobody will notice. Ask what you are seeking from work that only God can give.</p>
+
+<h3>Relationships</h3>
+<p>&ldquo;As I have loved you, so you also are to love one another&rdquo; <span class="ref">(John 13:34)</span>. The standard is the cross, which must be received before it can be extended. <strong>This week:</strong> forgive one specific person. Go to one person you have wronged. Do not explain your reasons; just own your part.</p>
+
+<h3>Handling Failure</h3>
+<div class="callout warn"><span class="tag">The Most Important Paragraph in This Document</span>
+<p><strong>When you fail &mdash; and you will, repeatedly and in the same ways &mdash; the response is immediate return, not delayed penance.</strong> No condemnation <span class="ref">(Rom 8:1)</span>. Confession is met with faithful and just forgiveness <span class="ref">(1 John 1:9)</span>. Your advocate is already speaking on your behalf <span class="ref">(1 John 2:1; Heb 7:25)</span>.</p>
+<p>Do not restart. There is nothing to restart, because your standing never lapsed. Get up in the middle of the week and continue in the middle of the week.</p></div>
+
+<h3>A Sustainable Weekly Rhythm</h3>
+<p>Deliberately small. An ambitious plan you abandon in three weeks does more damage than a modest one you keep for years.</p>
+<h4>Daily (15 minutes)</h4>
+<ul>
+<li>10&ndash;15 verses, read slowly, three questions</li>
+<li>Prayer: adoration, confession, thanksgiving, petition &mdash; five minutes is enough</li>
+<li>One verse held in mind through the day</li>
+</ul>
+<h4>Weekly</h4>
+<ul>
+<li>Corporate worship, non-negotiable</li>
+<li>One honest conversation with another believer</li>
+<li>One deliberate act of service or generosity that costs something</li>
+</ul>
+<h4>Monthly</h4>
+<ul>
+<li>A longer period &mdash; an hour or two &mdash; of unhurried prayer and reading</li>
+<li>Review: what has grown, what has slipped, one thing to attend to</li>
+</ul>
+<h4>As available</h4>
+<ul><li>The Lord&rsquo;s Supper, taken with attention</li></ul>
+
+<h3>When You Break It</h3>
+<p>You will. Probably within a fortnight.</p>
+<ul>
+<li><strong>Do not make up the missed days.</strong> There is no debt. This is not a streak.</li>
+<li><strong>Do not restart on Monday or the first of the month.</strong> Those dates have no theological standing. Resume now.</li>
+<li><strong>Do not shrink the plan in shame or expand it in compensation.</strong> Both are performance responses.</li>
+<li><strong>Ask once whether the plan is wrong</strong> &mdash; wrong time of day, wrong season. Adjust practically, without guilt.</li>
+<li><strong>Notice what the failure exposed.</strong> If missing three days produced guilt rather than hunger, you have your diagnostic. The remedy is not more discipline. It is the gospel again, applied to the reflex.</li>
+</ul>
+</section>
+<div class="ornament">&#10013; &#10013; &#10013;</div>
+
+<section class="part" id="close">
+<div class="part-label">Closing</div>
+<h2>Five Questions to Sit With</h2>
+<ol class="closing-q">
+<li>Do I believe God is who He says He is &mdash; holy, sovereign, just, and merciful &mdash; or have I quietly edited Him into someone more comfortable?</li>
+<li>When I hear the gospel, does it land as news about something done for me, or as advice about something I must do?</li>
+<li>Where is my functional confidence actually resting right now &mdash; on Christ&rsquo;s finished work, or on my recent performance?</li>
+<li>Is there a specific sin I am managing rather than mortifying, a relationship I am avoiding rather than pursuing, or a command I already know and am not obeying?</li>
+<li>If everything in my life stayed exactly as it is for the next thirty years, would the trajectory of my soul be toward Christ or away from Him?</li>
+</ol>
+
+<h3>Three Passages to Memorize</h3>
+<div class="memo">
+<p class="mref">Romans 8:1</p>
+<p>&ldquo;There is therefore now no condemnation for those who are in Christ Jesus.&rdquo;</p>
+<p class="why">Because you will forget this every week, and every week you need to hear it again.</p>
+</div>
+<div class="memo">
+<p class="mref">2 Corinthians 5:21</p>
+<p>&ldquo;For our sake he made him to be sin who knew no sin, so that in him we might become the righteousness of God.&rdquo;</p>
+<p class="why">Because the double transfer is the mechanism of the gospel, and without it the cross is only an example.</p>
+</div>
+<div class="memo">
+<p class="mref">John 15:5</p>
+<p>&ldquo;I am the vine; you are the branches. Whoever abides in me and I in him, he it is that bears much fruit, for apart from me you can do nothing.&rdquo;</p>
+<p class="why">Because every pillar collapses without this, and this verse tells you where the life actually comes from.</p>
+</div>
+
+<h3>A Short Reading List</h3>
+<div class="books">
+<h4>Start Here</h4>
+<ul>
+<li>J. I. Packer, <em>Knowing God</em></li>
+<li>Sinclair Ferguson, <em>The Whole Christ</em></li>
+<li>The Westminster Shorter Catechism, with proofs</li>
+</ul>
+<h4>Go Deeper</h4>
+<ul>
+<li>John Calvin, <em>Institutes of the Christian Religion</em></li>
+<li>Herman Bavinck, <em>Reformed Dogmatics</em></li>
+<li>Geerhardus Vos, <em>Biblical Theology</em></li>
+<li>John Owen, <em>The Death of Death in the Death of Christ</em></li>
+<li>Michael Horton, <em>The Christian Faith</em></li>
+</ul>
+<h4>On the Christian Life</h4>
+<ul>
+<li>John Owen, <em>The Mortification of Sin</em></li>
+<li>Jeremiah Burroughs, <em>The Rare Jewel of Christian Contentment</em></li>
+<li>D. A. Carson, <em>A Call to Spiritual Reformation</em></li>
+</ul>
+</div>
+
+<div class="callout warn"><span class="tag">A Final Warning</span>
+<p>This document is not a system. The Christian life is not a program, a framework, or a set of principles competently applied. It is a relationship with a living person &mdash; the risen Christ, who is not a concept to be managed but a Lord to be known.</p>
+<p>If you have read all eleven parts and feel you now have enough information to proceed on your own, you have missed the point entirely. <strong>The vine does not give the branches a manual and send them off.</strong> Apart from Him you can do nothing <span class="ref">(John 15:5)</span> &mdash; and &ldquo;nothing&rdquo; includes the disciplined application of everything you have just read.</p>
+<p>Go to Christ. Stay there. Everything else follows or it does not come at all.</p>
+</div>
+
+<footer class="colophon">
+<p class="crux">&#10013;</p>
+<p><em>Soli Deo Gloria</em></p>
+<p>To God alone be the glory.</p>
+</footer>
+</section>
+
+</main>
+</div>
+
+<script>
+(function(){
+  // Reading progress bar
+  const bar = document.getElementById('progress');
+  function updateProgress(){
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = h > 0 ? (window.scrollY / h * 100) + '%' : '0%';
+  }
+  window.addEventListener('scroll', updateProgress, {passive:true});
+
+  // Active nav link highlighting
+  const links = document.querySelectorAll('nav#toc a');
+  const sections = [];
+  links.forEach(function(a){
+    const id = a.getAttribute('href');
+    if(id){const el = document.querySelector(id); if(el) sections.push({el:el, link:a});}
+  });
+  function updateNav(){
+    let current = null;
+    for(let i = sections.length - 1; i >= 0; i--){
+      if(sections[i].el.getBoundingClientRect().top <= 80){current = sections[i]; break;}
+    }
+    links.forEach(function(a){a.classList.remove('active');});
+    if(current) current.link.classList.add('active');
+  }
+  window.addEventListener('scroll', updateNav, {passive:true});
+  updateNav();
+})();
+</script>
+</body>
+</html>
