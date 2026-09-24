@@ -1,0 +1,1451 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personal Health Reference</title>
+<style>
+  :root {
+    --bg: #F7F8FA;
+    --surface: #FFFFFF;
+    --border: #E1E4EA;
+    --border-strong: #C7CCD4;
+    --text: #161B22;
+    --text-secondary: #5B6472;
+    --text-tertiary: #8A93A0;
+    --accent: #2A6F6F;
+    --accent-soft: #E7F1F1;
+    --eli5: #3E6FA8;
+    --eli5-soft: #EAF1F8;
+    --tier-acute: #3F8F63;
+    --tier-acute-soft: #E8F4EC;
+    --tier-recurring: #A8791F;
+    --tier-recurring-soft: #FBF1DE;
+    --tier-chronic: #AE5230;
+    --tier-chronic-soft: #FBEBE3;
+    --danger: #B23B3B;
+    --danger-soft: #FBEAEA;
+    --tier-emergency: #B23B3B;
+    --tier-emergency-soft: #FBEAEA;
+    --conflict: #8A5C0A;
+    --conflict-soft: #FCEFD9;
+    --band: #161B22;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; margin: 0; }
+  p { margin: 0 0 0.85em 0; }
+  p:last-child { margin-bottom: 0; }
+  ul { margin: 0; padding-left: 1.25em; }
+  li { margin-bottom: 0.45em; }
+  li:last-child { margin-bottom: 0; }
+  button { font-family: inherit; cursor: pointer; }
+  a { color: var(--accent); }
+  a:focus-visible, button:focus-visible, input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* ---------- Disclaimer band ---------- */
+  .disclaimer-band {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--band);
+    color: #D7DBE1;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    padding: 7px 20px;
+    text-align: center;
+  }
+  .disclaimer-band strong { color: #fff; font-weight: 600; }
+
+  /* ---------- Shell ---------- */
+  .shell { max-width: 1080px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  .masthead { margin-bottom: 32px; }
+  .masthead .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-tertiary);
+    margin-bottom: 6px;
+  }
+  .masthead h1 { font-size: 2rem; letter-spacing: -0.01em; }
+  .masthead .sub { color: var(--text-secondary); font-size: 0.95rem; margin-top: 6px; max-width: 560px; }
+
+  /* ---------- Search ---------- */
+  .search-wrap { margin: 28px 0 20px; }
+  .search-field {
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid var(--text);
+    padding-bottom: 8px;
+    gap: 10px;
+  }
+  .search-field span { font-family: var(--mono); color: var(--text-tertiary); font-size: 0.9rem; }
+  .search-field input {
+    border: none;
+    background: transparent;
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    color: var(--text);
+    width: 100%;
+  }
+  .search-field input:focus { outline: none; }
+  .search-field input::placeholder { color: var(--text-tertiary); font-style: italic; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 14px; font-size: 0.78rem; color: var(--text-secondary); }
+  .legend .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+
+  /* ---------- Library grid ---------- */
+  .library-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 18px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--tier-color, var(--accent));
+    padding: 18px 18px 16px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 1px 2px rgba(22,27,34,0.04);
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(22,27,34,0.08); }
+  .card .ref { font-family: var(--mono); font-size: 0.72rem; color: var(--text-tertiary); letter-spacing: 0.06em; }
+  .card h2 { font-size: 1.15rem; line-height: 1.3; }
+  .card .teaser { font-size: 0.86rem; color: var(--text-secondary); flex-grow: 1; }
+  .card .tag { font-family: var(--mono); font-size: 0.7rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.04em; }
+  .card .severity-pill {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    padding: 3px 8px;
+    border-radius: 2px;
+    background: var(--tier-soft, var(--accent-soft));
+    color: var(--tier-color, var(--accent));
+    width: fit-content;
+  }
+  .card .open-link {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    align-self: flex-end;
+  }
+
+  .no-match { padding: 40px 10px; color: var(--text-secondary); font-size: 0.95rem; max-width: 460px; }
+  .no-match strong { color: var(--text); display: block; margin-bottom: 6px; font-family: var(--serif); font-size: 1.1rem; }
+
+  /* ---------- Detail view ---------- */
+  .back-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    padding: 0;
+    margin-bottom: 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .back-btn:hover { color: var(--accent); }
+
+  .topic-head { border-bottom: 1px dashed var(--border-strong); padding-bottom: 20px; margin-bottom: 28px; }
+  .topic-head .ref-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .topic-head .ref { font-family: var(--mono); font-size: 0.75rem; color: var(--text-tertiary); letter-spacing: 0.06em; }
+  .topic-head h1 { font-size: 1.9rem; margin-bottom: 10px; }
+  .topic-head .meta-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .severity-pill.lg { font-size: 0.75rem; padding: 4px 10px; }
+  .verified { font-family: var(--mono); font-size: 0.72rem; color: var(--text-tertiary); }
+
+  .detail-layout { display: grid; grid-template-columns: 176px 1fr; gap: 36px; align-items: start; }
+
+  .tab-rail { position: sticky; top: 52px; display: flex; flex-direction: column; gap: 2px; }
+  .tab-btn {
+    background: none;
+    border: none;
+    border-left: 3px solid transparent;
+    text-align: left;
+    padding: 8px 10px;
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .tab-btn .code { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; color: var(--text-tertiary); }
+  .tab-btn:hover { color: var(--text); background: var(--bg); }
+  .tab-btn.active { border-left-color: var(--accent); color: var(--text); font-weight: 600; background: var(--accent-soft); }
+  .tab-btn.active .code { color: var(--accent); }
+
+  .sections { display: flex; flex-direction: column; }
+  .sect { border-top: 1px dashed var(--border-strong); padding: 22px 0; scroll-margin-top: 64px; }
+  .sect:first-child { border-top: none; padding-top: 0; }
+  .sect.eli5 { background: var(--eli5-soft); border: 1px solid #D6E4F0; border-radius: 4px; padding: 18px 20px; margin: 4px 0; }
+  .sect.eli5:first-child { margin-top: 0; }
+
+  .sect-head {
+    background: none;
+    border: none;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0;
+    text-align: left;
+  }
+  .sect-head h3 { font-size: 1.15rem; color: var(--text); }
+  .sect.eli5 .sect-head h3 { color: var(--eli5); }
+  .sect-head .chev { font-family: var(--mono); font-size: 0.85rem; color: var(--text-tertiary); transition: transform 0.15s ease; }
+  .sect.expanded .sect-head .chev { transform: rotate(90deg); }
+
+  .sect-teaser { font-size: 0.86rem; color: var(--text-secondary); margin-top: 6px; }
+  .sect.expanded .sect-teaser { display: none; }
+
+  .sect-body { display: none; margin-top: 14px; font-size: 0.94rem; color: var(--text); max-width: 68ch; }
+  .sect.expanded .sect-body { display: block; }
+
+  .subblock { margin-top: 14px; padding: 12px 14px; border-radius: 3px; border: 1px solid var(--border); }
+  .subblock.danger { background: var(--danger-soft); border-color: #EAC7C7; }
+  .subblock.danger .subhead { color: var(--danger); }
+  .subblock.neutral { background: var(--bg); }
+  .subhead { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); margin-bottom: 8px; display: block; }
+
+  .conflict-box {
+    margin-top: 14px;
+    background: var(--conflict-soft);
+    border: 1px solid #EAD3A0;
+    border-left: 3px solid var(--conflict);
+    padding: 14px 16px;
+    border-radius: 3px;
+  }
+  .conflict-box .conflict-label { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--conflict); font-weight: 700; display: block; margin-bottom: 6px; }
+  .conflict-box p { font-size: 0.88rem; color: #5C4212; }
+
+  .dos-donts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 4px; }
+  .dos-donts-grid .subhead { margin-bottom: 8px; }
+
+  .source-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  .source-list li { font-size: 0.84rem; color: var(--text-secondary); }
+  .source-list .org { font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; color: var(--text-tertiary); letter-spacing: 0.04em; margin-right: 6px; }
+
+  .data-table-wrap { margin-top: 16px; max-width: 68ch; }
+  table.data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  table.data-table th {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-tertiary);
+    font-weight: 600;
+    padding: 0 10px 8px 0;
+    border-bottom: 1px solid var(--border-strong);
+  }
+  table.data-table td {
+    padding: 8px 10px 8px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+  table.data-table tr:last-child td { border-bottom: none; }
+  table.data-table td:first-child { font-weight: 600; white-space: nowrap; }
+  .table-caption { font-size: 0.76rem; color: var(--text-tertiary); margin-top: 8px; font-style: italic; }
+
+  footer.app-footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 0.76rem; color: var(--text-tertiary); font-family: var(--mono); }
+
+  @media (max-width: 720px) {
+    .shell { padding: 24px 16px 60px; }
+    .detail-layout { grid-template-columns: 1fr; }
+    .tab-rail { position: static; flex-direction: row; overflow-x: auto; gap: 6px; padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+    .tab-btn { flex-shrink: 0; border-left: none; border-bottom: 3px solid transparent; }
+    .tab-btn.active { border-left: none; border-bottom-color: var(--accent); }
+    .dos-donts-grid { grid-template-columns: 1fr; }
+    .masthead h1 { font-size: 1.6rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card, .sect-head .chev { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="disclaimer-band">
+  <strong>Reference only.</strong> Not a substitute for professional medical advice. Always consult a qualified clinician for personal symptoms or decisions.
+</div>
+
+<div class="shell" id="shell"></div>
+
+<script>
+const TOPICS = [
+  {
+    id: "common-cold",
+    ref: "REF-01",
+    title: "Common Cold",
+    tag: "Infectious · Respiratory",
+    tier: "acute",
+    tierLabel: "Acute — Self-limiting",
+    verified: "Verified Mar 2026",
+    conflict: null,
+    sections: {
+      understanding: "The common cold is a mild viral infection of the upper respiratory tract — the nose and throat. More than 200 different respiratory viruses can cause it; rhinoviruses are responsible for roughly half of all colds in the United States. The virus inflames the lining of the nose and throat, producing the familiar stuffiness, runny nose, and sore throat. It spreads through the air and by close contact, and can survive on hands and surfaces for up to 24 hours.",
+      eli5: "Tiny germs get into your nose and throat and make them puffy and drippy, kind of like a balloon that's been overfilled. Your body fights the germs off by itself in about a week, the same way a scraped knee heals on its own — you just have to give it time, rest, and plenty of water.",
+      status: "Adults typically catch 2 to 5 colds a year; school-age children can get up to 8. There's no test for a cold — it's diagnosed by its symptoms alone. Symptoms usually peak within 2 to 3 days and clear up in 7 to 10 days, sometimes lingering up to two weeks. A cold is distinct from flu, COVID-19, and RSV, which are more likely to cause severe illness and are worth testing for if you're in a higher-risk group.",
+      redFlags: {
+        emergency: ["Trouble breathing or unusually fast breathing", "Signs of dehydration", "A fever lasting more than 4 days"],
+        seeDoctor: ["Symptoms lasting more than 10 days without improvement", "Symptoms that seem to improve, then return or worsen", "Any worsening of an existing chronic condition, such as COPD or heart failure"],
+        complications: "A cold can occasionally lead to a secondary bacterial infection, such as a sinus infection, ear infection, or pneumonia, which would need separate treatment."
+      },
+      dos: ["Rest and drink plenty of fluids", "Use a humidifier, vaporizer, or steam to ease congestion", "Try saline nasal spray or drops", "Gargle warm salt water for a sore throat", "Take an over-the-counter pain reliever as directed on the label"],
+      donts: ["Don't take antibiotics — colds are viral, and antibiotics won't help and can cause side effects", "Don't combine multiple cold medicines that each contain paracetamol or ibuprofen — check labels to avoid doubling up", "Don't give aspirin to children", "Don't give decongestants to children under 6 or honey to infants under 12 months"],
+      nutrition: "Warm fluids — water, tea, and broths — help keep you hydrated and can ease congestion; chicken soup in particular may help reduce stuffiness. There's little solid evidence that supplements like vitamin C, echinacea, or garlic prevent colds or shorten how long they last.",
+      other: "There's no cure — treatment is entirely about managing symptoms with rest, fluids, and over-the-counter relief until the immune system clears the virus. Frequent handwashing and avoiding touching your face are the most effective ways to avoid catching or spreading one. Myth: antibiotics speed up recovery. Fact: they do nothing against a virus and can cause unwanted side effects, including antimicrobial resistance.",
+      sources: [
+        {org:"CDC", title:"About Common Cold", url:"https://www.cdc.gov/common-cold/about/index.html"},
+        {org:"CDC", title:"Manage Common Cold", url:"https://www.cdc.gov/common-cold/treatment/index.html"},
+        {org:"NHS", title:"Common cold", url:"https://www.nhs.uk/conditions/common-cold/"},
+        {org:"Cleveland Clinic", title:"Common Cold", url:"https://my.clevelandclinic.org/health/diseases/12342-common-cold"}
+      ]
+    }
+  },
+  {
+    id: "flu",
+    ref: "REF-02",
+    title: "Seasonal Influenza",
+    tag: "Infectious · Respiratory",
+    tier: "acute",
+    tierLabel: "Acute — Can be severe in risk groups",
+    verified: "Verified Apr 2026",
+    conflict: null,
+    sections: {
+      understanding: "Influenza is a contagious respiratory illness caused by influenza A and B viruses that infect the nose, throat, and lungs. It spreads through respiratory droplets from coughing, sneezing, or talking. Compared with a cold, flu tends to come on more suddenly and hit harder — fever, body aches, chills, and fatigue are common, alongside a cough and sore throat. Some people, especially children, also get vomiting or diarrhea.",
+      eli5: "Flu is like a cold's tougher big sibling. It shows up fast and hits harder — you might feel achy all over, really tired, and shivery, not just sniffly. A yearly flu shot helps your body practice fighting it before it ever shows up, like a fire drill for your immune system.",
+      status: "The CDC recommends an annual flu vaccine for everyone aged 6 months and older who doesn't have a contraindication, ideally in September or October. Because flu viruses change, vaccine formulas are updated each year — for the 2026–2027 season, all three vaccine components were updated, including protection against an H3N2 subclade that spread widely in 2025–2026. Diagnosis combines symptoms with lab testing (molecular or antigen tests) when needed.",
+      redFlags: {
+        emergency: ["Difficulty breathing or shortness of breath", "Pain or pressure in the chest or abdomen", "Sudden dizziness or confusion", "Severe or persistent vomiting", "Symptoms that improve, then return with fever and a worse cough"],
+        seeDoctor: ["Any flu symptoms in a higher-risk group — pregnant people, adults 65+, children under 5 (especially under 2), and people with asthma, diabetes, heart disease, or a weakened immune system — should prompt a call to a provider promptly, since antiviral treatment works best started early"],
+        complications: "In children, watch for fast or troubled breathing, bluish skin color, not drinking enough fluids, extreme irritability, or unresponsiveness — these need emergency care."
+      },
+      dos: ["Get an annual flu vaccine — the single most effective preventive step", "Stay home when sick to avoid spreading it", "Cover coughs and sneezes, and wash hands often", "If you're in a higher-risk group, contact a provider at the first sign of symptoms"],
+      donts: ["Don't expect antibiotics to help — flu is viral", "Most healthy people with mild symptoms don't need antiviral drugs, so don't assume you need them by default"],
+      nutrition: "As with any acute infection, rest and adequate fluids are the main supportive measures — there's no flu-specific diet, just staying hydrated while your body fights the virus.",
+      other: "Antiviral drugs (oseltamivir, zanamivir, baloxavir, and IV peramivir for hospitalized patients) can shorten illness and reduce complications like pneumonia, but only when started within 1–2 days of symptoms — they are not a substitute for vaccination. Myth: the flu shot can give you the flu. Fact: even when a vaccinated person still catches flu, vaccination measurably lowers the risk of severe disease, hospitalization, and death.",
+      sources: [
+        {org:"CDC", title:"Treatment of Flu", url:"https://www.cdc.gov/flu/treatment/index.html"},
+        {org:"CDC", title:"Preventing Seasonal Flu", url:"https://www.cdc.gov/flu/prevention/index.html"},
+        {org:"CDC", title:"2026-2027 Flu Season", url:"https://www.cdc.gov/flu/season/2026-2027.html"},
+        {org:"CDC", title:"ACIP Recommendations Summary", url:"https://www.cdc.gov/flu/hcp/vax-summary/acip-recommendations.html"}
+      ]
+    }
+  },
+  {
+    id: "migraine",
+    ref: "REF-03",
+    title: "Migraine",
+    tag: "Neurological · Episodic",
+    tier: "recurring",
+    tierLabel: "Recurring — Episodic",
+    verified: "Verified Mar 2026",
+    conflict: null,
+    sections: {
+      understanding: "Migraine is a neurological condition causing intense, often one-sided, throbbing head pain, typically with nausea and sensitivity to light and sound. Attacks can last from a few hours to several days. The exact cause isn't fully understood, but it involves temporary changes in nerve and blood vessel activity in the brain. There's a strong genetic link — about half of people with migraine have a close relative who also has it — and it's roughly three times more common in women than men.",
+      eli5: "Sometimes the wiring in your brain gets a little too excited all at once, like a radio turned up too loud, and that causes a strong headache along with feeling sick or extra sensitive to light and noise. Resting in a dark, quiet room helps turn the volume back down.",
+      status: "Headache disorders affect roughly 40% of people worldwide, and migraine ranks third among all neurological conditions for global disease burden. A migraine diagnosis is based on a pattern of symptoms — typically at least five attacks lasting 4 to 72 hours, with features like one-sided location, throbbing quality, and nausea or light/sound sensitivity — rather than a lab test. Some people also experience aura: temporary visual disturbances like zigzag lines or flashing lights that typically last 5 to 60 minutes before or during the headache.",
+      redFlags: {
+        emergency: ["A sudden, extremely painful headache unlike any before (thunderclap headache)", "Trouble speaking or remembering things", "Loss of vision, blurred or double vision", "Drowsiness or confusion", "A seizure", "A very high fever with symptoms of meningitis", "Weakness on one side of the body or face", "Any of these after a recent head injury"],
+        seeDoctor: ["An attack lasting longer than 72 hours", "Aura symptoms lasting longer than an hour", "A new or changing migraine pattern during pregnancy or shortly after giving birth"],
+        complications: "None of the symptoms above are typical of ordinary migraine — they signal something more serious and warrant emergency evaluation rather than home management."
+      },
+      dos: ["Rest in a dark, quiet room during an attack", "Identify and avoid your personal triggers", "Stay well hydrated", "Keep meals and sleep on a regular schedule", "Manage stress", "Treat an attack early, as soon as symptoms start"],
+      donts: ["Don't take painkillers more than 2 days a week — overuse can cause medication-overuse headache and make migraine harder to treat", "If you have migraine with aura, avoid combined hormonal contraceptives — they raise stroke risk in this group specifically"],
+      nutrition: "Skipping meals is a common trigger, so eating at regular times matters. Limit caffeine and alcohol, particularly wine. Some people are also sensitive to processed foods with additives like MSG, or to aged cheese — a symptom diary is the most reliable way to identify your own dietary triggers, since they vary by person.",
+      other: "Treatment falls into two categories: acute relief during an attack (painkillers, triptans, anti-nausea medication) and preventive treatment for frequent attacks (certain blood pressure or antidepressant medications, or vitamin B2). There's no cure, but migraine often eases with age and, for many, after menopause. Keeping a migraine diary — tracking timing, food, sleep, stress, and hormonal cycles — is the most practical way to spot your own patterns. See a doctor if attacks are severe, worsening, occurring more than once a week, or hard to control.",
+      sources: [
+        {org:"Mayo Clinic", title:"Migraine - Symptoms and causes", url:"https://www.mayoclinic.org/diseases-conditions/migraine-headache/symptoms-causes/syc-20360201"},
+        {org:"NHS", title:"Migraine", url:"https://www.nhs.uk/conditions/migraine/"},
+        {org:"WHO", title:"Migraine and other headache disorders", url:"https://www.who.int/news-room/fact-sheets/detail/headache-disorders"},
+        {org:"Mayo Clinic", title:"Migraine with aura", url:"https://www.mayoclinic.org/diseases-conditions/migraine-with-aura/symptoms-causes/syc-20352072"}
+      ]
+    }
+  },
+  {
+    id: "iron-deficiency-anemia",
+    ref: "REF-04",
+    title: "Iron Deficiency Anemia",
+    tag: "Hematologic · Nutritional",
+    tier: "chronic",
+    tierLabel: "Chronic — Treatable, needs monitoring",
+    verified: "Verified Feb 2026",
+    conflict: null,
+    sections: {
+      understanding: "Iron deficiency anemia develops when the body doesn't have enough iron to make adequate hemoglobin, the protein in red blood cells that carries oxygen. It's the most common type of anemia. Causes include inadequate dietary iron, poor absorption (as in coeliac disease), or ongoing blood loss — commonly heavy menstrual periods or gastrointestinal bleeding. Certain medications contribute too: aspirin and NSAIDs can cause GI bleeding, and long-term acid-reducing drugs can reduce how much iron you absorb.",
+      eli5: "Iron is what your body uses to build the tiny delivery trucks — red blood cells — that carry oxygen everywhere you need it. If you run low on iron, you end up with too few trucks, so oxygen delivery slows down and you feel tired and out of breath.",
+      status: "Iron deficiency anemia is diagnosed with a blood test measuring hemoglobin and ferritin (your iron stores). Anyone diagnosed should also be tested for coeliac disease, since it's a common underlying cause. Finding the root cause matters — unexplained cases, especially with very low hemoglobin, may need a gastroenterology referral to rule out sources of internal bleeding. Standard monitoring after starting treatment: a follow-up blood count around 4 weeks in, then continuing iron for about 3 more months after hemoglobin normalizes to rebuild stores, with further checks at 3, 6, 12, and 24 months.",
+      redFlags: {
+        emergency: [],
+        seeDoctor: ["Persistent fatigue, breathlessness, or heart palpitations", "A craving to eat non-food items like ice, dirt, or paper (a recognized sign called pica)", "No improvement despite taking iron supplements as directed"],
+        complications: "Left untreated, iron deficiency anemia can increase susceptibility to infection, and in severe cases can strain the heart — causing a rapid heartbeat or, rarely, heart failure."
+      },
+      dos: ["Take iron supplements exactly as prescribed", "Pair iron-rich meals or supplements with a source of vitamin C, like orange juice, to boost absorption", "Address the underlying cause alongside supplementation, whether that's diet, heavy periods, or a GI issue"],
+      donts: ["Don't take iron supplements at the same time as antacids — space them at least 2 hours apart", "Don't wash iron supplements down with black tea, which reduces absorption"],
+      nutrition: "Iron-rich foods include lean red meat, poultry, fish, beans, dark leafy greens, and iron-fortified cereals or bread. Iron from meat and fish (heme iron) is absorbed more easily than iron from plants (non-heme iron); eating them together can roughly triple how much plant iron your body absorbs. Vitamin C — from citrus fruit, strawberries, tomatoes, or potatoes — also improves absorption of non-heme iron. Cooking in a cast-iron skillet adds a small amount of dietary iron. High-fiber bran and black tea both reduce how much iron you absorb.",
+      other: "Treatment options include oral iron supplements (several different forms exist), and, for more severe cases or when oral iron isn't tolerated, IV iron or occasionally a blood transfusion. One 2020 randomized trial found plain iron supplements worked just as well as iron combined with vitamin C — so the vitamin C pairing helps, but isn't strictly required. See a doctor about ongoing fatigue, breathlessness, or palpitations, or if a course of iron supplements isn't resolving your symptoms.",
+      sources: [
+        {org:"NHS inform", title:"Iron deficiency anaemia", url:"https://www.nhsinform.scot/illnesses-and-conditions/nutritional/iron-deficiency-anaemia/"},
+        {org:"MedlinePlus", title:"Iron deficiency anemia", url:"https://medlineplus.gov/ency/article/000584.htm"},
+        {org:"MedlinePlus", title:"Iron in diet", url:"https://medlineplus.gov/ency/article/002422.htm"},
+        {org:"Cleveland Clinic", title:"Iron-Deficiency Anemia", url:"https://my.clevelandclinic.org/health/diseases/22824-iron-deficiency-anemia"}
+      ]
+    }
+  },
+  {
+    id: "hypertension",
+    ref: "REF-05",
+    title: "Hypertension",
+    tag: "Cardiovascular · Chronic",
+    tier: "chronic",
+    tierLabel: "Chronic — Silent, needs monitoring",
+    verified: "Verified Apr 2026",
+    conflict: {
+      label: "Diagnostic threshold varies by authority",
+      detail: "The 2025 US AHA/ACC guideline sets the hypertension threshold at 130/80 mmHg or higher. The WHO instead targets below 140/90 mmHg for people without other cardiovascular disease (below 130 systolic if cardiovascular disease is already present). Both are current, mainstream positions — which one applies to you is a conversation for your own doctor, not something this reference resolves."
+    },
+    tables: {
+      status: {
+        headers: ["Authority", "Hypertension threshold"],
+        rows: [
+          ["US (AHA/ACC 2025)", "130/80 mmHg or higher"],
+          ["WHO", "140/90 mmHg or higher (130 systolic if CVD is already present)"]
+        ],
+        caption: "Two current, mainstream thresholds — see the note above on why they differ."
+      }
+    },
+    sections: {
+      understanding: "Hypertension is persistently elevated pressure in the blood vessels. Modifiable risk factors include high salt intake, diets high in saturated or trans fat, low fruit and vegetable intake, physical inactivity, tobacco and alcohol use, and excess weight; air pollution is also a significant contributor. Non-modifiable factors include family history, age over 65, and existing conditions like diabetes or kidney disease. Most people with high blood pressure have no symptoms at all.",
+      eli5: "Blood pressure is how hard your blood pushes against the walls of your blood vessels as it moves around your body — a bit like water pressure in a garden hose. If the pressure stays too high for too long, it slowly wears on the hose. Most people can't feel it happening, which is exactly why it gets checked with a cuff instead of by how you feel.",
+      status: "The number of adults with hypertension worldwide nearly doubled from 650 million in 1990 to 1.4 billion in 2024. Diagnosis should be confirmed with an out-of-office reading — either a 24-hour ambulatory monitor or a home blood pressure monitor — rather than a single clinic reading alone.",
+      redFlags: {
+        emergency: ["A sudden, severe headache with high blood pressure", "Chest pain", "Sudden vision changes", "One-sided weakness or other stroke-like symptoms"],
+        seeDoctor: ["Blood pressure readings that are consistently elevated at home"],
+        complications: "Untreated, long-term hypertension is a major driver of heart attack, stroke, heart failure, and kidney failure — which is exactly why it's called a 'silent' condition: the damage accumulates before symptoms appear."
+      },
+      dos: ["Reduce sodium intake", "Follow a DASH-style eating pattern (see Nutrition)", "Get regular physical activity", "Maintain a healthy weight", "Limit alcohol", "Stop smoking", "Monitor blood pressure at home", "Take prescribed medication consistently"],
+      donts: ["Don't rely on 'feeling fine' as a sign your blood pressure is under control — it usually isn't felt at all", "Don't assume lifestyle change alone is sufficient without medical follow-up if your numbers stay elevated after 3–6 months"],
+      nutrition: "WHO recommends under 2,000 mg of sodium a day (just under a teaspoon of salt); US guidance sets an upper limit of 2,300 mg, with 1,500 mg as an optimal target for most adults. Cutting daily sodium by even 1,000 mg can meaningfully lower blood pressure. The DASH eating pattern — rich in vegetables, fruit, whole grains, fish, poultry, beans, nuts, and low-fat dairy, and lower in saturated fat and added sugar — is the diet most consistently linked to lower blood pressure. On alcohol, current US guidance frames no alcohol as ideal, with an upper limit of no more than 2 drinks a day for men and 1 for women for those who do drink.",
+      other: "Management combines lifestyle change with, when needed, medication — modern guidance favors starting treatment earlier for people with additional cardiovascular risk factors, and often uses single-pill combinations to simplify treatment. Get at least 150 minutes of moderate aerobic activity a week. Home blood pressure monitoring is one of the most useful things you can do yourself, since hypertension rarely announces itself through symptoms.",
+      sources: [
+        {org:"WHO", title:"Hypertension", url:"https://www.who.int/news-room/fact-sheets/detail/hypertension"},
+        {org:"WHO", title:"Sodium reduction", url:"https://www.who.int/news-room/fact-sheets/detail/sodium-reduction"},
+        {org:"American College of Cardiology", title:"High Blood Pressure Focus of New ACC/AHA Guideline", url:"https://www.acc.org/latest-in-cardiology/articles/2025/10/01/01/new-in-clinical-guidance-hbp"},
+        {org:"NIH / NHLBI", title:"DASH Eating Plan", url:"https://www.nhlbi.nih.gov/health/dash-eating-plan"},
+        {org:"American Heart Association", title:"How Much Sodium Should I Eat Per Day?", url:"https://www.heart.org/en/healthy-living/healthy-eating/eat-smart/sodium/how-much-sodium-should-i-eat-per-day"}
+      ]
+    }
+  },
+  {
+    id: "type-2-diabetes",
+    ref: "REF-06",
+    title: "Type 2 Diabetes",
+    tag: "Metabolic · Chronic",
+    tier: "chronic",
+    tierLabel: "Chronic — Systemic risk, needs monitoring",
+    verified: "Verified Mar 2026",
+    conflict: null,
+    tables: {
+      status: {
+        headers: ["Test", "Diabetes threshold"],
+        rows: [
+          ["A1C", "6.5% or higher"],
+          ["Fasting plasma glucose", "126 mg/dL or higher"],
+          ["Oral glucose tolerance test (2-hr)", "200 mg/dL or higher"],
+          ["Random glucose + symptoms", "200 mg/dL or higher"],
+          ["Prediabetes (A1C)", "5.7% to 6.4%"]
+        ],
+        caption: "ADA diagnostic criteria — usually confirmed with a repeat test."
+      }
+    },
+    sections: {
+      understanding: "Type 2 diabetes develops when the body becomes resistant to insulin — the hormone that moves glucose out of the blood and into cells for energy — combined with the body not producing quite enough insulin to compensate. The result is chronically elevated blood glucose, which over time damages nerves and blood vessels throughout the body, including the heart, eyes, kidneys, and nerves. Being overweight, physical inactivity, and genetics all contribute. More than 95% of people with diabetes have type 2, and rates in children and adolescents are rising.",
+      eli5: "Insulin is like a key that unlocks your body's cells so sugar from food can get inside and be used for energy. In type 2 diabetes, the locks stop responding to the key as well as they should, so sugar builds up in the blood instead of getting where it's needed.",
+      status: "Diabetes has risen sharply worldwide — from 200 million people in 1990 to 830 million in 2022, with 14% of adults now affected, up from 7% in 1990. More than half of adults over 30 living with diabetes worldwide weren't taking any medication for it. Diagnosis uses any of several blood tests: an A1C of 6.5% or higher, a fasting glucose of 126 mg/dL or higher, or a glucose tolerance test result of 200 mg/dL or higher — usually confirmed with a repeat test. An A1C between 5.7% and 6.4% indicates prediabetes.",
+      redFlags: {
+        emergency: ["Signs of a severe blood sugar crisis — extreme thirst, confusion, rapid breathing, or loss of consciousness", "Symptoms of dangerously low blood sugar if you're on glucose-lowering medication — shakiness, sweating, confusion"],
+        seeDoctor: ["Persistent excessive thirst, frequent urination, blurred vision, unexplained fatigue, or unintentional weight loss"],
+        complications: "Long-term complications include heart attack, stroke, kidney failure, vision loss, nerve damage, and foot ulcers that can lead to amputation — type 2 diabetes symptoms are often mild and easy to miss for years, which is why diagnosis is frequently delayed until complications appear."
+      },
+      dos: ["Reach and maintain a healthy body weight", "Stay physically active — at least 150 minutes of moderate exercise a week", "Get regular check-ups, including foot checks, kidney screening, and eye exams", "Take medication as prescribed"],
+      donts: ["Don't smoke", "Don't rely on the absence of symptoms as reassurance — type 2 diabetes is frequently silent in its early stages"],
+      nutrition: "A generally healthy eating pattern is the foundation: limiting added sugar and saturated fat while emphasizing vegetables, whole grains, and lean protein. Weight management through diet is one of the most effective ways to prevent or delay type 2 diabetes, and can improve blood sugar control after diagnosis.",
+      other: "Along with lifestyle change, common medication categories include metformin, SGLT-2 inhibitors, sulfonylureas, and insulin — often alongside blood-pressure-lowering medication and statins to reduce cardiovascular risk, since diabetes and heart disease are closely linked. Blood glucose monitoring is a key part of day-to-day self-management. Myth: type 2 diabetes is unavoidable if it runs in your family. Fact: it's often preventable or delayable through weight management, activity, and diet, even with a genetic predisposition. In the US alone, over 1 in 3 adults have prediabetes, and roughly 8 in 10 of them don't know it.",
+      sources: [
+        {org:"WHO", title:"Diabetes", url:"https://www.who.int/news-room/fact-sheets/detail/diabetes"},
+        {org:"American Diabetes Association", title:"Standards of Care in Diabetes—2025: Diagnosis and Classification", url:"https://diabetesjournals.org/care/article/48/Supplement_1/S27/157566"},
+        {org:"CDC", title:"A Report Card: Diabetes in the United States", url:"https://www.cdc.gov/diabetes/communication-resources/diabetes-statistics.html"}
+      ]
+    }
+  },
+  {
+    id: "gerd",
+    ref: "REF-07",
+    title: "GERD / Acid Reflux",
+    tag: "Gastrointestinal · Chronic",
+    tier: "chronic",
+    tierLabel: "Chronic — Manageable, watch red flags",
+    verified: "Verified Apr 2025 (Mayo) / Nov 2023 (NHS)",
+    conflict: null,
+    sections: {
+      understanding: "Acid reflux is the backward flow of stomach acid into the esophagus, causing the burning sensation known as heartburn. It happens when the lower esophageal sphincter — the muscle that should keep stomach contents where they belong — doesn't close properly. GERD (gastroesophageal reflux disease) is diagnosed when this happens two or more times a week, or when reflux is damaging the esophagus regardless of frequency. Risk factors include excess weight, smoking, large or fatty meals, and pregnancy.",
+      eli5: "There's a one-way valve at the top of your stomach that's supposed to keep stomach acid down where it belongs. When that valve doesn't seal properly, acid can leak back up into the tube that connects your throat to your stomach, and that burning feeling is what you notice.",
+      status: "GERD is a common, often chronic condition. Diagnosis frequently starts based on typical symptoms alone, with acid-suppressing medication often tried before any further testing. Doctors watch for 'alarm' symptoms — difficulty swallowing, anemia, GI bleeding, or unexplained weight loss — which prompt further investigation such as an endoscopy. Left untreated over the long term, ongoing acid exposure can lead to Barrett's esophagus, a precancerous change that raises esophageal cancer risk.",
+      redFlags: {
+        emergency: ["Chest pain, especially with shortness of breath or pain in the jaw or arm — this can signal a heart attack and needs emergency evaluation, not home reflux treatment"],
+        seeDoctor: ["Difficulty swallowing or food feeling stuck", "Frequent vomiting, or vomiting blood", "Unexplained weight loss", "Needing over-the-counter heartburn medicine more than twice a week"],
+        complications: "Ongoing untreated reflux can cause esophagitis (inflammation and possible bleeding), esophageal narrowing, or Barrett's esophagus."
+      },
+      dos: ["Maintain a healthy weight", "Stop smoking", "Elevate the head of the bed", "Eat slowly and chew thoroughly", "Consider sleeping on your left side"],
+      donts: ["Don't lie down right after eating", "Don't wear tight-fitting clothing around the abdomen", "Avoid your own known trigger foods and drinks — commonly alcohol, caffeine, carbonated drinks, fatty or spicy food, chocolate, and peppermint"],
+      nutrition: "Current guidance has moved away from broad, restrictive diets — the recommendation now is to avoid only the specific foods you've noticed trigger your own symptoms, since triggers vary by person. Common culprits include caffeine, carbonated drinks, chocolate, spicy or high-fat food, citrus, tomato-based food, peppermint, and alcohol. Smaller, more frequent meals tend to help more than large ones.",
+      other: "Treatment options range from over-the-counter antacids and H2 blockers to proton pump inhibitors (PPIs) for more persistent cases, and occasionally surgery. PPIs are effective and generally safe under medical guidance; reported long-term risks are rare and worth discussing with a doctor rather than avoiding the medication outright. Myth: you need to cut out entire food groups to control GERD. Fact: most people only need to avoid their own specific triggers. See a doctor if symptoms occur more than twice a week or don't respond to lifestyle changes and over-the-counter treatment.",
+      sources: [
+        {org:"Mayo Clinic", title:"GERD - Symptoms and causes", url:"https://www.mayoclinic.org/diseases-conditions/gerd/symptoms-causes/syc-20361940"},
+        {org:"Mayo Clinic", title:"Acid reflux and GERD: The same thing?", url:"https://www.mayoclinic.org/diseases-conditions/heartburn/expert-answers/heartburn-gerd/faq-20057894"},
+        {org:"Mayo Clinic News Network", title:"Restrictive diet usually not necessary to control symptoms of GERD", url:"https://newsnetwork.mayoclinic.org/discussion/mayo-clinic-q-and-a-restrictive-diet-usually-not-necessary-to-control-symptoms-of-gerd/"},
+        {org:"NHS", title:"Heartburn and acid reflux", url:"https://www.nhs.uk/conditions/heartburn-and-acid-reflux/"}
+      ]
+    }
+  },
+  {
+    id: "seasonal-allergies",
+    ref: "REF-08",
+    title: "Seasonal Allergies",
+    tag: "Immunologic · Recurring",
+    tier: "recurring",
+    tierLabel: "Recurring — Seasonal",
+    verified: "Verified Mar 2026",
+    conflict: null,
+    sections: {
+      understanding: "Allergic rhinitis, or hay fever, happens when the immune system overreacts to a harmless airborne substance — commonly tree, grass, or weed pollen, or mold spores — and releases histamine, causing inflammation in the nose and eyes. Seasonal hay fever tracks with pollen seasons in spring, summer, and early fall; year-round (perennial) allergic rhinitis is usually triggered by dust mites, pet dander, or indoor mold instead. Despite the name, hay fever doesn't actually cause a fever.",
+      eli5: "Your immune system is like a security guard that's supposed to stop germs. With hay fever, it mistakes harmless pollen for a real threat and sounds the alarm anyway — that's what causes the sneezing, itchy eyes, and runny nose, even though the pollen was never actually dangerous.",
+      status: "Roughly 1 in 3 US adults and more than 1 in 4 US children report a seasonal allergy; in the UK, hay fever affects about 1 in 5 people. Diagnosis is usually based on symptoms and their pattern, with allergy testing (a skin prick test or a blood test) used mainly when the trigger isn't obvious or when considering longer-term treatment like immunotherapy.",
+      redFlags: {
+        emergency: ["Severe breathing difficulty", "Swelling of the tongue, lips, or throat", "Collapse — these suggest anaphylaxis or a serious asthma flare, not typical hay fever, and need emergency care"],
+        seeDoctor: ["Symptoms that are severe, keep returning despite pharmacy treatment, or disrupt sleep or daily life", "New wheezing, breathlessness, or chest tightness, since allergic rhinitis can worsen asthma"],
+        complications: "None specific beyond the above — hay fever itself is not dangerous, but it can meaningfully affect quality of life and sleep if poorly controlled."
+      },
+      dos: ["Put a thin layer of petroleum jelly around your nostrils to trap pollen", "Wear wraparound sunglasses outdoors", "Shower and change clothes after being outside on high-pollen days", "Use a pollen filter in car air vents and a HEPA filter in your vacuum", "Keep windows closed when the pollen count is high"],
+      donts: ["Don't cut grass or spend long periods on grassy areas when pollen counts are high", "Don't dry laundry outdoors during pollen season — it collects on the fabric", "Don't keep fresh flowers indoors"],
+      nutrition: "No specific diet manages allergic rhinitis. One related phenomenon worth knowing: some people with a tree-pollen allergy get an itchy or tingly mouth after eating certain raw fruits, vegetables, or nuts — a cross-reaction called oral allergy syndrome, caused by proteins in those foods resembling pollen proteins.",
+      other: "First-line management is avoiding known allergens where possible. Medication options include antihistamines (tablets, nasal sprays, or eye drops — some cause drowsiness, others don't), steroid nasal sprays (most effective when started early and used daily, though they can take up to two weeks for full effect), and for severe or poorly controlled cases, immunotherapy (allergy shots or tablets) under specialist guidance. Checking daily pollen forecasts can help with planning. Myth: hay fever can be permanently cured with over-the-counter treatment. Fact: it can't currently be cured, but it can be well controlled.",
+      sources: [
+        {org:"NHS", title:"Hay fever", url:"https://www.nhs.uk/conditions/hay-fever/"},
+        {org:"CDC", title:"Allergens and Pollen", url:"https://www.cdc.gov/climate-health/php/effects/allergens-and-pollen.html"},
+        {org:"Cleveland Clinic", title:"Allergic Rhinitis (Hay Fever)", url:"https://my.clevelandclinic.org/health/diseases/8622-allergic-rhinitis-hay-fever"}
+      ]
+    }
+  },
+  {
+    id: "high-cholesterol",
+    ref: "REF-09",
+    title: "High Cholesterol",
+    tag: "Cardiovascular · Chronic",
+    tier: "chronic",
+    tierLabel: "Chronic — Silent, needs monitoring",
+    verified: "Verified Apr 2026",
+    conflict: null,
+    tables: {
+      status: {
+        headers: ["Marker", "General adult target"],
+        rows: [
+          ["LDL (\u2018bad\u2019) cholesterol", "Under 100 mg/dL; under 70 mg/dL if you already have heart disease"],
+          ["HDL (\u2018good\u2019) cholesterol", "Above 40 mg/dL (men), above 50 mg/dL (women) \u2014 higher is better"],
+          ["Triglycerides", "Under 150 mg/dL"],
+          ["Total cholesterol", "Under 200 mg/dL"]
+        ],
+        caption: "General adult targets \u2014 your own target depends on personal risk factors, set with your doctor."
+      }
+    },
+    sections: {
+      understanding: "Cholesterol is a waxy, fat-like substance your liver makes and that also comes from food; every cell uses some of it, and it travels through the blood attached to proteins called lipoproteins. LDL (\u2018bad\u2019) cholesterol can build up inside artery walls, forming plaques that stiffen and narrow arteries; HDL (\u2018good\u2019) cholesterol carries excess cholesterol back to the liver for removal. Triglycerides are a separate type of blood fat used for energy; high levels also raise heart disease risk. High cholesterol itself causes no symptoms \u2014 it's identified only through a blood test called a lipid panel.",
+      eli5: "Picture your blood vessels as roads. LDL cholesterol is like slow trucks that can break down and block a lane, slowly narrowing the road over years. HDL cholesterol is like a tow truck that clears those trucks away. A blood test is the only way to know how much of each you have, because you can't feel it happening.",
+      status: "High cholesterol has no symptoms, so it's found through routine blood testing rather than how you feel. Target ranges depend on your personal risk \u2014 someone who already has heart disease is held to a stricter LDL target than someone with no other risk factors.",
+      redFlags: {
+        emergency: ["Sudden chest pain, pressure, or pain spreading to the arm or jaw \u2014 this can signal a heart attack, not high cholesterol itself"],
+        seeDoctor: ["Family history of very high cholesterol or early heart disease, which may need earlier or more frequent testing"],
+        complications: "Untreated high cholesterol contributes silently to atherosclerosis over years to decades, raising the risk of heart attack, stroke, and peripheral artery disease."
+      },
+      dos: ["Get a lipid panel checked as recommended by your doctor", "Eat a heart-healthy diet emphasizing unsaturated fats", "Stay physically active", "Maintain a healthy weight", "Take prescribed medication consistently if recommended"],
+      donts: ["Don't rely on symptoms to tell you your cholesterol is high \u2014 there typically aren't any", "Don't assume lifestyle change alone is enough if your risk is already elevated \u2014 that's a conversation for your doctor"],
+      nutrition: "Lifestyle changes can lower LDL by roughly 10 to 15 percent \u2014 a smaller but meaningful piece of the picture compared with medication when medication is needed. Emphasize unsaturated fats (olive oil, nuts, fatty fish) over saturated fats (fatty meat, butter, full-fat dairy), increase soluble fiber (oats, beans, fruit), and limit added sugar. The Mediterranean-style eating pattern is commonly recommended for cholesterol management.",
+      other: "Some people develop unfavorable cholesterol patterns \u2014 high triglycerides and low HDL with normal LDL \u2014 especially with excess weight; this pattern carries real heart disease risk even when LDL looks fine, which is why a full lipid panel matters more than any single number. Medication (when prescribed) can lower LDL by roughly 60 to 65 percent, considerably more than lifestyle change alone, though the two are typically used together. Myth: you'd feel it if your cholesterol were dangerously high. Fact: it's silent until it causes a complication.",
+      sources: [
+        {org:"Mayo Clinic Health System", title:"Know your numbers: Cholesterol", url:"https://www.mayoclinichealthsystem.org/hometown-health/speaking-of-health/know-your-numbers-cholesterol"},
+        {org:"Mayo Clinic News Network", title:"Cholesterol - know your numbers", url:"https://newsnetwork.mayoclinic.org/discussion/mayo-clinic-qa-cholesterol-know-your-numbers/"},
+        {org:"Cleveland Clinic", title:"Hyperlipidemia (High Cholesterol)", url:"https://my.clevelandclinic.org/health/diseases/21656-hyperlipidemia"},
+        {org:"Cleveland Clinic", title:"LDL Cholesterol: What It Is & How to Manage It", url:"https://my.clevelandclinic.org/health/articles/24391-ldl-cholesterol"}
+      ]
+    }
+  },
+  {
+    id: "obesity",
+    ref: "REF-10",
+    title: "Obesity / Weight Management",
+    tag: "Metabolic · Chronic",
+    tier: "chronic",
+    tierLabel: "Chronic \u2014 Modifiable, needs monitoring",
+    verified: "Verified Apr 2026",
+    conflict: null,
+    tables: {
+      status: {
+        headers: ["BMI category", "Range (kg/m\u00b2)"],
+        rows: [
+          ["Underweight", "Under 18.5"],
+          ["Healthy weight", "18.5 to 24.9"],
+          ["Overweight", "25.0 to 29.9"],
+          ["Obesity, Class 1", "30.0 to 34.9"],
+          ["Obesity, Class 2", "35.0 to 39.9"],
+          ["Obesity, Class 3 (severe)", "40.0 and above"]
+        ],
+        caption: "CDC adult BMI categories, ages 20+. BMI is a screening tool \u2014 discuss your category with a doctor rather than using it alone."
+      }
+    },
+    sections: {
+      understanding: "Obesity is a chronic disease involving excess body fat that raises health risks; it's most commonly screened using body mass index (BMI), a ratio of weight to height. BMI is a screening tool, not a diagnosis \u2014 it doesn't distinguish fat from muscle and should be considered alongside other health measures, not in isolation. Causes are multifactorial: diet, physical activity, genetics, medications, sleep, and environment all play a role.",
+      eli5: "Doctors use a simple math formula called BMI \u2014 your weight compared to your height \u2014 as a first, rough check on body fat. It's not perfect; it can't tell muscle from fat. So it's treated as a starting point for a conversation with a doctor, not the whole story.",
+      status: "In the US, BMI categorizes adults into underweight, healthy weight, overweight, and obesity, with obesity further split into three classes. BMI is a screening measure only and isn't intended to diagnose disease on its own.",
+      redFlags: {
+        emergency: [],
+        seeDoctor: ["Rapid, unintentional weight change in either direction", "Signs of a weight-related complication \u2014 new joint pain, breathlessness, or blood sugar symptoms"],
+        complications: "Excess weight raises the risk of type 2 diabetes, hypertension, heart disease, certain cancers, sleep apnea, and osteoarthritis, largely through its effects on metabolic and joint health."
+      },
+      dos: ["Talk to a doctor about a realistic, personalized weight goal", "Combine dietary change with regular physical activity", "Set gradual, sustainable targets rather than rapid loss", "Address sleep and stress, which both affect weight"],
+      donts: ["Don't rely on BMI alone as a complete health picture", "Don't pursue extreme or unsustainable diets without medical guidance"],
+      nutrition: "There's no single required \u2018obesity diet\u2019 \u2014 what matters most is a sustained calorie balance appropriate to your goals, built from a pattern you can maintain. Reducing ultra-processed food and added sugar, increasing protein and fiber, and practicing portion awareness are consistently supported approaches. A registered dietitian can tailor this to your specific situation.",
+      other: "Treatment options span lifestyle change, behavioral support, medication, and, for some people, surgery \u2014 the right combination depends on individual health status and goals, decided with a doctor. Obesity is now formally classified as a chronic disease requiring ongoing management, not a one-time fix. Myth: obesity is simply a matter of willpower. Fact: genetics, environment, medications, and biology all meaningfully influence body weight alongside behavior.",
+      sources: [
+        {org:"CDC", title:"Adult BMI Calculator", url:"https://www.cdc.gov/bmi/adult-calculator/index.html"},
+        {org:"CDC", title:"Data, Trends, and Maps Definitions and Sources", url:"https://www.cdc.gov/dnpao-data-trends-maps/database/definitions.html"}
+      ]
+    }
+  },
+  {
+    id: "metabolic-syndrome",
+    ref: "REF-11",
+    title: "Metabolic Syndrome",
+    tag: "Metabolic · Risk Cluster",
+    tier: "chronic",
+    tierLabel: "Chronic \u2014 Risk cluster, needs monitoring",
+    verified: "Verified Apr 2026",
+    conflict: null,
+    tables: {
+      status: {
+        headers: ["Factor", "Threshold"],
+        rows: [
+          ["Waist circumference", "\u226540 in (102 cm) men, \u226535 in (88 cm) women"],
+          ["Triglycerides", "\u2265150 mg/dL, or on treatment for high triglycerides"],
+          ["HDL cholesterol", "<40 mg/dL (men), <50 mg/dL (women), or on treatment"],
+          ["Blood pressure", "\u2265130/85 mmHg, or on treatment for hypertension"],
+          ["Fasting glucose", "\u2265100 mg/dL, or on treatment for elevated glucose"]
+        ],
+        caption: "3 or more of these 5 findings meet criteria for metabolic syndrome (AHA/NHLBI harmonized definition)."
+      }
+    },
+    sections: {
+      understanding: "Metabolic syndrome is a cluster of risk factors \u2014 not a single disease \u2014 that together raise the risk of heart disease, stroke, and type 2 diabetes. It's diagnosed when someone has at least 3 of 5 specific findings: abdominal obesity, high triglycerides, low HDL cholesterol, high blood pressure, and elevated fasting blood glucose. Central (abdominal) obesity is considered the form of excess weight most strongly tied to this cluster, because it's closely linked to insulin resistance, the underlying mechanism connecting the other four factors.",
+      eli5: "Imagine five separate warning lights on a dashboard \u2014 waist size, two types of blood fat, blood pressure, and blood sugar. Any one light on its own is a small concern. But when three or more light up together, it means the body's whole metabolic system is under strain, which is a bigger signal than any single light alone.",
+      status: "The condition is diagnosed using the harmonized 2009 AHA/NHLBI/IDF criteria: 3 or more of the 5 factors below must be present.",
+      redFlags: {
+        emergency: [],
+        seeDoctor: ["Meeting 2 of the 5 criteria, since this signals rising risk even before a full diagnosis"],
+        complications: "Metabolic syndrome roughly doubles the long-term risk of cardiovascular disease and significantly raises the risk of developing type 2 diabetes, because the underlying insulin resistance affects blood vessels, the pancreas, and fat metabolism simultaneously."
+      },
+      dos: ["Get waist circumference, blood pressure, and a lipid and glucose panel checked together", "Prioritize weight management, especially reducing abdominal fat", "Stay physically active", "Address each of the 5 factors, not just the most obvious one"],
+      donts: ["Don't treat one factor in isolation while ignoring the others \u2014 they're interconnected", "Don't wait for a formal diagnosis to act if you already meet 1 or 2 criteria"],
+      nutrition: "The same evidence-based approach applies across all 5 factors: a diet lower in refined carbohydrates and added sugar, higher in fiber, and moderate in healthy fats. Weight loss of even 5 to 10 percent of body weight can meaningfully improve several factors at once, since abdominal fat loss improves insulin sensitivity broadly rather than affecting just one marker.",
+      other: "Because metabolic syndrome ties together cardiovascular, glucose, and lipid risk, managing it well often means the diet and lifestyle changes recommended for cholesterol, hypertension, and diabetes overlap substantially \u2014 one consistent plan tends to move all five factors in the right direction together. Myth: you need a distinct treatment for metabolic syndrome. Fact: it's usually managed by treating its component parts as a coordinated whole, primarily through lifestyle change.",
+      sources: [
+        {org:"NHLBI/AHA (via Circulation)", title:"Diagnosis and Management of the Metabolic Syndrome", url:"https://www.ahajournals.org/doi/10.1161/circulationaha.105.169405"},
+        {org:"Johns Hopkins Medicine", title:"Metabolic Syndrome", url:"https://www.hopkinsmedicine.org/health/conditions-and-diseases/metabolic-syndrome"},
+        {org:"NIH/NCBI StatPearls", title:"Metabolic Syndrome", url:"https://www.ncbi.nlm.nih.gov/books/NBK459248/"}
+      ]
+    }
+  },
+  {
+    id: "anxiety",
+    ref: "REF-12",
+    title: "Anxiety Disorders",
+    tag: "Mental Health · Recurring",
+    tier: "recurring",
+    tierLabel: "Recurring \u2014 Manageable",
+    verified: "Verified Apr 2026",
+    conflict: null,
+    sections: {
+      understanding: "Anxiety disorders involve excessive, hard-to-control worry or fear that goes beyond normal stress and interferes with daily life. Generalized anxiety disorder (GAD), the most studied form, is characterized by excessive worry about everyday things \u2014 work, health, family \u2014 occurring more days than not for at least 6 months, often accompanied by physical symptoms like restlessness, muscle tension, or trouble sleeping. About a third of US adults experience an anxiety disorder at some point in their lives, and it's more common in women than men.",
+      eli5: "Everyone's brain has a built-in alarm system for real danger. With an anxiety disorder, that alarm goes off too often, too loudly, or for things that aren't actually dangerous \u2014 and it doesn't easily switch back off. Therapy and, sometimes, medication help retrain that alarm to respond more accurately.",
+      status: "There's no blood test or scan for anxiety disorders \u2014 diagnosis is based on a clinical conversation about symptoms, their duration, and how much they interfere with daily functioning. Clinicians often use short screening questionnaires, such as the GAD-7, to help gauge symptom severity and track change over time, though these tools support rather than replace a full clinical evaluation.",
+      redFlags: {
+        emergency: ["Thoughts of suicide or self-harm \u2014 contact emergency services or a crisis line immediately"],
+        seeDoctor: ["Worry that is difficult to control and occurs most days for 6 months or more", "Physical symptoms \u2014 restlessness, fatigue, muscle tension, sleep trouble \u2014 alongside persistent worry", "Anxiety that's starting to limit work, relationships, or daily activities"],
+        complications: "Untreated anxiety disorders are linked to a higher risk of depression, and the physical toll of chronic stress hormones can affect sleep, digestion, and cardiovascular health over time."
+      },
+      dos: ["Talk to a doctor or mental health professional if worry is persistent and hard to control", "Consider cognitive behavioral therapy (CBT), one of the most evidence-supported treatments", "Practice regular physical activity, which has real evidence for reducing anxiety symptoms", "Limit caffeine and alcohol, both of which can worsen anxiety symptoms", "Prioritize consistent sleep"],
+      donts: ["Don't dismiss ongoing worry as \u2018just stress\u2019 if it's persistent and interfering with life", "Don't rely on alcohol to manage anxiety \u2014 it can worsen symptoms over time"],
+      nutrition: "There's no specific \u2018anxiety diet\u2019 with strong evidence behind it, but general patterns matter: limiting caffeine (a known symptom trigger for many people), maintaining stable blood sugar through regular meals, and limiting alcohol are commonly recommended as supportive measures alongside \u2014 not instead of \u2014 therapy or medication.",
+      other: "The most effective treatments are psychotherapy (particularly CBT), medication, or a combination \u2014 with roughly 70 percent or more of people with generalized anxiety disorder experiencing significant improvement with appropriate treatment. Myth: anxiety disorders mean someone is simply \u2018too sensitive\u2019 or could stop worrying if they tried harder. Fact: they involve real, treatable changes in how the brain processes threat, not a character flaw or lack of effort.",
+      sources: [
+        {org:"NIMH", title:"Generalized Anxiety Disorder", url:"https://www.nimh.nih.gov/health/statistics/generalized-anxiety-disorder"},
+        {org:"NIMH", title:"Anxiety Disorders", url:"https://www.nimh.nih.gov/health/topics/anxiety-disorders"},
+        {org:"MedlinePlus", title:"Generalized anxiety disorder", url:"https://medlineplus.gov/ency/article/000917.htm"},
+        {org:"Harvard Health Publishing", title:"Generalized Anxiety Disorder", url:"https://www.health.harvard.edu/mind-and-mood/generalized-anxiety-disorder-a-to-z"}
+      ]
+    }
+  },
+  {
+    id: "depression",
+    ref: "REF-13",
+    title: "Depression",
+    tag: "Mental Health · Recurring",
+    tier: "recurring",
+    tierLabel: "Recurring \u2014 Treatable",
+    verified: "Verified Apr 2026",
+    conflict: null,
+    tables: {
+      status: {
+        headers: ["PHQ-9 score", "Symptom severity"],
+        rows: [
+          ["0\u20134", "Minimal or none"],
+          ["5\u20139", "Mild"],
+          ["10\u201314", "Moderate"],
+          ["15\u201319", "Moderately severe"],
+          ["20\u201327", "Severe"]
+        ],
+        caption: "Commonly used PHQ-9 severity bands \u2014 a screening aid, not a diagnosis on its own."
+      }
+    },
+    sections: {
+      understanding: "Major depressive disorder involves a persistently low mood or loss of interest in previously enjoyable activities (anhedonia), lasting at least two weeks and affecting daily functioning. Diagnosis requires at least 5 of 9 core symptoms \u2014 depressed mood, loss of interest, sleep changes, appetite changes, fatigue, poor concentration, feelings of worthlessness or guilt, psychomotor changes, or thoughts of death \u2014 with at least one being depressed mood or anhedonia itself.",
+      eli5: "Everyone feels sad sometimes, and that usually passes. Depression is different \u2014 it's a heavier, longer-lasting weight that doesn't lift on its own and makes even things you normally enjoy feel flat or exhausting. It's a real, treatable medical condition, not something a person can simply decide to feel better from.",
+      status: "Depression is one of the most common mental health conditions worldwide, affecting roughly 5 to 7 percent of adults in any given year. Clinicians commonly use the PHQ-9, a brief 9-item questionnaire mapped directly to diagnostic criteria, both to screen for depression and to track symptom severity over time.",
+      redFlags: {
+        emergency: ["Thoughts of suicide or self-harm, or a specific plan to harm yourself \u2014 call or text 988 (US) or contact local emergency services immediately"],
+        seeDoctor: ["Low mood or loss of interest lasting 2 weeks or more", "Symptoms affecting sleep, appetite, concentration, or daily functioning", "Feelings of worthlessness or excessive guilt"],
+        complications: "Untreated depression can worsen physical health outcomes, disrupt relationships and work, and carries a real risk of suicidal thinking \u2014 which is why early evaluation matters even when symptoms seem manageable."
+      },
+      dos: ["Reach out to a doctor or mental health professional if symptoms persist beyond 2 weeks", "Consider therapy (CBT is well-supported), medication, or a combination, based on a professional evaluation", "Maintain routine \u2014 regular sleep, meals, and activity \u2014 even when motivation is low", "Stay connected to supportive people, even when withdrawal feels easier"],
+      donts: ["Don't wait for symptoms to become severe before seeking help \u2014 earlier treatment tends to work better", "Don't assume depression will resolve through willpower alone; it's a medical condition, not a mood you can simply choose to change"],
+      nutrition: "There's no specific \u2018depression diet,\u2019 but regular, balanced meals help stabilize energy and mood-related biology, and appetite changes are themselves often a symptom worth monitoring, not just a nutrition question. If eating patterns have changed significantly \u2014 much more or much less \u2014 mention this specifically to whoever is evaluating your symptoms.",
+      other: "Treatment is individualized and often combines psychotherapy and medication; both are evidence-based and frequently work better together than either alone. If a person has had episodes of dramatically elevated mood or energy in the past, that changes the diagnosis to bipolar disorder, which needs a different treatment approach \u2014 mentioning any such episodes to a clinician is important. Myth: depression is just prolonged sadness. Fact: it's a distinct clinical condition involving measurable changes in sleep, energy, cognition, and motivation, not simply an intensified version of everyday sadness.",
+      sources: [
+        {org:"NAMI", title:"Major Depressive Disorder", url:"https://www.nami.org/types-of-conditions/depression/"},
+        {org:"NIH/NCBI StatPearls", title:"Major Depressive Disorder", url:"https://www.ncbi.nlm.nih.gov/books/NBK559078/"}
+      ]
+    }
+  },
+  {
+    id: "insomnia",
+    ref: "REF-14",
+    title: "Insomnia",
+    tag: "Sleep · Recurring",
+    tier: "recurring",
+    tierLabel: "Recurring \u2014 Often situational",
+    verified: "Verified Apr 2026",
+    conflict: null,
+    tables: {
+      understanding: {
+        headers: ["Type", "Duration"],
+        rows: [
+          ["Short-term (acute) insomnia", "Under 3 months, often tied to a specific stressor"],
+          ["Chronic insomnia", "3 or more nights a week, for 3 months or more"]
+        ],
+        caption: "Standard clinical distinction between short-term and chronic insomnia."
+      }
+    },
+    sections: {
+      understanding: "Insomnia is difficulty falling asleep, staying asleep, or waking too early, along with daytime effects like fatigue or irritability, despite having adequate opportunity to sleep. It can be short-term (linked to a specific stressor, lasting under 3 months) or chronic (occurring 3 or more nights a week for 3 months or more). Common contributors include stress, poor sleep habits, caffeine or alcohol use, an irregular sleep schedule, and underlying medical or mental health conditions.",
+      eli5: "Sleep works best on a routine, like a light switch that flips more easily at the same time each night. Insomnia is when that switch gets stuck \u2014 you lie awake, wake up too often, or can't get back to sleep \u2014 and it starts affecting how you feel and function the next day.",
+      status: "Insomnia is diagnosed based on a person's reported sleep difficulty and daytime impact, not a lab test \u2014 a sleep study is generally reserved for cases where another sleep disorder, like sleep apnea, is suspected. A sleep diary, tracking bedtime, wake time, and nighttime awakenings for 1 to 2 weeks, often helps guide diagnosis and treatment.",
+      redFlags: {
+        emergency: [],
+        seeDoctor: ["Sleep difficulty lasting 3 months or more", "Loud snoring, gasping, or breathing pauses during sleep, which may point to sleep apnea instead of or alongside insomnia", "Daytime sleepiness severe enough to affect safety, such as while driving"],
+        complications: "Chronic insomnia is linked to a higher risk of anxiety, depression, and impaired daytime functioning, and can worsen the management of other health conditions."
+      },
+      dos: ["Keep a consistent sleep and wake time, even on weekends", "Consider cognitive behavioral therapy for insomnia (CBT-I), the first-line treatment with the strongest long-term evidence", "Reserve the bed for sleep, avoiding screens or work in bed", "Get natural light exposure during the day"],
+      donts: ["Don't rely on long-term sleep medication as a first option \u2014 most guidance favors CBT-I first", "Don't nap excessively during the day if it's disrupting nighttime sleep", "Don't use alcohol as a sleep aid \u2014 it disrupts sleep quality even though it may help you fall asleep faster"],
+      nutrition: "Limit caffeine, especially in the afternoon and evening, since its effects can persist for hours. Avoid heavy meals and alcohol close to bedtime, both of which can fragment sleep even if they don't prevent falling asleep initially.",
+      other: "CBT-I \u2014 which addresses the thoughts and habits that perpetuate insomnia through techniques like stimulus control and sleep restriction \u2014 is considered the most effective long-term treatment, often outperforming medication over time. Sleep medications, when used, are generally recommended for short-term use rather than as an ongoing solution. Myth: you can \u2018catch up\u2019 on lost sleep over the weekend. Fact: extra weekend sleep doesn't fully reverse the effects of chronic sleep deprivation and can actually disrupt your weekday sleep schedule further.",
+      sources: [
+        {org:"NHS England / South Yorkshire ICB Guideline", title:"Insomnia in adults - treatment and management pathway", url:"https://mot.southyorkshire.icb.nhs.uk/south-yorkshire/files/South%20Yorkshire%20Guideline%20Insomnia%20management.pdf"},
+        {org:"NIH/NCBI", title:"Diagnosis and treatment of chronic insomnia", url:"https://pmc.ncbi.nlm.nih.gov/articles/PMC2924526/"},
+        {org:"Sleep Foundation", title:"Treatments for Insomnia", url:"https://www.sleepfoundation.org/insomnia/treatment"}
+      ]
+    }
+  },
+  {
+    id: "back-pain",
+    ref: "REF-15",
+    title: "Lower Back Pain",
+    tag: "Musculoskeletal · Acute",
+    tier: "acute",
+    tierLabel: "Acute \u2014 Usually self-limiting",
+    verified: "Verified Apr 2026",
+    conflict: null,
+    sections: {
+      understanding: "Low back pain is one of the most common reasons people see a doctor. About 90 to 95 percent of cases are \u2018non-specific\u2019 \u2014 meaning there's no single identifiable structural cause \u2014 and are considered mechanical in nature, often related to muscle strain, posture, or normal wear. A small minority of cases stem from a specific, more serious cause, which is why clinicians screen for warning signs even in routine back pain.",
+      eli5: "Think of your back like a well-used hinge \u2014 most soreness comes from everyday strain, like sleeping wrong or lifting awkwardly, and it settles down on its own with time and gentle movement. Doctors check for a short list of warning signs first, just to rule out anything more serious, and then usually recommend staying active rather than resting completely.",
+      status: "For most adults, a doctor can evaluate acute back pain through history and a physical exam alone, without imaging \u2014 X-rays, MRIs, or CT scans are generally deferred for about 6 weeks unless a red-flag symptom is present, since imaging this early rarely changes treatment and can lead to unnecessary follow-up.",
+      redFlags: {
+        emergency: ["Loss of bladder or bowel control, or numbness in the groin or inner thighs \u2014 this combination can signal cauda equina syndrome, a surgical emergency", "Sudden weakness or numbness in the legs"],
+        seeDoctor: ["Back pain following significant trauma", "Unexplained weight loss alongside back pain", "Back pain with a fever, or a history of cancer or intravenous drug use", "Pain that doesn't improve after several weeks of self-care"],
+        complications: "The rare but serious causes of back pain \u2014 fracture, infection, tumor, or cauda equina syndrome \u2014 account for well under 5 percent of cases combined, but missing them has serious consequences, which is why red-flag screening matters even for routine-seeming pain."
+      },
+      dos: ["Stay as active as your pain allows \u2014 this is the first-line recommendation, ahead of rest", "Apply heat or cold for symptomatic relief", "Consider physical therapy if pain persists or recurs", "Use over-the-counter pain relief as directed if needed"],
+      donts: ["Don't default to prolonged bed rest \u2014 it's associated with slower recovery, not faster", "Don't request imaging for routine back pain without a red-flag symptom present \u2014 it doesn't speed recovery and can lead to incidental findings that cause unnecessary worry"],
+      nutrition: "There's no specific back-pain diet, but maintaining a healthy weight reduces mechanical load on the spine, and adequate protein and calcium support general musculoskeletal and bone health relevant to long-term back health.",
+      other: "Most cases of non-specific low back pain improve within weeks with conservative self-management; patient education about staying active is considered the primary first-line treatment, with medication and physical therapy as supportive options rather than default requirements. Myth: back pain always means something is structurally wrong that needs to be found and fixed. Fact: in the large majority of cases, no single structural cause is ever identified, and the pain still resolves with time and activity.",
+      sources: [
+        {org:"NIH/NCBI StatPearls", title:"Low Back Pain: Evaluation and Management", url:"https://www.ncbi.nlm.nih.gov/books/NBK538173/"},
+        {org:"PubMed", title:"Red flags of low back pain", url:"https://pubmed.ncbi.nlm.nih.gov/32740106/"},
+        {org:"NIH/NINDS (via SfN)", title:"Back Pain", url:"https://www.sfn.org/sitecore/content/Home/BrainFacts2/Diseases-and-Disorders/Neurological-Disorders-AZ/Diseases-A-to-Z-from-NINDS/Back-Pain"}
+      ]
+    }
+  },
+  {
+    id: "osteoarthritis",
+    ref: "REF-16",
+    title: "Osteoarthritis",
+    tag: "Musculoskeletal · Chronic",
+    tier: "chronic",
+    tierLabel: "Chronic \u2014 Progressive, manageable",
+    verified: "Verified Apr 2026",
+    conflict: null,
+    sections: {
+      understanding: "Osteoarthritis is the most common form of arthritis. It happens when the protective cartilage that cushions the ends of bones gradually wears down, eventually allowing bone to rub against bone within the joint. It most often affects the hands, knees, hips, and spine, and risk rises with age, joint injury history, and excess weight, which adds mechanical stress to weight-bearing joints.",
+      eli5: "Your joints have a smooth cushion, like the padding in a shoe, that lets bones glide against each other without friction. Osteoarthritis is that cushion slowly wearing thin over years, so the bones start rubbing more directly \u2014 that's what causes the stiffness and ache, especially after rest or overuse.",
+      status: "Osteoarthritis is a progressive condition \u2014 the joint changes can't be reversed \u2014 but symptoms are usually manageable, and its rate of worsening can often be slowed. Diagnosis is typically based on symptoms, joint examination, and imaging when needed; joint fluid may occasionally be tested to rule out other causes like inflammatory arthritis or infection.",
+      redFlags: {
+        emergency: [],
+        seeDoctor: ["Joint pain, stiffness, or swelling that doesn't improve with rest and self-care", "A joint that becomes suddenly hot, very swollen, or red \u2014 this can indicate infection or a different type of arthritis, not typical osteoarthritis", "Joint pain significantly limiting daily activities"],
+        complications: "Without management, osteoarthritis can progressively limit mobility and independence, particularly in weight-bearing joints like the knees and hips."
+      },
+      dos: ["Stay active with low-impact exercise \u2014 walking, swimming, or cycling \u2014 to strengthen supporting muscles", "Maintain a healthy weight to reduce joint stress, especially in the knees and hips", "Consider physical or occupational therapy for joint-specific strategies", "Use assistive tools (larger grips, supportive footwear) to reduce strain on affected joints"],
+      donts: ["Don't avoid all movement out of fear of worsening pain \u2014 inactivity tends to worsen stiffness", "Don't exceed recommended doses of over-the-counter pain relievers without medical guidance"],
+      nutrition: "Weight loss, even modest amounts, meaningfully reduces stress on weight-bearing joints and can ease symptoms. Evidence for supplements like glucosamine and chondroitin is mixed at best, so they shouldn't be relied on as a primary strategy.",
+      other: "There's no cure, but a combination of exercise, weight management, physical therapy, and, when needed, medication can effectively manage symptoms for most people. Care is often coordinated between a primary care provider, a rheumatologist, or an orthopedic surgeon depending on severity. Myth: exercise makes osteoarthritis worse. Fact: appropriate low-impact exercise strengthens the muscles supporting the joint and is one of the most consistently recommended treatments.",
+      sources: [
+        {org:"Mayo Clinic", title:"Osteoarthritis - Symptoms and causes", url:"https://www.mayoclinic.org/diseases-conditions/osteoarthritis/symptoms-causes/syc-20351925"},
+        {org:"Mayo Clinic", title:"Osteoarthritis - Diagnosis and treatment", url:"https://www.mayoclinic.org/diseases-conditions/osteoarthritis/diagnosis-treatment/drc-20351930"},
+        {org:"Cleveland Clinic", title:"Osteoarthritis: What It Is, Symptoms & Treatment", url:"https://my.clevelandclinic.org/health/diseases/5599-osteoarthritis"}
+      ]
+    }
+  },
+  {
+    id: "asthma",
+    ref: "REF-17",
+    title: "Asthma",
+    tag: "Respiratory · Chronic",
+    tier: "chronic",
+    tierLabel: "Chronic \u2014 Needs an action plan",
+    verified: "Verified Apr 2026",
+    conflict: null,
+    tables: {
+      status: {
+        headers: ["Zone", "Peak flow (% of personal best)", "Meaning"],
+        rows: [
+          ["Green", "80\u2013100%", "Well controlled; continue daily medicine as usual"],
+          ["Yellow", "50\u201380%", "Caution; asthma is worsening \u2014 follow your action plan's step-up instructions"],
+          ["Red", "Below 50%", "Danger; use rescue medicine immediately and seek urgent care if it doesn't improve"]
+        ],
+        caption: "Standard 3-zone Asthma Action Plan framework, based on peak flow relative to your personal best."
+      }
+    },
+    sections: {
+      understanding: "Asthma is a chronic condition in which the airways become inflamed, narrowed, and produce extra mucus, making it harder to breathe. Attacks are typically triggered by specific factors \u2014 allergens, smoke, cold air, exercise, respiratory infections, or stress \u2014 that vary from person to person. Between attacks, many people with well-controlled asthma have no symptoms at all.",
+      eli5: "Imagine breathing through a straw that sometimes gets squeezed and a little clogged \u2014 that's what an asthma attack feels like for your airways. Certain things (like pollen, smoke, or a cold) can trigger the squeeze. Daily medicine keeps the straw wide open most of the time, and a rescue inhaler quickly widens it again if a squeeze happens.",
+      status: "Asthma is managed with a personalized written Asthma Action Plan, developed with a healthcare provider, that defines what to do based on symptoms or peak flow readings \u2014 a simple breathing test that measures how forcefully air moves out of the lungs.",
+      redFlags: {
+        emergency: ["Peak flow below 50% of personal best", "Severe shortness of breath, especially if unable to speak in full sentences", "Rescue inhaler not relieving symptoms", "Lips or fingernails turning bluish"],
+        seeDoctor: ["Needing a rescue inhaler more than 2 days a week", "Nighttime symptoms more than twice a month", "Symptoms interfering with normal activities"],
+        complications: "A severe, prolonged asthma attack that doesn't respond to usual rescue medication (status asthmaticus) is a medical emergency requiring immediate care."
+      },
+      dos: ["Work with a healthcare provider to create a written Asthma Action Plan", "Take daily controller medication consistently, even without symptoms, if prescribed", "Identify and reduce exposure to your personal triggers", "Keep rescue medication accessible at all times"],
+      donts: ["Don't stop controller medication just because you feel well \u2014 it's working to prevent symptoms, not just treating them", "Don't ignore increasing rescue inhaler use \u2014 it's a sign asthma isn't well controlled"],
+      nutrition: "There's no specific asthma diet, though maintaining a healthy weight can ease breathing mechanics, and identifying any food-related triggers (uncommon, but possible in some people) is worth discussing with a doctor if suspected.",
+      other: "Asthma can't be cured, but it can be effectively controlled with a combination of daily controller medication and situational rescue medication, guided by an individualized action plan. Common triggers include allergens, secondhand smoke, cold weather, respiratory infections, strenuous exercise, and emotional stress \u2014 though exercise itself is still encouraged, typically alongside a preventive inhaler if needed beforehand. Myth: asthma is just heavy breathing that people can control by staying calm. Fact: it's a physical narrowing of the airways that requires medical management, not willpower.",
+      sources: [
+        {org:"CDC", title:"Living with Asthma", url:"https://www.cdc.gov/asthma/living-with/index.html"},
+        {org:"American Lung Association", title:"Create an Asthma Action Plan", url:"https://www.lung.org/lung-health-diseases/lung-disease-lookup/asthma/managing-asthma/create-an-asthma-action-plan"},
+        {org:"NIH/NCBI StatPearls", title:"Peak Flow Rate Measurement", url:"https://www.ncbi.nlm.nih.gov/books/NBK459325/"},
+        {org:"NIH/NHLBI", title:"Asthma Action Plan", url:"https://www.nhlbi.nih.gov/sites/default/files/publications/Asthma-Action-Plan-2020_rev_508.pdf"}
+      ]
+    }
+  },
+  {
+    id: "uti",
+    ref: "REF-18",
+    title: "Urinary Tract Infection",
+    tag: "Urological · Acute",
+    tier: "acute",
+    tierLabel: "Acute \u2014 Treatable",
+    verified: "Verified Apr 2026",
+    conflict: null,
+    sections: {
+      understanding: "A urinary tract infection happens when bacteria \u2014 most often E. coli, which normally lives in the gut \u2014 enter the urinary tract through the urethra and multiply, most commonly in the bladder or urethra. The urinary system normally keeps bacteria out, but factors like sexual activity, certain birth control methods, or anatomical differences can make infections more likely, and UTIs are substantially more common in women than men.",
+      eli5: "Your urinary system is usually really good at keeping germs out, kind of like a security gate. A UTI happens when a few bacteria slip past that gate and start multiplying in the bladder, which causes that burning, urgent feeling when you go to the bathroom. Antibiotics clear it up, usually within a few days.",
+      status: "Most UTIs cause noticeable symptoms, but it's possible to have bacteria in the urine without any symptoms at all \u2014 called asymptomatic bacteriuria \u2014 which in most people doesn't need treatment. Diagnosis typically involves a urine test to confirm the infection before starting antibiotics.",
+      redFlags: {
+        emergency: ["Fever, chills, and back or side pain alongside urinary symptoms \u2014 this can indicate the infection has reached the kidneys (pyelonephritis) and needs prompt treatment", "Severe pain, confusion, or symptoms in a pregnant person"],
+        seeDoctor: ["Burning or pain during urination", "A strong, frequent urge to urinate even after just going", "Cloudy, strong-smelling, or bloody urine"],
+        complications: "Left untreated, a UTI can spread to the kidneys and, in rare cases, lead to a serious bloodstream infection (sepsis) \u2014 prompt treatment of symptomatic infections is what prevents this progression."
+      },
+      dos: ["See a healthcare provider for antibiotic treatment if you have symptoms", "Drink plenty of water to help flush bacteria", "Urinate soon after sexual activity", "Wipe front to back to reduce bacterial spread"],
+      donts: ["Don't leave a symptomatic UTI untreated in the hope it resolves on its own", "Don't use irritating products (deodorant sprays, douches) in the genital area, which can raise infection risk", "Avoid caffeine, alcohol, and citrus-heavy drinks while symptomatic \u2014 they can irritate the bladder further"],
+      nutrition: "Water is the main dietary recommendation \u2014 staying well hydrated dilutes urine and helps flush bacteria out mechanically. Cranberry products have popular support for prevention, but the evidence is mixed and they are not a substitute for antibiotic treatment of an active infection.",
+      other: "Simple UTIs are typically managed by a primary care provider with a short course of antibiotics; frequent or complicated UTIs may warrant referral to a urologist. People with recurrent UTIs, urinary tract abnormalities, kidney stones, or a weakened immune system are at higher risk of complications and should be monitored more closely. Myth: cranberry juice cures a UTI. Fact: it may modestly help prevent some infections, but it does not treat an existing one \u2014 antibiotics are needed for that.",
+      sources: [
+        {org:"Mayo Clinic Health System", title:"Urinary tract infection myths debunked", url:"https://www.mayoclinichealthsystem.org/hometown-health/speaking-of-health/debunking-urinary-tract-infection-myths"},
+        {org:"Mayo Clinic News Network", title:"UTI: This common infection can be serious", url:"https://newsnetwork.mayoclinic.org/discussion/uti-this-common-infection-can-be-serious/"},
+        {org:"Cleveland Clinic", title:"Urinary Tract Infection (UTI)", url:"https://my.clevelandclinic.org/health/diseases/9135-urinary-tract-infections"}
+      ]
+    }
+  },
+  {
+    id: "ibs",
+    ref: "REF-19",
+    title: "Irritable Bowel Syndrome",
+    tag: "Gastrointestinal · Recurring",
+    tier: "recurring",
+    tierLabel: "Recurring \u2014 Chronic functional",
+    verified: "Verified Apr 2026",
+    conflict: null,
+    sections: {
+      understanding: "Irritable bowel syndrome is a functional gastrointestinal disorder \u2014 meaning the gut doesn't work quite right, without a structural disease being visible on tests. It's characterized by recurring abdominal pain linked to changes in bowel habits, whether that's diarrhea, constipation, or a mix of both. The exact cause isn't fully understood, but altered gut-brain signaling, gut motility, and sometimes prior gut infections all appear to play a role.",
+      eli5: "Think of your gut as having its own nervous system that talks constantly with your brain. In IBS, some of those signals get crossed or over-sensitive, so the gut reacts more strongly than it needs to \u2014 causing cramping, bloating, and unpredictable bathroom habits \u2014 even though nothing is structurally damaged.",
+      status: "IBS is diagnosed using symptom-based criteria (the Rome IV criteria) \u2014 recurrent abdominal pain at least one day a week over the past three months, associated with changes in stool frequency or form \u2014 after ruling out other causes through history, exam, and sometimes basic testing. IBS is generally classified into subtypes based on the predominant bowel pattern: constipation-predominant, diarrhea-predominant, or mixed.",
+      redFlags: {
+        emergency: [],
+        seeDoctor: ["Rectal bleeding or blood in the stool", "Unintentional weight loss", "Symptoms starting after age 50 for the first time", "Waking from sleep due to symptoms", "A family history of colon cancer or inflammatory bowel disease"],
+        complications: "These red-flag symptoms aren't typical of IBS and point toward a need to rule out other gastrointestinal conditions, such as inflammatory bowel disease or colorectal cancer, before assuming IBS is the cause."
+      },
+      dos: ["Identify and track your own personal food and stress triggers with a symptom diary", "Consider a structured low FODMAP diet under guidance from a doctor or dietitian", "Manage stress, since gut-brain signaling plays a real role in symptom severity", "Stay physically active, which can support regular bowel function"],
+      donts: ["Don't self-diagnose IBS without ruling out red-flag symptoms with a doctor first", "Don't follow a highly restrictive elimination diet long-term without professional guidance \u2014 it can lead to nutritional gaps"],
+      nutrition: "The low FODMAP diet \u2014 temporarily reducing fermentable carbohydrates found in certain fruits, vegetables, dairy, and grains, then gradually reintroducing them \u2014 has meaningful evidence for reducing IBS symptoms and is best done with a dietitian's guidance. Some people also notice improvement avoiding gluten-containing foods, even without celiac disease, though this varies by individual and should be tested systematically rather than assumed.",
+      other: "There's no single medication that works for everyone with IBS \u2014 treatment is tailored to the predominant symptom pattern (constipation, diarrhea, or pain) and may include dietary change, fiber, antispasmodics, or, for more difficult cases, medications targeting gut motility or gut-brain signaling directly. Psychological therapies, including cognitive behavioral therapy and gut-directed hypnotherapy, also have solid evidence for symptom improvement. Myth: IBS is \u2018all in your head\u2019 or not a real medical condition. Fact: it involves measurable differences in gut motility and gut-brain signaling \u2014 it's a real, diagnosable functional disorder, even though standard tests appear normal.",
+      sources: [
+        {org:"NIH/NIDDK", title:"Eating, Diet, & Nutrition for Irritable Bowel Syndrome", url:"https://www.niddk.nih.gov/health-information/digestive-diseases/irritable-bowel-syndrome/eating-diet-nutrition"},
+        {org:"MDCalc (Rome Foundation criteria)", title:"Rome IV Diagnostic Criteria for IBS", url:"https://www.mdcalc.com/calc/4007/rome-iv-diagnostic-criteria-irritable-bowel-syndrome-ibs"}
+      ]
+    }
+  },
+  {
+    id: "thyroid-disorders",
+    ref: "REF-20",
+    title: "Thyroid Disorders",
+    tag: "Endocrine · Chronic",
+    tier: "chronic",
+    tierLabel: "Chronic \u2014 Needs monitoring",
+    verified: "Verified Apr 2026",
+    conflict: null,
+    tables: {
+      status: {
+        headers: ["TSH pattern", "Likely meaning"],
+        rows: [
+          ["Normal range (roughly 0.4\u20134.5 mIU/L)", "Thyroid function is typically normal"],
+          ["High TSH", "Suggests hypothyroidism (underactive thyroid)"],
+          ["Low TSH", "Suggests hyperthyroidism (overactive thyroid)"]
+        ],
+        caption: "General reference pattern \u2014 exact lab reference ranges vary slightly by lab and individual context."
+      }
+    },
+    sections: {
+      understanding: "The thyroid, a small gland in the neck, produces hormones that regulate metabolism throughout the body. Hypothyroidism means the thyroid produces too little hormone, slowing metabolism; hyperthyroidism means it produces too much, speeding it up. Both are usually identified through a blood test measuring thyroid-stimulating hormone (TSH), a pituitary hormone that rises when thyroid hormone is low and falls when it's high \u2014 an inverse signal that helps pinpoint which direction the problem runs.",
+      eli5: "Your thyroid is like the engine's idle speed setting for your whole body. Hypothyroidism is the engine idling too low \u2014 you feel slow, tired, and cold. Hyperthyroidism is the engine idling too high \u2014 you feel fast, jittery, and warm. A simple blood test called TSH shows which direction, if either, your engine has drifted.",
+      status: "TSH testing is the primary screening tool for thyroid function. Because interpretation can shift with age, pregnancy, and other factors, a single abnormal result is usually confirmed and interpreted alongside free T4 levels rather than acted on in isolation.",
+      redFlags: {
+        emergency: ["A very rapid heart rate, chest pain, or severe agitation in someone with known hyperthyroidism \u2014 can signal a thyroid storm, a rare emergency", "Severe swelling, slowed breathing, or confusion in someone with untreated hypothyroidism \u2014 can signal myxedema, a rare emergency"],
+        seeDoctor: ["Unexplained fatigue, weight change, or cold or heat intolerance", "A new lump or swelling in the neck", "Heart palpitations or unexplained rapid heartbeat"],
+        complications: "Untreated thyroid disorders can affect heart rhythm, bone density, cholesterol levels, mood, and, in hypothyroidism, cardiovascular risk over time \u2014 most complications develop gradually rather than suddenly."
+      },
+      dos: ["Get TSH tested if you have persistent, unexplained symptoms of fatigue, weight change, or temperature intolerance", "Take thyroid medication consistently and at the same time each day if prescribed", "Have levels rechecked periodically, since dosing needs can change over time"],
+      donts: ["Don't adjust thyroid medication dosing on your own without a follow-up test", "Don't ignore new neck swelling or a lump \u2014 it's worth having examined even if you feel otherwise well"],
+      nutrition: "Iodine is essential for thyroid hormone production, but in iodine-sufficient countries like the US and UK, additional iodine supplementation usually isn't needed and can occasionally worsen thyroid function in susceptible people \u2014 this is worth discussing with a doctor rather than self-supplementing. If you're on thyroid hormone replacement, taking it on an empty stomach, consistently, and separate from calcium or iron supplements improves absorption.",
+      other: "Common causes include autoimmune conditions (Hashimoto's thyroiditis for hypothyroidism, Graves' disease for hyperthyroidism), thyroid nodules, and, less commonly, pituitary issues. Treatment for hypothyroidism typically involves daily hormone replacement; hyperthyroidism treatment varies more, from medication to radioactive iodine to surgery, depending on the cause. Myth: thyroid problems always cause obvious symptoms. Fact: many people with mild or subclinical thyroid dysfunction have few or no noticeable symptoms, which is part of why testing matters when risk factors or subtle symptoms are present.",
+      sources: [
+        {org:"Cleveland Clinic", title:"TSH (Thyroid-Stimulating Hormone) Levels", url:"https://my.clevelandclinic.org/health/articles/23524-thyroid-stimulating-hormone-tsh-levels"},
+        {org:"NIH/NCBI (clinical trial protocol, reference range context)", title:"Levothyroxine Sodium in Thyroidectomized Patients Taking Proton Pump Inhibitors", url:"https://cdn.clinicaltrials.gov/large-docs/16/NCT03094416/Prot_000.pdf"}
+      ]
+    }
+  },
+  {
+    id: "atrial-fibrillation",
+    ref: "REF-21",
+    title: "Atrial Fibrillation",
+    tag: "Cardiovascular · Chronic",
+    tier: "chronic",
+    tierLabel: "Chronic \u2014 Stroke risk, needs monitoring",
+    verified: "Verified Apr 2026",
+    conflict: null,
+    tables: {
+      understanding: {
+        headers: ["Stroke risk factor", "Notes"],
+        rows: [
+          ["Prior stroke or TIA", "Strongest individual risk factor"],
+          ["Age 65 and older", "Risk rises further after age 75"],
+          ["High blood pressure", "Common and modifiable contributor"],
+          ["Diabetes", "Independently raises risk"],
+          ["Heart failure or vascular disease", "Additional contributing factors"],
+          ["Female sex", "Associated with modestly higher risk"]
+        ],
+        caption: "Recognized stroke risk factors in people with AFib (components of the CHA2DS2-VASc risk framework used by clinicians)."
+      }
+    },
+    sections: {
+      understanding: "Atrial fibrillation (AFib) is the most common heart rhythm disorder. Instead of the heart's upper chambers (atria) beating in a coordinated rhythm, they quiver chaotically, which can let the heart send less blood out with each beat and allow blood to pool and potentially clot in the atria. AFib doesn't directly cause a heart attack, but the clot risk it creates significantly raises the risk of stroke, and a persistently fast rate can weaken the heart muscle over time, leading to heart failure.",
+      eli5: "Your heart's upper chambers normally squeeze in a steady, coordinated rhythm, like a marching band in step. In AFib, that coordination breaks down into a chaotic quiver instead of a clean squeeze. Blood can pool in the corners of that quivering chamber and form small clots, which is the main danger \u2014 not the irregular beat itself, but what it can lead to.",
+      status: "AFib is diagnosed with an ECG (electrocardiogram), sometimes worn as a portable monitor over days to catch intermittent episodes. Some people with AFib have no noticeable symptoms at all and are only diagnosed during a routine exam or after a complication like a stroke.",
+      redFlags: {
+        emergency: ["Sudden numbness or weakness on one side of the body, trouble speaking, or facial drooping \u2014 signs of a possible stroke; call emergency services immediately", "Severe shortness of breath, fainting, or chest pain"],
+        seeDoctor: ["New heart palpitations, a racing or irregular heartbeat", "Unexplained fatigue, dizziness, or shortness of breath"],
+        complications: "AFib meaningfully raises stroke risk because of clot formation in the quivering atria, and sustained rapid rates can lead to heart failure if the rhythm isn't managed."
+      },
+      dos: ["Seek prompt evaluation for new palpitations or an irregular heartbeat", "Take prescribed blood thinners consistently if recommended, since they directly reduce stroke risk", "Manage related conditions \u2014 blood pressure, diabetes, weight \u2014 since these are shared risk factors", "Monitor your pulse if advised, to help catch irregular episodes"],
+      donts: ["Don't stop a prescribed blood thinner without medical guidance, even if you feel fine \u2014 stopping abruptly can raise stroke risk", "Don't dismiss occasional palpitations as unimportant without having them evaluated at least once"],
+      nutrition: "Limit excessive alcohol intake, a well-established AFib trigger for many people, and moderate caffeine if you notice it triggers episodes. General heart-healthy eating \u2014 similar to guidance for blood pressure and cholesterol \u2014 supports overall cardiovascular risk reduction alongside AFib-specific treatment.",
+      other: "Treatment usually combines two goals: reducing stroke risk (often with blood-thinning medication) and controlling the heart rhythm or rate (with medication or procedures like cardioversion or catheter ablation). The right approach depends on symptoms, how long AFib has been present, and individual stroke risk factors. Myth: AFib itself causes a heart attack. Fact: AFib doesn't directly cause a heart attack, but it substantially raises stroke risk through clot formation, which is why it still requires prompt, ongoing management.",
+      sources: [
+        {org:"Mayo Clinic Health System", title:"Afib and irregular heartbeat symptoms", url:"https://www.mayoclinichealthsystem.org/hometown-health/speaking-of-health/afib-and-irregular-heartbeat-symptoms-what-you-need-to-know"},
+        {org:"Mayo Clinic News Network", title:"Can Atrial Fibrillation Cause a Heart Attack or Lead to Other Serious Complications?", url:"https://newsnetwork.mayoclinic.org/discussion/atrial-fibrillation-wont-cause-heart-attack-but-can-lead-to-other-serious-complications/"},
+        {org:"Cleveland Clinic", title:"Atrial Fibrillation (AFib)", url:"https://my.clevelandclinic.org/health/diseases/16765-atrial-fibrillation-afib"},
+        {org:"Journal of the American Heart Association", title:"Heart Failure and Stroke Risk in Atrial Fibrillation", url:"https://www.ahajournals.org/doi/10.1161/JAHA.124.040758"}
+      ]
+    }
+  },
+  {
+    id: "heart-attack",
+    ref: "REF-22",
+    title: "Heart Attack Recognition",
+    tag: "Cardiovascular · Emergency",
+    tier: "emergency",
+    tierLabel: "Emergency \u2014 Know the signs",
+    verified: "Verified Apr 2026",
+    conflict: null,
+    tables: {
+      status: {
+        headers: ["Symptom", "How common"],
+        rows: [
+          ["Chest pressure, squeezing, fullness, or pain", "Most common symptom in both men and women"],
+          ["Pain or discomfort in arms, back, neck, or jaw", "Common in both, sometimes the primary symptom"],
+          ["Shortness of breath", "Common in both; may occur with or without chest discomfort"],
+          ["Cold sweat, nausea, or lightheadedness", "Occurs in both; somewhat more frequently reported by women"],
+          ["Unusual fatigue, indigestion-like discomfort", "More often reported by women, and more likely to be dismissed or misattributed"]
+        ],
+        caption: "Warning signs of a heart attack \u2014 American Heart Association. Symptoms overlap between sexes, but presentation can differ."
+      }
+    },
+    sections: {
+      understanding: "A heart attack occurs when blood flow carrying oxygen to part of the heart muscle is severely reduced or completely blocked, usually by a buildup of fat, cholesterol, and other substances narrowing the arteries. Without quick treatment to restore blood flow, the affected heart muscle begins to be damaged. This is a purely emergency-recognition reference \u2014 heart attack management itself requires immediate professional medical care, not self-treatment.",
+      eli5: "Your heart muscle needs a constant supply of blood to keep working, delivered through its own small pipes. A heart attack happens when one of those pipes gets blocked, cutting off supply to part of the muscle. The longer it's blocked, the more damage happens \u2014 which is why getting help fast matters so much.",
+      status: "Someone in the US has a heart attack roughly every 40 seconds. Symptoms can differ meaningfully between men and women \u2014 recognizing the fuller range of warning signs, not just classic chest pain, is genuinely important for catching heart attacks that might otherwise be missed or dismissed.",
+      redFlags: {
+        emergency: ["Chest discomfort lasting more than a few minutes, or that goes away and comes back", "Any combination of the symptoms in the table above, especially if sudden \u2014 call 911 immediately, do not drive yourself", "Chewing an aspirin while waiting for emergency services may be advised by a clinician in some cases, but calling for help always comes first"],
+        seeDoctor: ["A personal or family history of heart disease, to understand and manage your own risk factors before an emergency occurs"],
+        complications: "The longer blood flow stays blocked, the more heart muscle is damaged \u2014 this is why calling emergency services immediately, rather than waiting to see if symptoms pass or driving yourself to the hospital, measurably improves outcomes."
+      },
+      dos: ["Call 911 immediately for any suspected heart attack symptoms, even if unsure", "Stay seated or lying down while waiting for help", "If prescribed nitroglycerin for a known heart condition, take it as directed while waiting for EMS"],
+      donts: ["Don't drive yourself or have someone drive you \u2014 a heart attack can trigger a dangerous rhythm, and EMS can begin treatment immediately upon arrival", "Don't wait to see if symptoms pass before calling for help", "Don't dismiss atypical symptoms (fatigue, nausea, indigestion-like discomfort) just because there's no classic chest pain, especially in women"],
+      nutrition: "Not applicable to this emergency-recognition entry \u2014 see the High Cholesterol, Hypertension, and Type 2 Diabetes entries for dietary risk-reduction guidance relevant to preventing heart attacks over the long term.",
+      other: "Prevention is a long-term, cumulative effort: managing blood pressure, cholesterol, and blood sugar, not smoking, staying active, and knowing your personal and family risk factors. Emergency medical teams can begin treatment before arrival at the hospital, and people who arrive by ambulance are often treated faster than those who arrive by car \u2014 another reason calling 911 outperforms self-transport. Myth: heart attack symptoms are always sudden and dramatic, like in movies. Fact: they can build gradually over minutes and may feel more like pressure, fullness, or indigestion than sharp, dramatic pain.",
+      sources: [
+        {org:"American Heart Association", title:"Warning Signs of a Heart Attack", url:"https://www.heart.org/en/health-topics/heart-attack/warning-signs-of-a-heart-attack"},
+        {org:"American Heart Association", title:"Heart Attack Symptoms in Women", url:"https://www.heart.org/en/health-topics/heart-attack/warning-signs-of-a-heart-attack/heart-attack-symptoms-in-women"},
+        {org:"American Heart Association", title:"Get familiar with signs of a heart attack or stroke", url:"https://www.heart.org/en/news/2020/01/21/get-familiar-with-signs-of-a-heart-attack-or-stroke"},
+        {org:"CDC", title:"About Women and Heart Disease", url:"https://www.cdc.gov/heart-disease/about/women-and-heart-disease.html"}
+      ]
+    }
+  },
+  {
+    id: "stroke",
+    ref: "REF-23",
+    title: "Stroke Recognition",
+    tag: "Neurological · Emergency",
+    tier: "emergency",
+    tierLabel: "Emergency \u2014 Know the signs",
+    verified: "Verified Apr 2026",
+    conflict: null,
+    tables: {
+      status: {
+        headers: ["Letter", "What to check"],
+        rows: [
+          ["B \u2014 Balance", "Sudden loss of balance or coordination, trouble walking, dizziness"],
+          ["E \u2014 Eyes", "Sudden vision changes \u2014 blurred, double vision, or loss of sight in one or both eyes"],
+          ["F \u2014 Face", "Face drooping on one side, or numbness \u2014 ask the person to smile"],
+          ["A \u2014 Arm", "One arm weak or numb \u2014 ask the person to raise both arms and watch for drift"],
+          ["S \u2014 Speech", "Slurred speech, difficulty speaking, or trouble understanding \u2014 ask them to repeat a simple sentence"],
+          ["T \u2014 Time", "If any of the above are present, call 911 immediately \u2014 note the time symptoms started"]
+        ],
+        caption: "The BE-FAST checklist (American Heart Association / American Stroke Association) \u2014 the standard tool for spotting stroke symptoms quickly."
+      }
+    },
+    sections: {
+      understanding: "A stroke happens when blood flow to part of the brain is interrupted \u2014 most commonly by a clot blocking an artery (ischemic stroke, the most common type) or, less often, by a burst blood vessel (hemorrhagic stroke). Brain cells begin dying within minutes of losing blood supply, which is why stroke is treated as one of the most time-critical medical emergencies. This is a purely emergency-recognition reference \u2014 stroke treatment itself requires immediate professional medical care.",
+      eli5: "Your brain needs a constant supply of blood, just like your heart does. A stroke happens when that supply to part of the brain gets suddenly cut off or a blood vessel bursts. Brain cells start dying within minutes, so recognizing the signs fast and getting emergency help immediately is what limits lasting damage.",
+      status: "Stroke is a leading cause of death and serious long-term disability, but it's also preventable and treatable \u2014 especially when treatment begins quickly. A clot-busting medication can reduce the likelihood of permanent disability if given within a narrow window, often cited as around 3 hours from symptom onset, which is why speed matters enormously.",
+      redFlags: {
+        emergency: ["Any single BE-FAST symptom, even if it goes away \u2014 call 911 immediately and note the time it started", "Sudden, severe headache with no known cause", "Sudden confusion or trouble understanding speech"],
+        seeDoctor: ["Brief stroke-like symptoms that resolved on their own (possible TIA, or \u2018mini-stroke\u2019) still need urgent medical evaluation \u2014 a TIA is a warning sign of serious future stroke risk and should never be ignored just because it cleared up"],
+        complications: "A transient ischemic attack (TIA) can look identical to a stroke but resolves within minutes; because it signals real underlying risk, ignoring a resolved TIA removes a critical opportunity for prevention before a larger stroke occurs."
+      },
+      dos: ["Call 911 immediately for any BE-FAST symptom, even a single one, and even if it resolves", "Note the exact time symptoms started \u2014 this determines treatment options", "Stay with the person and keep them safe and calm while waiting for EMS"],
+      donts: ["Don't wait to see if symptoms improve before calling for help", "Don't drive the person to the hospital yourself \u2014 EMS can begin evaluation and treatment during transport", "Don't dismiss symptoms that resolve quickly \u2014 a TIA still requires urgent evaluation"],
+      nutrition: "Not applicable to this emergency-recognition entry \u2014 see the Hypertension, Atrial Fibrillation, and High Cholesterol entries for dietary risk-reduction guidance relevant to stroke prevention over the long term.",
+      other: "The most effective treatments for ischemic stroke are highly time-sensitive, which is the entire basis of the BE-FAST framework \u2014 the goal is recognition and a 911 call within seconds to minutes of symptom onset, not a wait-and-see approach. Long-term prevention centers on managing shared risk factors: high blood pressure, atrial fibrillation, high cholesterol, diabetes, and smoking. Myth: stroke only happens to older people. Fact: while risk rises with age, strokes can occur at any age, and rapid recognition matters regardless of who's affected.",
+      sources: [
+        {org:"American Heart Association", title:"Heart Attack, Stroke and Cardiac Arrest Symptoms", url:"https://www.heart.org/en/about-us/heart-attack-and-stroke-symptoms"},
+        {org:"CDC", title:"Signs and Symptoms of Stroke", url:"https://www.cdc.gov/stroke/signs-symptoms/index.html"},
+        {org:"American Heart Association", title:"Get familiar with signs of a heart attack or stroke", url:"https://www.heart.org/en/news/2020/01/21/get-familiar-with-signs-of-a-heart-attack-or-stroke"}
+      ]
+    }
+  },
+  {
+    id: "oral-health",
+    ref: "REF-24",
+    title: "Oral Health",
+    tag: "Dental · Chronic",
+    tier: "chronic",
+    tierLabel: "Chronic \u2014 Preventable with routine care",
+    verified: "Verified Apr 2026",
+    conflict: null,
+    tables: {
+      status: {
+        headers: ["Habit", "Recommended frequency"],
+        rows: [
+          ["Brushing", "Twice daily"],
+          ["Flossing", "Once daily"],
+          ["Dental checkup and cleaning", "At least once a year, or more often if recommended"]
+        ],
+        caption: "CDC-recommended baseline oral hygiene and checkup frequency for adults."
+      }
+    },
+    sections: {
+      understanding: "Oral health problems mainly fall into two categories: cavities (tooth decay caused by bacterial plaque acids wearing away tooth enamel) and gum disease (inflammation of the tissue around teeth, caused by plaque buildup). Gum disease ranges from gingivitis, the mild and reversible early stage, to periodontitis, a more serious form involving bone loss around the teeth that can't be reversed, only managed. Together, periodontitis and cavities are the two leading causes of tooth loss.",
+      eli5: "Think of plaque as a sticky film of bacteria that builds up on your teeth every day. If it's not brushed and flossed away regularly, it can wear holes in your teeth (cavities) or irritate and infect your gums (gum disease). Regular brushing, flossing, and dental checkups are how you keep that film from causing lasting damage.",
+      status: "Gum disease is common and often develops silently before it's noticed \u2014 nearly half of US adults aged 30 and older have some degree of periodontitis, and severe periodontitis affects about 8 percent. A yearly dental checkup helps catch both cavities and gum disease early, when they're most manageable.",
+      redFlags: {
+        emergency: ["Facial swelling with fever, or a dental infection causing difficulty swallowing or breathing \u2014 this can indicate a spreading infection and needs urgent care"],
+        seeDoctor: ["Red, swollen, or bleeding gums", "Gums that appear to be pulling away from the teeth", "Loose or increasingly sensitive teeth", "Persistent bad breath or a change in how teeth fit together when biting"],
+        complications: "Poor oral health is linked to broader health effects \u2014 for example, gum disease can worsen blood sugar control in people with diabetes, and untreated infection can, in rare cases, spread beyond the mouth."
+      },
+      dos: ["Brush twice daily and floss once daily to remove plaque before it causes damage", "Get a professional cleaning and checkup at least once a year", "Address bleeding or swollen gums early \u2014 gingivitis is fully reversible with good care, unlike more advanced gum disease"],
+      donts: ["Don't skip regular dental visits even if nothing feels wrong \u2014 gum disease often has no symptoms until it's advanced", "Don't ignore bleeding gums as normal \u2014 persistent bleeding when brushing or flossing is a sign of gum inflammation worth addressing"],
+      nutrition: "Limiting frequent sugary or acidic food and drink reduces the fuel available to plaque bacteria that cause cavities. Drinking fluoridated water, where available, and using fluoride toothpaste both meaningfully reduce cavity risk.",
+      other: "Gingivitis, the earliest stage of gum disease, is fully reversible with consistent brushing, flossing, and professional cleaning; periodontitis, the more advanced stage, can't be reversed but can be slowed and managed with professional treatment, sometimes including a deeper cleaning procedure called scaling and root planing. Myth: bleeding gums when you brush or floss is normal and not worth worrying about. Fact: healthy gums generally don't bleed with normal brushing or flossing \u2014 persistent bleeding is an early sign of gum inflammation worth addressing before it progresses.",
+      sources: [
+        {org:"CDC", title:"About Periodontal (Gum) Disease", url:"https://www.cdc.gov/oral-health/about/gum-periodontal-disease.html"},
+        {org:"CDC", title:"Gum Disease Facts", url:"https://www.cdc.gov/oral-health/data-research/facts-stats/fast-facts-gum-disease.html"},
+        {org:"CDC", title:"About Oral Health", url:"https://www.cdc.gov/oral-health/about/"}
+      ]
+    }
+  }
+];
+
+const SECTION_DEFS = [
+  { key: "understanding", label: "Understanding & Mechanism", code: "UN" },
+  { key: "eli5", label: "Explain It Like I'm 5", code: "E5" },
+  { key: "status", label: "Current Status", code: "CS" },
+  { key: "redFlags", label: "Precautions & Red Flags", code: "RF" },
+  { key: "dosDonts", label: "Do's & Don'ts", code: "DD" },
+  { key: "nutrition", label: "Nutrition", code: "NU" },
+  { key: "other", label: "Other Dimensions", code: "OT" },
+  { key: "sources", label: "Sources", code: "SO" }
+];
+
+let state = { view: "library", activeTopicId: null };
+
+function tierVars(tier) {
+  const map = {
+    acute: { color: "var(--tier-acute)", soft: "var(--tier-acute-soft)" },
+    recurring: { color: "var(--tier-recurring)", soft: "var(--tier-recurring-soft)" },
+    chronic: { color: "var(--tier-chronic)", soft: "var(--tier-chronic-soft)" },
+    emergency: { color: "var(--tier-emergency)", soft: "var(--tier-emergency-soft)" }
+  };
+  return map[tier];
+}
+
+function tableHTML(table) {
+  if (!table) return "";
+  return `<div class="data-table-wrap">
+    <table class="data-table">
+      <thead><tr>${table.headers.map(h => `<th>${esc(h)}</th>`).join("")}</tr></thead>
+      <tbody>${table.rows.map(row => `<tr>${row.map(cell => `<td>${esc(cell)}</td>`).join("")}</tr>`).join("")}</tbody>
+    </table>
+    ${table.caption ? `<div class="table-caption">${esc(table.caption)}</div>` : ""}
+  </div>`;
+}
+
+function esc(s) {
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function teaserOf(text, len) {
+  if (text.length <= len) return text;
+  return text.slice(0, len).replace(/\s+\S*$/, "") + "…";
+}
+
+function renderApp() {
+  const shell = document.getElementById("shell");
+  if (state.view === "library") {
+    shell.innerHTML = libraryHTML();
+    attachLibraryEvents();
+  } else {
+    const topic = TOPICS.find(t => t.id === state.activeTopicId);
+    shell.innerHTML = detailHTML(topic);
+    attachDetailEvents(topic);
+    window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+  }
+}
+
+function libraryHTML() {
+  return `
+    <div class="masthead">
+      <div class="eyebrow">Personal Reference Library · 24 entries</div>
+      <h1>Health Reference</h1>
+      <div class="sub">A static, offline library built from major health authorities — WHO, CDC, NHS, Mayo Clinic, and NIH. Search filters what's already here; nothing is fetched live.</div>
+    </div>
+
+    <div class="search-wrap">
+      <div class="search-field">
+        <span>Search</span>
+        <input id="search-input" type="text" placeholder="Try “migraine” or “blood pressure”…" autocomplete="off" aria-label="Search health reference library">
+      </div>
+      <div class="legend">
+        <span><span class="dot" style="background:var(--tier-acute)"></span>Acute — self-limiting</span>
+        <span><span class="dot" style="background:var(--tier-recurring)"></span>Recurring — episodic</span>
+        <span><span class="dot" style="background:var(--tier-chronic)"></span>Chronic — systemic risk</span>
+        <span><span class="dot" style="background:var(--tier-emergency)"></span>Emergency — know the signs</span>
+      </div>
+    </div>
+
+    <div id="library-grid" class="library-grid">
+      ${gridHTML(TOPICS)}
+    </div>
+  `;
+}
+
+function gridHTML(topics) {
+  if (topics.length === 0) {
+    return `<div class="no-match">
+      <strong>Not yet in your library.</strong>
+      This reference only grows through a dedicated research cycle against WHO, CDC, NHS, Mayo Clinic, and NIH sources — nothing is pulled live. Mention this topic to add it next time.
+    </div>`;
+  }
+  return topics.map(t => {
+    const v = tierVars(t.tier);
+    return `
+      <button class="card" data-id="${t.id}" style="--tier-color:${v.color}; --tier-soft:${v.soft}">
+        <div class="ref">${t.ref}</div>
+        <h2>${esc(t.title)}</h2>
+        <div class="tag">${esc(t.tag)}</div>
+        <div class="teaser">${esc(teaserOf(t.sections.understanding, 118))}</div>
+        <span class="severity-pill">${esc(t.tierLabel)}</span>
+        <span class="open-link">Open →</span>
+      </button>
+    `;
+  }).join("");
+}
+
+function attachLibraryEvents() {
+  const input = document.getElementById("search-input");
+  const grid = document.getElementById("library-grid");
+  input.addEventListener("input", () => {
+    const q = input.value.trim().toLowerCase();
+    const filtered = q === "" ? TOPICS : TOPICS.filter(t =>
+      t.title.toLowerCase().includes(q) ||
+      t.tag.toLowerCase().includes(q) ||
+      t.id.toLowerCase().includes(q)
+    );
+    grid.innerHTML = gridHTML(filtered);
+    bindCardClicks(grid);
+  });
+  bindCardClicks(grid);
+}
+
+function bindCardClicks(container) {
+  container.querySelectorAll(".card").forEach(card => {
+    card.addEventListener("click", () => {
+      state.view = "detail";
+      state.activeTopicId = card.dataset.id;
+      renderApp();
+    });
+  });
+}
+
+function listHTML(items) {
+  return `<ul>${items.map(i => `<li>${esc(i)}</li>`).join("")}</ul>`;
+}
+
+function sectionBodyHTML(topic, defKey) {
+  const s = topic.sections;
+  const tbl = topic.tables ? tableHTML(topic.tables[defKey]) : "";
+  switch (defKey) {
+    case "understanding":
+      return `<p>${esc(s.understanding)}</p>` + tbl + (topic.conflict ? conflictHTML(topic.conflict) : "");
+    case "eli5":
+      return `<p>${esc(s.eli5)}</p>` + tbl;
+    case "status":
+      return `<p>${esc(s.status)}</p>` + tbl;
+    case "redFlags": {
+      let out = "";
+      if (s.redFlags.emergency.length) {
+        out += `<div class="subblock danger"><span class="subhead">Seek emergency care</span>${listHTML(s.redFlags.emergency)}</div>`;
+      }
+      if (s.redFlags.seeDoctor.length) {
+        out += `<div class="subblock neutral"><span class="subhead">Contact a doctor</span>${listHTML(s.redFlags.seeDoctor)}</div>`;
+      }
+      out += tbl;
+      out += `<p style="margin-top:14px">${esc(s.redFlags.complications)}</p>`;
+      return out;
+    }
+    case "dosDonts":
+      return `<div class="dos-donts-grid">
+        <div><span class="subhead">Do</span>${listHTML(s.dos)}</div>
+        <div><span class="subhead">Don't</span>${listHTML(s.donts)}</div>
+      </div>` + tbl;
+    case "nutrition":
+      return `<p>${esc(s.nutrition)}</p>` + tbl;
+    case "other":
+      return `<p>${esc(s.other)}</p>` + tbl;
+    case "sources":
+      return `<ul class="source-list">${s.sources.map(src =>
+        `<li><span class="org">${esc(src.org)}</span>${esc(src.title)} — <a href="${src.url}" target="_blank" rel="noopener noreferrer">${src.url}</a></li>`
+      ).join("")}</ul>`;
+  }
+}
+
+function teaserFor(topic, defKey) {
+  const s = topic.sections;
+  const map = {
+    understanding: s.understanding,
+    eli5: s.eli5,
+    status: s.status,
+    redFlags: s.redFlags.complications,
+    dosDonts: s.dos[0] + " …",
+    nutrition: s.nutrition,
+    other: s.other,
+    sources: `${s.sources.length} cited sources`
+  };
+  return teaserOf(map[defKey], 100);
+}
+
+function conflictHTML(c) {
+  return `<div class="conflict-box">
+    <span class="conflict-label">⚠ ${esc(c.label)}</span>
+    <p>${esc(c.detail)}</p>
+  </div>`;
+}
+
+function detailHTML(topic) {
+  const v = tierVars(topic.tier);
+  const defaultOpen = "understanding";
+  return `
+    <button class="back-btn" id="back-btn">← Back to library</button>
+
+    <div class="topic-head">
+      <div class="ref-row">
+        <span class="ref">${topic.ref}</span>
+        <span class="tag">${esc(topic.tag)}</span>
+      </div>
+      <h1>${esc(topic.title)}</h1>
+      <div class="meta-row">
+        <span class="severity-pill lg" style="background:${v.soft}; color:${v.color}">${esc(topic.tierLabel)}</span>
+        <span class="verified">${esc(topic.verified)}</span>
+      </div>
+    </div>
+
+    <div class="detail-layout">
+      <nav class="tab-rail" aria-label="Section navigation">
+        ${SECTION_DEFS.map(d => `
+          <button class="tab-btn ${d.key === defaultOpen ? "active" : ""}" data-target="${d.key}">
+            <span class="code">${d.code}</span>
+            <span>${d.label}</span>
+          </button>
+        `).join("")}
+      </nav>
+
+      <div class="sections">
+        ${SECTION_DEFS.map(d => `
+          <section class="sect ${d.key === "eli5" ? "eli5" : ""} ${d.key === defaultOpen ? "expanded" : ""}" id="sect-${d.key}" data-key="${d.key}">
+            <button class="sect-head" data-key="${d.key}" aria-expanded="${d.key === defaultOpen}">
+              <h3>${esc(d.label)}</h3>
+              <span class="chev">▸</span>
+            </button>
+            <div class="sect-teaser">${esc(teaserFor(topic, d.key))}</div>
+            <div class="sect-body">${sectionBodyHTML(topic, d.key)}</div>
+          </section>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function attachDetailEvents(topic) {
+  document.getElementById("back-btn").addEventListener("click", () => {
+    state.view = "library";
+    renderApp();
+  });
+
+  document.querySelectorAll(".sect-head").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.key;
+      const sect = document.getElementById("sect-" + key);
+      const expanded = sect.classList.toggle("expanded");
+      btn.setAttribute("aria-expanded", String(expanded));
+      document.querySelectorAll(".tab-btn").forEach(tb => tb.classList.remove("active"));
+      const tab = document.querySelector(`.tab-btn[data-target="${key}"]`);
+      if (tab) tab.classList.add("active");
+    });
+  });
+
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.target;
+      const sect = document.getElementById("sect-" + key);
+      if (!sect.classList.contains("expanded")) {
+        sect.classList.add("expanded");
+        const head = sect.querySelector(".sect-head");
+        head.setAttribute("aria-expanded", "true");
+      }
+      document.querySelectorAll(".tab-btn").forEach(tb => tb.classList.remove("active"));
+      btn.classList.add("active");
+      sect.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+}
+
+renderApp();
+</script>
+
+</body>
+</html>
