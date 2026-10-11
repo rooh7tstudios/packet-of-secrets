@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shape of You: a Big Five personality test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF0F6;--surface:#FFFFFF;--ink:#1B1E36;--muted:#5B6078;--line:#D5D8E5;
+  --O:#7B5CD6;--C:#178F7E;--E:#C9820A;--A:#D4486F;--N:#3F66D1;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#151729;--surface:#1E2138;--ink:#E9EAF4;--muted:#A3A7C2;--line:#33375A;
+  --O:#A48BF0;--C:#3FC2AE;--E:#F0B440;--A:#F07A9C;--N:#7A9BF2;}}
+:root[data-theme="dark"]{
+  --bg:#151729;--surface:#1E2138;--ink:#E9EAF4;--muted:#A3A7C2;--line:#33375A;
+  --O:#A48BF0;--C:#3FC2AE;--E:#F0B440;--A:#F07A9C;--N:#7A9BF2;}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+main{max-width:640px;margin:0 auto;padding:24px 20px 64px}
+h1,h2,h3{font-family:var(--display);line-height:1.1;margin:0}
+h1{font-size:clamp(40px,11vw,64px);font-weight:800;letter-spacing:-.02em}
+h2{font-size:30px;font-weight:700;letter-spacing:-.01em}
+h3{font-size:21px;font-weight:700}
+p{margin:0 0 14px}
+a{color:inherit}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--N);outline-offset:3px}
+.btn{background:var(--ink);color:var(--bg);border:0;border-radius:14px;padding:16px 26px;font-weight:700;font-size:18px}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.link{background:none;border:0;padding:8px 0;text-decoration:underline;color:var(--muted)}
+.screen{display:none}.screen.on{display:block}
+
+/* fingerprint: the one memorable element */
+.print{display:flex;gap:10px;align-items:flex-end;height:220px;margin:28px 0 8px}
+.print .bar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.print .fill{border-radius:40px 40px 10px 10px;height:8%;transition:height 1.1s cubic-bezier(.2,.8,.2,1)}
+.print .lab{font-family:var(--display);font-weight:800;font-size:22px;text-align:center;margin-top:8px}
+.print .pct{font-size:14px;text-align:center;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.print .fill{transition:none}}
+
+.hero p.lede{font-size:20px;margin-top:18px}
+.facts{display:flex;gap:22px;flex-wrap:wrap;margin:20px 0 28px;color:var(--muted);font-size:15px}
+.facts b{display:block;color:var(--ink);font-family:var(--display);font-size:24px}
+
+/* guess */
+.guess{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;margin:10px 0}
+.guess label{display:flex;justify-content:space-between;font-weight:700}
+.guess .ends{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+input[type=range]{width:100%;margin:10px 0 4px}
+
+/* quiz */
+.qtop{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--muted)}
+.track{height:6px;background:var(--line);border-radius:6px;margin:10px 0 36px;overflow:hidden}
+.track div{height:100%;background:var(--ink);width:0;transition:width .25s}
+.stmt{font-family:var(--display);font-weight:700;font-size:clamp(28px,7.5vw,40px);line-height:1.15;min-height:3.6em;letter-spacing:-.01em}
+.opts{display:grid;gap:10px;margin:26px 0 18px}
+.opt{display:flex;align-items:center;gap:14px;text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:14px 16px;font-size:17px}
+.opt .dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--muted);flex:none}
+.opt:hover{border-color:var(--ink)}
+.opt.sel{border-color:var(--ink)}.opt.sel .dot{background:var(--ink);border-color:var(--ink)}
+.opt kbd{margin-left:auto;font-family:var(--body);font-size:13px;color:var(--muted)}
+@media (max-width:480px){.opt kbd{display:none}}
+
+/* break */
+.fact{background:var(--surface);border-radius:22px;padding:28px 24px;margin:18px 0 24px;border:1px solid var(--line)}
+.fact p.big{font-family:var(--display);font-size:26px;font-weight:700;line-height:1.2}
+
+/* results */
+.arch{font-size:clamp(36px,10vw,56px);font-weight:800;letter-spacing:-.02em;margin:6px 0 10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px 20px;margin:18px 0;border-top:6px solid var(--k)}
+.card .head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.card .num{font-family:var(--display);font-weight:800;font-size:44px;color:var(--k);line-height:1}
+.meter{position:relative;height:12px;background:var(--line);border-radius:12px;margin:14px 0 6px}
+.meter .rng{position:absolute;top:0;bottom:0;background:var(--k);opacity:.25;border-radius:12px}
+.meter .pt{position:absolute;top:-4px;width:20px;height:20px;border-radius:50%;background:var(--k);border:3px solid var(--surface);transform:translateX(-50%)}
+.meter .gs{position:absolute;top:-8px;width:3px;height:28px;background:var(--ink);transform:translateX(-50%);border-radius:2px}
+.legend{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.tips{display:grid;gap:10px;margin:16px 0}
+.tips div{border-left:4px solid var(--k);padding:2px 0 2px 12px}
+.tips b{display:block;font-size:15px}
+details{margin-top:10px}
+summary{cursor:pointer;font-weight:700;padding:8px 0}
+.facet{display:grid;grid-template-columns:1fr 44px;gap:4px 12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.facet .fm{grid-column:1/3;height:6px;background:var(--line);border-radius:6px;overflow:hidden}
+.facet .fm i{display:block;height:100%;background:var(--k)}
+.facet .fd{grid-column:1/3;font-size:14px;color:var(--muted)}
+.facet .fp{text-align:right;font-weight:700}
+.surprise{background:var(--ink);color:var(--bg);border-radius:20px;padding:22px 20px;margin:18px 0}
+.surprise h3{margin-bottom:8px}
+.note{background:var(--surface);border:1px dashed var(--muted);border-radius:14px;padding:12px 14px;font-size:15px;margin-top:12px}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0}
+ol.src{padding-left:20px;font-size:14px;color:var(--muted)}
+ol.src li{margin-bottom:6px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:12px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+.meter .fr{position:absolute;top:-3px;width:18px;height:18px;background:var(--surface);border:3px solid var(--ink);transform:translateX(-50%) rotate(45deg);border-radius:4px}
+.key{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:10px}
+.modal{position:fixed;inset:0;background:rgba(10,12,30,.72);display:flex;align-items:center;justify-content:center;padding:20px;z-index:10}
+.modal[hidden]{display:none}
+.mbox{background:var(--surface);border-radius:20px;padding:18px;max-width:440px;width:100%;max-height:100%;overflow:auto}
+.mbox img{width:100%;height:auto;border-radius:12px;display:block;margin-bottom:12px}
+.field{width:100%;padding:12px 14px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;margin:6px 0 4px}
+.cmp{width:100%;border-collapse:collapse;font-size:15px;margin:12px 0}
+.cmp th{font-size:13px;color:var(--muted);font-weight:400}
+.cmp td,.cmp th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left}
+.cmp td.n,.cmp th.n{text-align:right}
+.cmp td.n{font-weight:700}
+.cmp tr.gap td{color:var(--A)}
+.sec{margin-top:52px}
+.sec h2{margin-bottom:10px}
+.tr{display:grid;gap:10px;margin-top:16px}
+.tr div{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--k);border-radius:14px;padding:12px 14px}
+.tr b{font-family:var(--display);font-size:19px;color:var(--k);display:block}
+.tr em{display:block;font-style:normal;font-weight:700;margin-top:2px}
+.tr span{display:block;color:var(--muted);font-size:15px;margin-top:2px}
+.why{display:grid;gap:12px;margin-top:16px}
+.why div{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px}
+.why h3{font-size:19px;margin-bottom:4px}
+.why p{margin:0;color:var(--muted);font-size:16px}
+.steps{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:14px}
+.steps li{display:grid;grid-template-columns:38px 1fr;gap:12px;align-items:start}
+.steps .n{width:38px;height:38px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-family:var(--display);font-weight:800}
+.steps b{display:block}
+.steps span{color:var(--muted);font-size:16px}
+.tips2{margin:14px 0 0;padding-left:20px}
+.tips2 li{margin-bottom:8px}
+.know{display:grid;gap:12px;margin-top:16px}
+.know div{border-left:4px solid var(--ink);padding:2px 0 2px 14px}
+.know b{display:block}
+.know span{color:var(--muted);font-size:16px}
+.faq details{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px 16px;margin-top:10px}
+.faq p{color:var(--muted);font-size:16px}
+.hint{color:var(--muted);font-size:14px;margin:0 0 4px;min-height:1.4em}
+</style>
+</head>
+<body>
+<main>
+
+<!-- INTRO -->
+<section id="intro" class="screen on hero">
+  <div class="print" id="heroPrint" aria-hidden="true"></div>
+  <h1>See the shape of your personality.</h1>
+  <p class="lede">A free Big Five test built from open research questions. You get five trait scores, 29 sub-traits, and a plain read on what they mean for how you work, argue, and handle stress.</p>
+  <div class="facts">
+    <span><b>87</b>questions</span>
+    <span><b>~10 min</b>to finish</span>
+    <span><b>0</b>sign-ups</span>
+  </div>
+  <button class="btn" id="goGuess">Start the test</button>
+  <p class="muted small" style="margin-top:14px" id="resumeNote" hidden>You have a test in progress. <button class="link" id="resumeBtn">Pick up where you left off</button></p>
+  <p class="muted small" style="margin-top:22px">Your answers stay in this browser. Nothing gets sent anywhere.</p>
+
+  <div class="sec">
+    <h2>Five traits. One shape.</h2>
+    <p class="muted">Decades of research keep landing on the same five dimensions. Everyone sits somewhere on each one, and nobody sits in the same spot as anyone else. This test finds your spots.</p>
+    <div class="tr">
+      <div style="--k:var(--O)"><b>Openness</b><em>Do you get lost in ideas at 2 a.m.?</em><span>How much you chase new ideas, art, and experiences.</span></div>
+      <div style="--k:var(--C)"><b>Conscientiousness</b><em>Is your desk a system or a crime scene?</em><span>How much you plan, organize, and follow through.</span></div>
+      <div style="--k:var(--E)"><b>Extraversion</b><em>Does a crowded room charge you or drain you?</em><span>Where you get your social energy, and how loudly you use it.</span></div>
+      <div style="--k:var(--A)"><b>Agreeableness</b><em>Do you assume the best about people?</em><span>How much you trust, cooperate, and put others first.</span></div>
+      <div style="--k:var(--N)"><b>Emotional sensitivity</b><em>How loud is your inner alarm system?</em><span>How strongly stress and worry hit you. Researchers call it Neuroticism.</span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>Why spend ten minutes on this?</h2>
+    <div class="why">
+      <div><h3>Catch your blind spots</h3><p>You guess your scores first. Then you see where your self-image and your answers split apart. That gap is the interesting part.</p></div>
+      <div><h3>Name the patterns you've noticed</h3><p>Some tasks drain you and others fire you up. Some people drive you nuts and others feel effortless. Your scores give those patterns a name.</p></div>
+      <div><h3>See yourself through a friend's eyes</h3><p>Send a link to someone who knows you. They rate you in three minutes, and you compare notes.</p></div>
+      <div><h3>Leave with one experiment</h3><p>Every trait comes with something small to try this week. You'll have a next step, not just a number.</p></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>How it works</h2>
+    <ol class="steps">
+      <li><span class="n">1</span><div><b>Guess</b><span>Move five sliders to predict your own scores. Thirty seconds.</span></div></li>
+      <li><span class="n">2</span><div><b>Answer</b><span>Rate 87 short statements in five parts. A surprising research fact waits between parts, so you get a breather.</span></div></li>
+      <li><span class="n">3</span><div><b>Explore</b><span>See your shape, five trait cards, 29 sub-traits, and the gap between your guess and your answers. Then invite a friend or share a card.</span></div></li>
+    </ol>
+  </div>
+
+  <div class="sec">
+    <h2>How to get an honest result</h2>
+    <ul class="tips2">
+      <li>Answer for your typical week, not your best day or your worst.</li>
+      <li>Go with your first instinct. Overthinking a statement rarely improves your answer.</li>
+      <li>Describe who you are, not who you're trying to become. The test can't help the aspirational version of you.</li>
+      <li>Use "Neither" only when you truly can't decide. A test full of middle answers tells you nothing.</li>
+      <li>Skip the test when you're exhausted or upset. Your mood leaks into your answers.</li>
+    </ul>
+  </div>
+
+  <div class="sec know">
+    <h2 style="margin-bottom:0">Things to know before you start</h2>
+    <div><b>No score is good or bad.</b><span>Every spot has strengths and costs. A high scorer and a low scorer each get an edge in different situations.</span></div>
+    <div><b>You get a snapshot, not a sentence.</b><span>Twin studies suggest about half the differences between people come from genes. Experience shapes the rest, and traits shift slowly over years.</span></div>
+    <div><b>It's for reflection, not for verdicts.</b><span>The researchers behind these questions say the scores suit research but should not drive big decisions about individuals, such as hiring. This is a mirror, not a medical or career exam.</span></div>
+    <div><b>Percentiles compare you with volunteers.</b><span>The comparison group is 320,000 mostly American people who chose to take an online personality test. They run curious and empathetic, so your Openness may read a bit low.</span></div>
+  </div>
+
+  <div class="sec faq">
+    <h2>Quick answers</h2>
+    <details><summary>Why not the 16 personality types?</summary><p>The four-letter type tests sort a smooth range into two boxes per letter. Someone near the middle lands on one side or the other, and studies of the popular type tests find many people get a different type when they retake them. The Big Five keeps the whole range, so you see how far you lean, not just which way.</p></details>
+    <details><summary>Will my scores change if I retake it?</summary><p>Expect small shifts. That's why every trait shows a likely range next to the score.</p></details>
+    <details><summary>Where do my answers go?</summary><p>They stay in your browser. The page has no server and no sign-up. The only time data leaves your device is when you send a friend a link, and then only the ratings in that link.</p></details>
+    <details><summary>Where do the questions come from?</summary><p>They come from the International Personality Item Pool, a public-domain library built by researchers. This test uses 87 questions from the IPIP-NEO-120. Full sources sit at the bottom of your results.</p></details>
+  </div>
+
+  <div class="row" style="margin-top:36px"><button class="btn" id="goGuess2">Ready? Start the test</button></div>
+</section>
+
+<!-- GUESS -->
+<section id="guessS" class="screen">
+  <h2>First, guess.</h2>
+  <p class="muted" style="margin-top:10px">Where do you think you land compared with other people? At the end you'll see how your guess stacks up against your answers. You may be surprised.</p>
+  <div id="guessList"></div>
+  <div class="row"><button class="btn" id="startQuiz">Lock in my guesses</button><button class="link" id="skipGuess">Skip this</button></div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz" class="screen">
+  <div class="qtop"><span id="partLbl">Part 1 of 5</span><span id="countLbl">1 / 87</span></div>
+  <div class="track"><div id="bar"></div></div>
+  <p class="muted small" style="margin:0 0 8px">How well does this describe you?</p>
+  <p class="hint" id="hint"></p>
+  <div class="stmt" id="stmt" aria-live="polite"></div>
+  <div class="opts" id="opts" role="group" aria-label="Answer"></div>
+  <button class="link" id="backBtn">Go back</button>
+</section>
+
+<!-- BREAK -->
+<section id="brk" class="screen">
+  <p class="muted" id="brkLbl">Part 1 done</p>
+  <div class="fact"><p class="big" id="brkFact"></p><p class="muted small" id="brkSrc" style="margin:0"></p></div>
+  <button class="btn" id="brkGo">Keep going</button>
+</section>
+
+<!-- RESULTS -->
+<section id="res" class="screen">
+  <p class="muted">Your profile</p>
+  <h2 class="arch" id="archName"></h2>
+  <p id="archLine"></p>
+  <div class="print" id="resPrint"></div>
+  <p class="muted small">Bar height is your percentile: the share of people in the comparison group who scored lower than you.</p>
+  <div id="surprise"></div>
+  <div id="friendSum"></div>
+  <div id="cards"></div>
+
+  <div class="card" style="--k:var(--A)">
+    <h3>Ask a friend to rate you</h3>
+    <p style="margin-top:10px">Other people see things you can't. Send this link to someone who knows you well. They answer 29 quick questions about you, then send a reply link back. Open it in this browser and your results add a second view.</p>
+    <label class="small muted" for="myName">Your first name (your friend sees it)</label>
+    <input class="field" id="myName" maxlength="24" autocomplete="off" placeholder="Sam">
+    <div class="row" style="margin:12px 0 4px"><button class="btn" id="invShare">Send invite</button><button class="btn ghost" id="invCopy">Copy link</button></div>
+    <p class="small muted" style="margin:8px 0 0" id="frCount">Two or three friends give a steadier picture than one.</p>
+  </div>
+
+  <div class="card" style="--k:var(--muted)">
+    <h3>How much to trust this</h3>
+    <p style="margin-top:10px">Your five trait scores are solid enough for self-reflection. The research team behind these questions says they work for research but should not drive big decisions about a person, like hiring. Treat the sub-trait scores as rougher still, since each one rests on three questions.</p>
+    <p>The shaded band on each trait shows a likely range. Take the test again in a different mood and you'll land somewhere in it.</p>
+    <p>The comparison group is 320,000 mostly American volunteers who chose to take an online personality test. People like that tend to score higher on curiosity and empathy than the general public, so your Openness percentile may read a little low.</p>
+    <p style="margin:0">You also see yourself from the inside. In validation studies, friends' ratings matched people's self-ratings best on Openness and worst on Agreeableness. Ask someone close to you which scores surprise them.</p>
+  </div>
+
+  <div class="row">
+    <button class="btn" id="cardBtn">Share result card</button>
+    <button class="btn ghost" id="copyBtn">Copy as text</button>
+    <button class="btn ghost" id="retake">Take it again</button>
+  </div>
+
+  <details>
+    <summary>Methods and sources</summary>
+    <p class="small muted">Questions come from the IPIP-NEO-120 (Johnson, 2014), a public-domain inventory from the International Personality Item Pool. This version keeps the three strongest questions per sub-trait, ranked by each question's correlation with its scale in the original paper, for 87 questions total. It drops the political-values sub-trait because it asks about voting, which varies by country and loads weakly on Openness. Percentiles use norms from Kajonius &amp; Johnson (2019), rescaled from four to three questions, so treat them as close estimates.</p>
+    <ol class="src">
+      <li>Johnson, J. A. (2014). Measuring thirty facets of the Five Factor Model with a 120-item public domain inventory. <i>Journal of Research in Personality</i>, 51, 78–89. <a href="https://doi.org/10.1016/j.jrp.2014.05.003" target="_blank" rel="noopener">doi</a></li>
+      <li>Kajonius, P. J., &amp; Johnson, J. A. (2019). Assessing the structure of the Five Factor Model of personality (IPIP-NEO-120) in the public domain. <i>Europe's Journal of Psychology</i>, 15(2). <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7871748/" target="_blank" rel="noopener">open access</a></li>
+      <li>International Personality Item Pool. <a href="https://ipip.ori.org/" target="_blank" rel="noopener">ipip.ori.org</a></li>
+      <li>Polderman, T. J. et al. (2015). Meta-analysis of the heritability of human traits based on fifty years of twin studies. <i>Nature Genetics</i>, 47, 702–709. <a href="https://doi.org/10.1038/ng.3285" target="_blank" rel="noopener">doi</a></li>
+      <li>Roberts, B. W. et al. (2007). The power of personality. <i>Perspectives on Psychological Science</i>, 2(4), 313–345. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4499872/" target="_blank" rel="noopener">open access</a></li>
+      <li>Anusic, I., &amp; Schimmack, U. (2016). Stability and change of personality traits, self-esteem, and well-being. <i>Journal of Personality and Social Psychology</i>, 110(5), 766–781. <a href="https://doi.org/10.1037/pspp0000066" target="_blank" rel="noopener">doi</a></li>
+    </ol>
+  </details>
+</section>
+
+<!-- FRIEND INTRO -->
+<section id="fIntro" class="screen">
+  <h1 style="font-size:clamp(34px,9vw,52px)">Rate <span id="fOwner">your friend</span>.</h1>
+  <p class="lede" style="margin-top:16px">You'll see 29 short descriptions. Say how well each one fits <span class="fo2">them</span>, going by what you've actually seen. If you have no idea, tap "Can't say". It takes about three minutes.</p>
+  <label class="small muted" for="fName">Your first name (optional)</label>
+  <input class="field" id="fName" maxlength="24" autocomplete="off" placeholder="Alex">
+  <div class="row"><button class="btn" id="fStart">Start rating</button></div>
+  <p class="muted small">Your answers go into a reply link that you send back. Nothing is saved on a server.</p>
+</section>
+
+<!-- FRIEND QUIZ -->
+<section id="fQuiz" class="screen">
+  <div class="qtop"><span id="fWho"></span><span id="fCount"></span></div>
+  <div class="track"><div id="fBar"></div></div>
+  <p class="muted small" style="margin:0 0 8px" id="fPrompt"></p>
+  <div class="stmt" id="fStmt" aria-live="polite"></div>
+  <div class="opts" id="fOpts" role="group" aria-label="Answer"></div>
+  <button class="link" id="fBack">Go back</button>
+</section>
+
+<!-- FRIEND DONE -->
+<section id="fDone" class="screen">
+  <h2>Done. Thank you.</h2>
+  <p style="margin-top:12px" id="fDoneP"></p>
+  <div class="row"><button class="btn" id="fShare">Send reply link</button><button class="btn ghost" id="fCopy">Copy link</button></div>
+  <p class="muted small">The link carries your ratings inside it. It must be opened in the same browser where <span class="fo2">they</span> took the test.</p>
+  <button class="link" id="fOwn">Take the full test yourself</button>
+</section>
+</main>
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-label="Result card">
+  <div class="mbox">
+    <img id="cardImg" alt="Your result card">
+    <p class="small muted" style="margin:0 0 10px">Press and hold the image to save it, or tap Share.</p>
+    <div class="row" style="margin:0"><button class="btn" id="shareImg">Share</button><button class="btn ghost" id="closeModal">Close</button></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+// ---------- data ----------
+// [ipip120 number, facet, key(+1/-1), text]
+var ITEMS=[
+[1,"N1",1,"Worry about things"],[31,"N1",1,"Fear for the worst"],[91,"N1",1,"Get stressed out easily"],
+[6,"N2",1,"Get angry easily"],[36,"N2",1,"Get irritated easily"],[66,"N2",1,"Lose my temper"],
+[11,"N3",1,"Often feel blue"],[41,"N3",1,"Dislike myself"],[71,"N3",1,"Am often down in the dumps"],
+[16,"N4",1,"Find it difficult to approach others"],[46,"N4",1,"Am afraid to draw attention to myself"],[76,"N4",1,"Only feel comfortable with friends"],
+[51,"N5",-1,"Rarely overindulge"],[81,"N5",-1,"Easily resist temptations"],[111,"N5",-1,"Am able to control my cravings"],
+[26,"N6",1,"Panic easily"],[56,"N6",1,"Become overwhelmed by events"],[86,"N6",1,"Feel that I'm unable to deal with things"],
+[2,"E1",1,"Make friends easily"],[32,"E1",1,"Feel comfortable around people"],[62,"E1",-1,"Avoid contacts with others"],
+[7,"E2",1,"Love large parties"],[37,"E2",1,"Talk to a lot of different people at parties"],[97,"E2",-1,"Avoid crowds"],
+[12,"E3",1,"Take charge"],[42,"E3",1,"Try to lead others"],[72,"E3",1,"Take control of things"],
+[17,"E4",1,"Am always busy"],[47,"E4",1,"Am always on the go"],[77,"E4",1,"Do a lot in my spare time"],
+[22,"E5",1,"Love excitement"],[52,"E5",1,"Seek adventure"],[112,"E5",1,"Act wild and crazy"],
+[57,"E6",1,"Have a lot of fun"],[87,"E6",1,"Love life"],[117,"E6",1,"Look at the bright side of life"],
+[33,"O1",1,"Enjoy wild flights of fantasy"],[63,"O1",1,"Love to daydream"],[93,"O1",1,"Like to get lost in thought"],
+[8,"O2",1,"Believe in the importance of art"],[68,"O2",-1,"Do not like poetry"],[98,"O2",-1,"Do not enjoy going to art museums"],
+[13,"O3",1,"Experience my emotions intensely"],[73,"O3",-1,"Rarely notice my emotional reactions"],[103,"O3",-1,"Don't understand people who get emotional"],
+[48,"O4",-1,"Prefer to stick with things that I know"],[78,"O4",-1,"Dislike changes"],[108,"O4",-1,"Am attached to conventional ways"],
+[53,"O5",-1,"Avoid philosophical discussions"],[83,"O5",-1,"Have difficulty understanding abstract ideas"],[113,"O5",-1,"Am not interested in theoretical discussions"],
+[4,"A1",1,"Trust others"],[64,"A1",1,"Trust what people say"],[94,"A1",-1,"Distrust people"],
+[9,"A2",-1,"Use others for my own ends"],[39,"A2",-1,"Cheat to get ahead"],[69,"A2",-1,"Take advantage of others"],
+[14,"A3",1,"Love to help others"],[44,"A3",1,"Am concerned about others"],[74,"A3",-1,"Am indifferent to the feelings of others"],
+[49,"A4",-1,"Yell at people"],[79,"A4",-1,"Insult people"],[109,"A4",-1,"Get back at others"],
+[24,"A5",-1,"Believe that I am better than others"],[54,"A5",-1,"Think highly of myself"],[84,"A5",-1,"Have a high opinion of myself"],
+[29,"A6",1,"Sympathize with the homeless"],[59,"A6",1,"Feel sympathy for those who are worse off than myself"],[119,"A6",-1,"Try not to think about the needy"],
+[5,"C1",1,"Complete tasks successfully"],[35,"C1",1,"Excel in what I do"],[65,"C1",1,"Handle tasks smoothly"],
+[40,"C2",-1,"Often forget to put things back in their proper place"],[70,"C2",-1,"Leave a mess in my room"],[100,"C2",-1,"Leave my belongings around"],
+[15,"C3",1,"Keep my promises"],[45,"C3",1,"Tell the truth"],[105,"C3",-1,"Break my promises"],
+[20,"C4",1,"Work hard"],[80,"C4",-1,"Do just enough work to get by"],[110,"C4",-1,"Put little time and effort into my work"],
+[55,"C5",1,"Carry out my plans"],[85,"C5",-1,"Waste my time"],[115,"C5",-1,"Have difficulty starting tasks"],
+[30,"C6",-1,"Jump into things without thinking"],[90,"C6",-1,"Rush into things"],[120,"C6",-1,"Act without thinking"]
+].sort(function(a,b){return a[0]-b[0]});
+var TOTAL=ITEMS.length;
+
+// norms on the 4-20 facet scale (Kajonius & Johnson 2019, N=320,128)
+var NORM={N1:[12.07,3.77],N2:[11.51,4.11],N3:[9.35,3.87],N4:[11.69,3.64],N5:[11.94,3.44],N6:[10.07,3.63],
+E1:[14.48,3.60],E2:[12.36,4.02],E3:[14.56,3.43],E4:[12.84,3.15],E5:[12.52,3.32],E6:[15.35,3.20],
+O1:[14.60,3.41],O2:[14.67,3.58],O3:[15.20,3.01],O4:[12.28,3.26],O5:[14.50,3.55],
+A1:[13.43,3.54],A2:[16.63,2.88],A3:[16.72,2.56],A4:[15.10,3.49],A5:[12.34,3.35],A6:[15.03,3.10],
+C1:[16.32,2.40],C2:[13.23,4.31],C3:[16.32,2.57],C4:[16.06,3.09],C5:[14.07,3.16],C6:[13.68,4.09]};
+var DNORM={N:[11.10,2.66],E:[13.69,2.36],O:[14.25,2.06],A:[14.87,2.01],C:[14.95,2.34]};
+var ALPHA={N:.90,E:.89,O:.82,A:.85,C:.90};
+
+var ORDER=["O","C","E","A","N"];
+var D={
+O:{name:"Openness",sub:"curiosity, imagination, appetite for new ideas",
+ lo:"conventional, practical",hi:"curious, inventive",
+ high:"You chase ideas, art, and novelty, and routine bores you fast. You connect things other people keep separate.",
+ low:"You trust what works and you'd rather perfect a known method than test a new one. You stay focused where others wander.",
+ mid:"You take new ideas on their merits. Some days you want novelty, some days the familiar route.",
+ sH:"You spot connections across fields and adapt to change without much friction.",wH:"You can drop a project once it stops feeling new.",tH:"Finish one thing before you start the next shiny one.",
+ sL:"You stay consistent, and people know what they'll get from you.",wL:"You might dismiss a good idea because it's unfamiliar.",tL:"Try one small, unfamiliar thing a week where failure costs nothing.",
+ adj:["Grounded","Curious"],noun:["Pragmatist","Explorer"]},
+C:{name:"Conscientiousness",sub:"organization, follow-through, self-control",
+ lo:"flexible, spontaneous",hi:"organized, driven",
+ high:"You plan ahead, keep commitments, and finish what you start. People hand you the things that can't slip.",
+ low:"You work in bursts and react to what's in front of you. Mess and last-minute changes don't rattle you.",
+ mid:"You can organize when it matters and let things slide when it doesn't.",
+ sH:"People rely on you, and your work compounds because you show up every day.",wH:"You can turn rigid, or overwork to meet standards nobody else set.",tH:"Block time on purpose with no plan attached.",
+ sL:"You adapt fast and handle chaos that would freeze a planner.",wL:"Deadlines and small promises slip, and trust leaks with them.",tL:"Borrow structure from outside: deadlines you share with someone, timers, checklists.",
+ adj:["Spontaneous","Disciplined"],noun:["Improviser","Architect"]},
+E:{name:"Extraversion",sub:"social energy, assertiveness, enthusiasm",
+ lo:"reserved, quiet",hi:"outgoing, energetic",
+ high:"People and activity charge you up. You speak first, take the lead, and fill a room.",
+ low:"Quiet charges you up. You prefer a few deep conversations to a crowd, and you think before you speak.",
+ mid:"You enjoy people in doses and need some quiet to recover. You can flex either way.",
+ sH:"You build networks fast and move groups to act.",wH:"You can talk over quieter people and miss their best ideas.",tH:"In your next meeting, speak last.",
+ sL:"You listen well and focus deeply for long stretches.",wL:"Your good ideas go unheard because you don't push them.",tL:"Share one idea early in your next meeting, before you feel ready.",
+ adj:["Reflective","Outgoing"],noun:["Observer","Catalyst"]},
+A:{name:"Agreeableness",sub:"trust, warmth, cooperation",
+ lo:"direct, skeptical",hi:"warm, cooperative",
+ high:"You assume good intent, help without being asked, and look for the solution everyone can live with.",
+ low:"You say what you think, question motives, and don't mind friction if it gets a better result.",
+ mid:"You cooperate by default and push back when something matters to you.",
+ sH:"People trust you, and teams run smoother with you in them.",wH:"You say yes too often and avoid conflict you need to have.",tH:"Practice one clear, kind no this week.",
+ sL:"You negotiate well and give the hard feedback others dodge.",wL:"You can come across harsher than you mean.",tL:"Ask one question before you give your critique.",
+ adj:["Candid","Warm"],noun:["Challenger","Diplomat"]},
+N:{name:"Emotional sensitivity",sub:"called Neuroticism in research: how strongly you react to stress",
+ lo:"calm, steady",hi:"reactive, sensitive",
+ high:"You feel stress, worry, and mood swings more strongly than most. You notice threats early.",
+ low:"You stay calm under pressure and bounce back fast. Setbacks roll off you.",
+ mid:"You feel stress like most people do and usually recover within a day or two.",
+ sH:"You spot risks early and take problems seriously before they grow.",wH:"Stress piles up and drains energy you need for the work itself.",tH:"When you worry, write down the worst case and the most likely case side by side.",
+ sL:"You keep your head in a crisis, and others steady themselves on you.",wL:"You can miss real warning signs, or seem unbothered when others need you to care.",tL:"Under pressure, ask the people around you how they're holding up.",
+ adj:["Steady","Sensitive"],noun:["Anchor","Sentinel"]}
+};
+var F={
+N1:["Anxiety","How much you worry and expect the worst"],N2:["Irritability","How fast you get angry or annoyed"],N3:["Low mood","How often you feel down or dislike yourself"],
+N4:["Self-consciousness","How uneasy you feel around people you don't know"],N5:["Impulsiveness","How hard it is to resist cravings and urges"],N6:["Stress vulnerability","How easily pressure overwhelms you"],
+E1:["Friendliness","How warmly you connect with new people"],E2:["Love of crowds","How much you enjoy big groups and parties"],E3:["Assertiveness","How readily you take charge"],
+E4:["Activity level","How busy and fast-paced you keep your life"],E5:["Thrill seeking","How much you crave excitement"],E6:["Cheerfulness","How often you feel joy and enthusiasm"],
+O1:["Imagination","How much you daydream and invent"],O2:["Artistic interest","How much art and beauty move you"],O3:["Emotional depth","How aware you are of your feelings"],
+O4:["Adventurousness","How much you want variety over routine"],O5:["Intellect","How much you enjoy abstract ideas"],
+A1:["Trust","How much you assume good intent"],A2:["Straightforwardness","How much you refuse to use or cheat others"],A3:["Altruism","How much you want to help"],
+A4:["Cooperation","How much you avoid fights and grudges"],A5:["Modesty","How little you rate yourself above others"],A6:["Sympathy","How much you feel for people struggling"],
+C1:["Self-efficacy","How capable you feel at getting things done"],C2:["Orderliness","How tidy and organized you keep things"],C3:["Dutifulness","How firmly you keep promises"],
+C4:["Achievement drive","How hard you push toward goals"],C5:["Self-discipline","How well you start and stick to tasks"],C6:["Cautiousness","How much you think before acting"]
+};
+var LABELS=["Very inaccurate","Mostly inaccurate","Neither","Mostly accurate","Very accurate"];
+var FACTS=[
+["More than 600,000 people took the 120-question version of this test online in its first decade.","Johnson, 2014"],
+["Twin studies across fifty years put the heritability of personality traits near 50%. Your genes set the range; your life picks the spot.","Polderman et al., 2015"],
+["Your friends see your Openness almost the way you do. They disagree with you most about Agreeableness.","Johnson, 2014"],
+["Personality traits predict divorce, health, and job success about as well as income or IQ do.","Roberts et al., 2007"]
+];
+var PARTS=5, PER=Math.ceil(TOTAL/PARTS);
+
+// ---------- state ----------
+var KEY="bigfive87-v1";
+var S={i:0,ans:{},guess:null,done:false};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function load(){try{var r=localStorage.getItem(KEY);if(r){var o=JSON.parse(r);if(o&&typeof o.i==="number")return o}}catch(e){}return null}
+function clear(){try{localStorage.removeItem(KEY)}catch(e){}}
+
+var $=function(id){return document.getElementById(id)};
+function show(id){document.querySelectorAll(".screen").forEach(function(s){s.classList.toggle("on",s.id===id)});window.scrollTo(0,0)}
+function toast(t){var el=$("toast");el.textContent=t;el.classList.add("on");setTimeout(function(){el.classList.remove("on")},1800)}
+
+// ---------- math ----------
+function phi(z){var t=1/(1+.2316419*Math.abs(z)),d=.3989423*Math.exp(-z*z/2),p=d*t*(.3193815+t*(-.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return z>0?1-p:p}
+function pct(z){return Math.max(1,Math.min(99,Math.round(phi(z)*100)))}
+
+function score(){
+  var fs={};
+  ITEMS.forEach(function(it){var a=S.ans[it[0]];if(a==null)return;var v=it[2]>0?a:6-a;(fs[it[1]]=fs[it[1]]||[]).push(v)});
+  var facet={},dom={};
+  Object.keys(NORM).forEach(function(k){
+    var arr=fs[k]||[3];var m=arr.reduce(function(s,x){return s+x},0)/arr.length;var raw=m*4;
+    var z=(raw-NORM[k][0])/NORM[k][1];facet[k]={raw:raw,z:z,p:pct(z)};
+  });
+  ORDER.forEach(function(d){
+    var ks=Object.keys(NORM).filter(function(k){return k[0]===d});
+    var raw=ks.reduce(function(s,k){return s+facet[k].raw},0)/ks.length;
+    var z=(raw-DNORM[d][0])/DNORM[d][1];var se=Math.sqrt(1-ALPHA[d]);
+    dom[d]={z:z,p:pct(z),lo:pct(z-se),hi:pct(z+se)};
+  });
+  return {facet:facet,dom:dom};
+}
+
+// ---------- fingerprint ----------
+function drawPrint(el,vals,showPct){
+  el.innerHTML="";
+  ORDER.forEach(function(d){
+    var b=document.createElement("div");b.className="bar";
+    b.innerHTML='<div class="fill" style="background:var(--'+d+')"></div><div class="lab" style="color:var(--'+d+')">'+d+'</div>'+(showPct?'<div class="pct">'+vals[d]+'</div>':'');
+    el.appendChild(b);
+  });
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    el.querySelectorAll(".fill").forEach(function(f,i){f.style.height=Math.max(6,vals[ORDER[i]])+"%"});
+  })});
+}
+drawPrint($("heroPrint"),{O:78,C:46,E:62,A:84,N:30},false);
+
+// ---------- intro ----------
+var prev=load();
+if(prev&&!prev.done&&Object.keys(prev.ans).length>0){$("resumeNote").hidden=false}
+$("resumeBtn").onclick=function(){S=prev;show("quiz");renderQ()};
+if(prev){S=prev;S.friends=S.friends||[]}
+
+function startFlow(){S={i:0,ans:{},guess:null,done:false,friends:S.friends||[]};buildGuess();show("guessS")}
+$("goGuess").onclick=startFlow;$("goGuess2").onclick=startFlow;
+
+// ---------- guess ----------
+function buildGuess(){
+  var g=$("guessList");g.innerHTML="";
+  ORDER.forEach(function(d){
+    var w=document.createElement("div");w.className="guess";
+    w.innerHTML='<label for="g'+d+'"><span style="color:var(--'+d+')">'+D[d].name+'</span><span id="gv'+d+'">50</span></label><p class="small muted" style="margin:2px 0 0">'+D[d].sub+'</p><input type="range" min="1" max="99" value="50" id="g'+d+'" style="accent-color:var(--'+d+')"><div class="ends"><span>'+D[d].lo+'</span><span>'+D[d].hi+'</span></div>';
+    g.appendChild(w);
+    w.querySelector("input").oninput=function(e){$("gv"+d).textContent=e.target.value};
+  });
+}
+$("startQuiz").onclick=function(){S.guess={};ORDER.forEach(function(d){S.guess[d]=+$("g"+d).value});save();show("quiz");renderQ()};
+$("skipGuess").onclick=function(){S.guess=null;save();show("quiz");renderQ()};
+
+// ---------- quiz ----------
+function sentence(t){return "I "+t.charAt(0).toLowerCase()+t.slice(1)+"."}
+var locked=false;
+function renderQ(){
+  var it=ITEMS[S.i];locked=false;
+  $("partLbl").textContent="Part "+(Math.floor(S.i/PER)+1)+" of "+PARTS;
+  $("countLbl").textContent=(S.i+1)+" / "+TOTAL;
+  $("bar").style.width=(S.i/TOTAL*100)+"%";
+  $("stmt").textContent=sentence(it[3]);
+  $("hint").textContent=S.i<3?"No right answers. Go with your first instinct.":(S.i===TOTAL-1?"Last one.":"");
+  var o=$("opts");o.innerHTML="";
+  LABELS.forEach(function(l,k){
+    var b=document.createElement("button");b.className="opt"+(S.ans[it[0]]===k+1?" sel":"");
+    b.innerHTML='<span class="dot"></span><span>'+l+'</span><kbd>'+(k+1)+'</kbd>';
+    b.onclick=function(){pick(k+1)};o.appendChild(b);
+  });
+  $("backBtn").style.visibility=S.i>0?"visible":"hidden";
+}
+function pick(v){
+  if(locked)return;locked=true;
+  var it=ITEMS[S.i];S.ans[it[0]]=v;
+  var bs=$("opts").children;for(var k=0;k<bs.length;k++)bs[k].classList.toggle("sel",k===v-1);
+  setTimeout(function(){
+    S.i++;save();
+    if(S.i>=TOTAL){S.done=true;save();renderResults();show("res");return}
+    if(S.i%PER===0){var n=S.i/PER;$("brkLbl").textContent="Part "+n+" of "+PARTS+" done. "+(TOTAL-S.i)+" questions left.";var f=FACTS[(n-1)%FACTS.length];$("brkFact").textContent=f[0];$("brkSrc").textContent=f[1];show("brk");return}
+    renderQ();
+  },220);
+}
+$("brkGo").onclick=function(){show("quiz");renderQ()};
+$("backBtn").onclick=function(){if(S.i>0){S.i--;save();renderQ()}};
+document.addEventListener("keydown",function(e){
+  if(!$("quiz").classList.contains("on"))return;
+  var n=parseInt(e.key,10);if(n>=1&&n<=5){pick(n)}
+  if(e.key==="Backspace"&&S.i>0){e.preventDefault();S.i--;save();renderQ()}
+});
+
+// ---------- results ----------
+function band(p){return p>=60?"high":p<=40?"low":"mid"}
+function archetype(dom){
+  var r=ORDER.map(function(d){return [d,dom[d].z]}).sort(function(a,b){return Math.abs(b[1])-Math.abs(a[1])});
+  if(Math.abs(r[0][1])<.35)return {name:"The Balanced Generalist",line:"None of your traits pulls far from the middle. You adjust to the situation instead of running on one default, which makes you hard to predict and easy to work with."};
+  var a=r[0],b=r[1],noun=D[a[0]].noun[a[1]>0?1:0],adj=D[b[0]].adj[b[1]>0?1:0];
+  return {name:"The "+adj+" "+noun,line:"Your strongest signal is "+(a[1]>0?"high ":"low ")+D[a[0]].name.toLowerCase()+", shaped by "+(b[1]>0?"high ":"low ")+D[b[0]].name.toLowerCase()+". The name is a shorthand for fun. The numbers below carry the real information."};
+}
+var LAST=null;
+function renderResults(){
+  var R=score();LAST=R;R.fr=friendDom(S.friends||[]);renderFriends(R);
+  var ar=archetype(R.dom);$("archName").textContent=ar.name;$("archLine").textContent=ar.line;
+  var pv={};ORDER.forEach(function(d){pv[d]=R.dom[d].p});drawPrint($("resPrint"),pv,true);
+
+  // guess vs actual
+  var sp=$("surprise");sp.innerHTML="";
+  if(S.guess){
+    var gap=ORDER.map(function(d){return [d,R.dom[d].p-S.guess[d]]}).sort(function(a,b){return Math.abs(b[1])-Math.abs(a[1])})[0];
+    var d=gap[0],g=S.guess[d],p=R.dom[d].p;
+    sp.innerHTML='<div class="surprise"><h3>Your biggest blind spot: '+D[d].name+'</h3><p style="margin:0">You guessed '+g+'. Your answers put you at '+p+'. '+(Math.abs(gap[1])<12?"That's close, so you read yourself well across the board.":(gap[1]>0?"You rate higher here than you think you do.":"You rate lower here than you think you do."))+' The thin line on each trait below marks your guess.</p></div>';
+  }
+
+  var c=$("cards");c.innerHTML="";
+  ORDER.forEach(function(d){
+    var r=R.dom[d],t=D[d],bd=band(r.p);
+    var text=bd==="high"?t.high:bd==="low"?t.low:t.mid;
+    var tips=bd==="high"?[t.sH,t.wH,t.tH]:bd==="low"?[t.sL,t.wL,t.tL]:null;
+    var fks=Object.keys(NORM).filter(function(k){return k[0]===d});
+    var fh=fks.map(function(k){var f=R.facet[k];return '<div class="facet"><span>'+F[k][0]+'</span><span class="fp">'+f.p+'</span><div class="fm"><i style="width:'+f.p+'%"></i></div><span class="fd">'+F[k][1]+'</span></div>'}).join("");
+    var warn=(d==="N"&&R.facet.N3.p>=85)?'<div class="note">A high low-mood score is not a diagnosis. If you have felt down most days for a couple of weeks, talk to a doctor or someone you trust.</div>':"";
+    var frMark=R.fr?'<span class="fr" title="Friends"></span>':"";
+    var frLine="";
+    if(R.fr){var df=R.fr[d].p-r.p;if(Math.abs(df)>=15){frLine='<p class="small" style="margin:10px 0 0;color:var(--muted)">Friends see you about '+Math.abs(df)+' points '+(df>0?"higher":"lower")+' here than you see yourself.</p>'}}
+    var guessMark=S.guess?'<span class="gs" style="left:'+S.guess[d]+'%" title="Your guess"></span>':"";
+    var el=document.createElement("div");el.className="card";el.style.setProperty("--k","var(--"+d+")");
+    el.innerHTML='<div class="head"><div><h3>'+t.name+'</h3><p class="small muted" style="margin:4px 0 0">'+t.sub+'</p></div><span class="num">'+r.p+'</span></div>'+
+      '<div class="meter"><span class="rng" style="left:'+r.lo+'%;width:'+Math.max(2,r.hi-r.lo)+'%"></span>'+guessMark+frMark+'<span class="pt" style="left:'+r.p+'%"></span></div>'+
+      '<div class="legend"><span>'+t.lo+'</span><span>likely range '+r.lo+' to '+r.hi+'</span><span>'+t.hi+'</span></div>'+
+      '<p style="margin-top:14px">'+text+'</p>'+frLine+
+      (tips?'<div class="tips"><div><b>Your edge</b>'+tips[0]+'</div><div><b>Watch for</b>'+tips[1]+'</div><div><b>Try this week</b>'+tips[2]+'</div></div>':
+      '<div class="tips"><div><b>Your edge</b>You can borrow from both ends. '+t.sH+'</div><div><b>Try this week</b>Notice which situations pull you toward '+t.lo.split(",")[0]+' and which toward '+t.hi.split(",")[0]+'.</div></div>')+
+      warn+'<details><summary>See your '+fks.length+' sub-traits</summary>'+fh+'</details>';
+    c.appendChild(el);
+  });
+}
+$("copyBtn").onclick=function(){
+  if(!LAST)return;
+  var txt=$("archName").textContent+"\n"+ORDER.map(function(d){return D[d].name+": "+LAST.dom[d].p+"th percentile"}).join("\n")+"\n(Big Five, IPIP-NEO items)";
+  function fallback(){var ta=document.createElement("textarea");ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("Copied")}catch(e){toast("Copy failed. Select the text manually.")}ta.remove()}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){toast("Copied")},fallback)}else fallback();
+};
+$("retake").onclick=function(){var fr=S.friends||[];clear();S={i:0,ans:{},guess:null,done:false,friends:fr};buildGuess();show("guessS")};
+
+// ================= helpers =================
+function baseUrl(){return location.href.split("#")[0]}
+function copyText(txt,msg){
+  function fb(){var ta=document.createElement("textarea");ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast(msg||"Copied")}catch(e){toast("Copy failed")}ta.remove()}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){toast(msg||"Copied")},fb)}else fb();
+}
+function shareLink(url,title,text){
+  if(navigator.share){navigator.share({title:title,text:text,url:url}).catch(function(){})}
+  else copyText(text+"\n"+url,"Link copied")
+}
+
+// ================= friend rating =================
+// one strong item per facet: [facet, key, third-person text]
+var FI=[
+["N1",1,"Worries about things"],["N2",1,"Gets angry easily"],["N3",1,"Often feels blue"],["N4",1,"Finds it difficult to approach others"],["N5",-1,"Rarely overindulges"],["N6",1,"Panics easily"],
+["E1",1,"Makes friends easily"],["E2",1,"Loves large parties"],["E3",1,"Takes charge"],["E4",1,"Is always busy"],["E5",1,"Loves excitement"],["E6",1,"Has a lot of fun"],
+["O1",1,"Loves to daydream"],["O2",1,"Believes in the importance of art"],["O3",1,"Experiences emotions intensely"],["O4",-1,"Dislikes change"],["O5",-1,"Avoids philosophical discussions"],
+["A1",1,"Trusts others"],["A2",-1,"Cheats to get ahead"],["A3",1,"Loves to help others"],["A4",-1,"Insults people"],["A5",-1,"Thinks highly of themself"],["A6",1,"Feels sympathy for people who are worse off"],
+["C1",1,"Excels at what they do"],["C2",-1,"Leaves a mess"],["C3",1,"Keeps promises"],["C4",1,"Works hard"],["C5",-1,"Wastes time"],["C6",-1,"Rushes into things"]
+];
+var FLAB=LABELS.concat(["Can't say"]);
+var FS={owner:"",name:"",i:0,ans:[]};
+var flock=false;
+
+function fOwnerName(){return FS.owner||"your friend"}
+function fillOwner(){
+  $("fOwner").textContent=fOwnerName();
+  document.querySelectorAll(".fo2").forEach(function(e){e.textContent=FS.owner||"them"});
+}
+function startFriendIntro(owner){FS={owner:owner,name:"",i:0,ans:[]};fillOwner();show("fIntro")}
+$("fStart").onclick=function(){FS.name=$("fName").value.trim();FS.i=0;FS.ans=[];show("fQuiz");renderF()};
+function renderF(){
+  var it=FI[FS.i];flock=false;
+  $("fWho").textContent="Rating "+fOwnerName();
+  $("fCount").textContent=(FS.i+1)+" / "+FI.length;
+  $("fBar").style.width=(FS.i/FI.length*100)+"%";
+  $("fPrompt").textContent="How well does this describe "+(FS.owner||"them")+"?";
+  $("fStmt").textContent=it[2]+".";
+  var o=$("fOpts");o.innerHTML="";
+  FLAB.forEach(function(l,k){
+    var b=document.createElement("button");b.className="opt"+(FS.ans[FS.i]===(k===5?0:k+1)?" sel":"");
+    b.innerHTML='<span class="dot"></span><span>'+l+'</span>';
+    b.onclick=function(){fPick(k===5?0:k+1)};o.appendChild(b);
+  });
+  $("fBack").style.visibility=FS.i>0?"visible":"hidden";
+}
+function fPick(v){
+  if(flock)return;flock=true;FS.ans[FS.i]=v;
+  var bs=$("fOpts").children;for(var k=0;k<bs.length;k++)bs[k].classList.toggle("sel",(k===5?0:k+1)===v);
+  setTimeout(function(){
+    FS.i++;
+    if(FS.i>=FI.length){finishF();return}
+    renderF();
+  },200);
+}
+$("fBack").onclick=function(){if(FS.i>0){FS.i--;renderF()}};
+function replyUrl(){return baseUrl()+"#r="+encodeURIComponent(FS.name||"A friend")+"~"+FS.ans.join("")}
+function finishF(){
+  $("fDoneP").textContent="Send the reply link to "+fOwnerName()+". When they open it, your ratings show up next to their own results.";
+  show("fDone");
+}
+$("fShare").onclick=function(){shareLink(replyUrl(),"My ratings of you","My ratings of you are in this link.")};
+$("fCopy").onclick=function(){copyText(replyUrl(),"Reply link copied")};
+$("fOwn").onclick=function(){history.replaceState(null,"",baseUrl());S={i:0,ans:{},guess:null,done:false,friends:S.friends||[]};buildGuess();show("guessS")};
+
+// ================= friend scoring + display =================
+function friendDom(fr){
+  if(!fr||!fr.length)return null;
+  var out={},ok=false;
+  ORDER.forEach(function(d){
+    var means=[];
+    fr.forEach(function(f){
+      var vals=[];
+      for(var k=0;k<FI.length;k++){
+        if(FI[k][0][0]!==d)continue;
+        var a=+f.a.charAt(k);if(!a)continue;
+        vals.push(FI[k][1]>0?a:6-a);
+      }
+      if(vals.length>=3)means.push(vals.reduce(function(x,y){return x+y},0)/vals.length);
+    });
+    if(!means.length)return;
+    ok=true;
+    var m=means.reduce(function(x,y){return x+y},0)/means.length;
+    var mu=DNORM[d][0]/4,sd=DNORM[d][1]/4;
+    var z=((m-mu)/sd)*0.8;
+    out[d]={z:z,p:pct(z)};
+  });
+  return ok&&ORDER.every(function(d){return out[d]})?out:null;
+}
+function renderFriends(R){
+  var box=$("friendSum");box.innerHTML="";
+  var fr=S.friends||[];
+  $("frCount").textContent=fr.length?fr.length+(fr.length===1?" friend has":" friends have")+" replied. Ask one more for a steadier picture.":"Two or three friends give a steadier picture than one.";
+  if(!R.fr)return;
+  var names=fr.map(function(f){return f.n}).join(", ");
+  var g=ORDER.map(function(d){return [d,R.fr[d].p-R.dom[d].p]}).sort(function(a,b){return Math.abs(b[1])-Math.abs(a[1])})[0];
+  var rows=ORDER.map(function(d){var df=R.fr[d].p-R.dom[d].p;return '<tr'+(Math.abs(df)>=15?' class="gap"':'')+'><td>'+D[d].name+'</td><td class="n">'+R.dom[d].p+'</td><td class="n">'+R.fr[d].p+'</td></tr>'}).join("");
+  var msg=Math.abs(g[1])<15?"Your friends see you much the way you see yourself.":"Biggest gap: "+D[g[0]].name+". Friends put you "+Math.abs(g[1])+" points "+(g[1]>0?"higher":"lower")+" than you put yourself. Either they see behavior you don't notice, or you act differently around them. Ask them for an example.";
+  box.innerHTML='<div class="card" style="--k:var(--ink)"><h3>How '+(fr.length===1?"a friend sees":"your friends see")+' you</h3><p class="small muted" style="margin:6px 0 0">'+names.replace(/</g,"&lt;")+'</p>'+
+    '<table class="cmp"><tr><th>Trait</th><th class="n">You</th><th class="n">Friends</th></tr>'+rows+'</table><p style="margin:0 0 10px">'+msg+'</p>'+
+    '<p class="small muted" style="margin:0">Friend scores are rougher. They answer 6 questions per trait and see you in some settings, not all. A gap is a prompt to ask, not a verdict.</p></div>';
+}
+// invite
+$("invShare").onclick=function(){var n=$("myName").value.trim();shareLink(baseUrl()+"#f="+encodeURIComponent(n),"Rate me?","Can you rate me on 29 quick questions? It takes 3 minutes.")};
+$("invCopy").onclick=function(){var n=$("myName").value.trim();copyText(baseUrl()+"#f="+encodeURIComponent(n),"Invite link copied")};
+
+// ================= share card =================
+var cardBlob=null;
+function rr(x,X,Y,W,H,r){x.beginPath();x.moveTo(X+r,Y);x.arcTo(X+W,Y,X+W,Y+H,r);x.arcTo(X+W,Y+H,X,Y+H,r);x.arcTo(X,Y+H,X,Y,r);x.arcTo(X,Y,X+W,Y,r);x.closePath()}
+function drawCard(){
+  var R=LAST;if(!R)return;
+  var W=1080,H=1350,c=document.createElement("canvas");c.width=W;c.height=H;var x=c.getContext("2d");
+  var disp='"Bricolage Grotesque",system-ui,sans-serif',body='"Atkinson Hyperlegible",system-ui,sans-serif';
+  var col={O:"#7B5CD6",C:"#178F7E",E:"#C9820A",A:"#D4486F",N:"#3F66D1"};
+  var short={O:"Openness",C:"Conscientious",E:"Extraversion",A:"Agreeable",N:"Sensitivity"};
+  x.fillStyle="#EEF0F6";x.fillRect(0,0,W,H);
+  x.fillStyle="#FFFFFF";rr(x,50,50,W-100,H-100,44);x.fill();
+  x.textAlign="center";x.fillStyle="#5B6078";x.font="400 30px "+body;x.fillText("My personality shape",W/2,140);
+  var name=$("archName").textContent,fs=84;
+  x.fillStyle="#1B1E36";
+  do{x.font="800 "+fs+"px "+disp;fs-=4}while(x.measureText(name).width>W-200&&fs>36);
+  x.fillText(name,W/2,250);
+  var bw=136,gap=32,tot=5*bw+4*gap,sx=(W-tot)/2,base=1090,maxH=600;
+  ORDER.forEach(function(d,i){
+    var p=R.dom[d].p,h=Math.max(30,maxH*p/100),X=sx+i*(bw+gap);
+    x.fillStyle=col[d];rr(x,X,base-h,bw,h,bw/2>h?h/2:56);x.fill();
+    x.fillRect(X,base-Math.min(h,40),bw,Math.min(h,40)-0);
+    x.fillStyle="#1B1E36";x.font="800 46px "+disp;x.fillText(String(p),X+bw/2,base-h-18);
+    x.fillStyle=col[d];x.font="800 52px "+disp;x.fillText(d,X+bw/2,base+64);
+    x.fillStyle="#5B6078";x.font="400 22px "+body;x.fillText(short[d],X+bw/2,base+100);
+  });
+  x.fillStyle="#5B6078";x.font="400 26px "+body;
+  x.fillText("Percentile against 320,000 people",W/2,1235);
+  x.font="400 22px "+body;x.fillText("Big Five · open IPIP-NEO questions",W/2,1275);
+  c.toBlob(function(b){
+    cardBlob=b;$("cardImg").src=c.toDataURL("image/png");$("modal").hidden=false;$("shareImg").focus();
+  },"image/png");
+}
+$("cardBtn").onclick=function(){
+  var ready=(document.fonts&&document.fonts.load)?Promise.all([document.fonts.load('800 60px "Bricolage Grotesque"'),document.fonts.load('400 24px "Atkinson Hyperlegible"')]).catch(function(){}):Promise.resolve();
+  ready.then(drawCard);
+};
+$("closeModal").onclick=function(){$("modal").hidden=true};
+$("modal").addEventListener("click",function(e){if(e.target===$("modal"))$("modal").hidden=true});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")$("modal").hidden=true});
+$("shareImg").onclick=function(){
+  if(!cardBlob)return;
+  var f;try{f=new File([cardBlob],"my-personality-shape.png",{type:"image/png"})}catch(e){f=null}
+  if(f&&navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:"My personality shape"}).catch(function(){})}
+  else toast("Press and hold the image to save it")
+};
+
+// ================= hash routing =================
+(function route(){
+  var h=location.hash||"";
+  if(h.indexOf("#f=")===0){
+    var o="";try{o=decodeURIComponent(h.slice(3))}catch(e){}
+    startFriendIntro(o.slice(0,24));return;
+  }
+  if(h.indexOf("#r=")===0){
+    var body=h.slice(3),i=body.lastIndexOf("~");
+    if(i>0){
+      var n="";try{n=decodeURIComponent(body.slice(0,i))}catch(e){n="A friend"}
+      var a=body.slice(i+1);
+      if(a.length===FI.length&&/^[0-5]+$/.test(a)){
+        S.friends=S.friends||[];
+        var dup=S.friends.some(function(f){return f.a===a&&f.n===n});
+        if(!dup){S.friends.push({n:n.slice(0,24)||"A friend",a:a});save()}
+        history.replaceState(null,"",baseUrl());
+        if(S.done){renderResults();show("res");toast(dup?"Already added":n+"'s ratings added")}
+        else{show("intro");toast(n+"'s ratings are saved. Take the test to see them.")}
+        return;
+      }
+    }
+    toast("That reply link looks damaged");
+  }
+})();
+if(prev&&prev.done&&!/^#[fr]=/.test(location.hash||"")){renderResults();show("res")}
+})();
+</script>
+</body>
+</html>
