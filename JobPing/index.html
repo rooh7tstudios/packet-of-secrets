@@ -1,0 +1,344 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>JobPing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: light page, signal-orange used as the one loud accent (marker highlight, radar sweep, buttons, big stat numerals). Short ruled sections: hero, three sourced stats, how it works + scoring, pricing, FAQ, about + CTA, sources. */
+:root {
+  color-scheme: light;
+  --ink: #0A0F24;
+  --bg: #F7F8FC;
+  --fg: #0A0F24;
+  --muted: #4A5373;
+  --line: #D5DAEA;
+  --card: #FFFFFF;
+  --orange: #FF5A1F;
+  --orange-big: #E0450C;
+  --orange-text: #C93500;
+  --tint: #FFE6DB;
+  --focus: #2D3CFF;
+  --f-display: "Archivo", "Arial Black", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --gutter: clamp(1rem, 4vw, 2rem);
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 1.0625rem; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.wrap { max-width: 1080px; margin-inline: auto; padding-inline: var(--gutter); }
+h1, h2, h3 { font-family: var(--f-display); font-stretch: 112%; text-transform: uppercase; margin: 0; text-wrap: balance; }
+.eyebrow { margin: 0; font-family: var(--f-mono); font-weight: 700; font-size: 0.76rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange-text); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 0.7rem 1.4rem; font-family: var(--f-display); font-stretch: 112%; font-weight: 800; font-size: 1rem; letter-spacing: 0.02em; text-transform: uppercase; text-decoration: none; cursor: pointer; background: var(--orange); color: var(--ink); border: 3px solid var(--ink); border-radius: 0; box-shadow: 5px 5px 0 var(--ink); transition: transform 0.15s ease, box-shadow 0.15s ease; }
+.btn:hover { transform: translate(2px, 2px); box-shadow: 3px 3px 0 var(--ink); }
+.btn:active { transform: translate(5px, 5px); box-shadow: 0 0 0 var(--ink); }
+.addr-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 0.9rem; margin-top: 1.1rem; }
+.addr { font-family: var(--f-mono); font-weight: 500; font-size: 0.95rem; overflow-wrap: anywhere; user-select: all; }
+.copy { font-family: var(--f-mono); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; min-height: 36px; padding: 0.35rem 0.8rem; cursor: pointer; background: transparent; color: var(--ink); border: 2px solid var(--ink); border-radius: 0; }
+.copy:hover { background: var(--ink); color: var(--bg); }
+
+/* Hero */
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 1.1rem; }
+.mark { display: inline-flex; align-items: center; gap: 0.6rem; font-family: var(--f-display); font-stretch: 112%; font-weight: 900; font-size: 1.3rem; text-transform: uppercase; text-decoration: none; }
+.dot { position: relative; width: 14px; height: 14px; border-radius: 50%; background: var(--orange); border: 2px solid var(--ink); }
+.dot::after { content: ""; position: absolute; inset: -2px; border-radius: 50%; border: 2px solid var(--orange); animation: dotping 2.2s ease-out infinite; }
+@keyframes dotping { from { transform: scale(1); opacity: 0.9; } to { transform: scale(3); opacity: 0; } }
+.toplink { font-family: var(--f-mono); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; text-underline-offset: 4px; text-decoration-thickness: 2px; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: 2rem 3rem; align-items: center; padding-block: clamp(1.2rem, 4vw, 2.5rem) clamp(2.5rem, 6vw, 4rem); }
+h1 { font-weight: 900; font-size: clamp(2.3rem, 7vw, 5.2rem); line-height: 0.97; letter-spacing: -0.015em; margin-top: 1rem; }
+h1 mark { background: linear-gradient(transparent 58%, var(--orange) 58%, var(--orange) 92%, transparent 92%); color: inherit; padding: 0 0.08em; }
+.lede { font-size: clamp(1.05rem, 2.2vw, 1.2rem); max-width: 33em; margin: 1.3rem 0 1.7rem; color: var(--muted); }
+.fine { margin: 1.1rem 0 0; font-family: var(--f-mono); font-size: 0.8rem; font-weight: 500; }
+.radar { width: 100%; max-width: 400px; margin-inline: auto; }
+.radar svg { display: block; width: 100%; height: auto; }
+.legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; margin-top: 0.8rem; font-family: var(--f-mono); font-size: 0.74rem; font-weight: 500; }
+.legend span { display: inline-flex; align-items: center; gap: 0.45rem; }
+.legend i { width: 11px; height: 11px; border-radius: 50%; background: var(--ink); }
+.legend i.hollow { background: transparent; border: 2px solid var(--ink); }
+.sweep { transform-origin: 200px 200px; animation: sweep 7s linear infinite; }
+.ping { transform-origin: 200px 200px; opacity: 0; animation: ping 3.6s cubic-bezier(0.2, 0.6, 0.3, 1) infinite; }
+.ping.p2 { animation-delay: 1.2s; }
+.ping.p3 { animation-delay: 2.4s; }
+@keyframes sweep { to { transform: rotate(360deg); } }
+@keyframes ping { 0% { transform: scale(1); opacity: 0.9; } 100% { transform: scale(21); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .sweep, .ping, .dot::after { animation: none; } .ping { display: none; } .btn { transition: none; } }
+
+section { padding-block: clamp(2.5rem, 6vw, 4rem); border-top: 1px solid var(--line); }
+.sec-head { display: grid; gap: 0.7rem; margin-bottom: clamp(1.5rem, 3vw, 2.2rem); }
+.sec-head h2 { font-weight: 900; font-size: clamp(1.8rem, 4.6vw, 3rem); line-height: 1; letter-spacing: -0.01em; max-width: 18em; }
+
+/* Stats */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 2rem 2.2rem; margin: 0; padding: 0; list-style: none; }
+.stats li { border-top: 4px solid var(--ink); padding-top: 0.9rem; min-width: 0; }
+.stats b { display: block; font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: clamp(3rem, 8vw, 4.4rem); line-height: 0.95; letter-spacing: -0.03em; color: var(--orange-big); }
+.stats p { margin: 0.7rem 0 0.5rem; font-weight: 500; }
+.stats small { display: block; color: var(--muted); font-size: 0.85rem; line-height: 1.45; }
+.caveat { margin: 1.8rem 0 0; padding: 0.9rem 1.1rem; background: var(--tint); border-left: 4px solid var(--orange); max-width: 46em; font-size: 0.95rem; }
+
+/* How it works */
+.how-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 2.5rem 3.5rem; align-items: start; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.3rem; counter-reset: s; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 2.6rem minmax(0, 1fr); gap: 0.9rem; }
+.steps li::before { content: counter(s); font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 2rem; line-height: 1; color: var(--orange-big); }
+.steps h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 0.2rem; }
+.steps p { margin: 0; color: var(--muted); }
+.score-box { background: var(--card); border: 3px solid var(--ink); padding: 1.3rem 1.4rem; box-shadow: 8px 8px 0 var(--orange); }
+.score-box h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 0.8rem; }
+.score-box ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.7rem; }
+.score-box li { padding-left: 1.2rem; position: relative; }
+.score-box li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 0.6rem; height: 0.6rem; background: var(--orange); border: 2px solid var(--ink); }
+.boards { margin: 1.6rem 0 0; font-size: 0.92rem; color: var(--muted); }
+.boards b { color: var(--fg); font-weight: 600; }
+
+/* Pricing */
+.price-grid { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 2.2rem 3.5rem; align-items: start; }
+.price-card { background: var(--card); border: 3px solid var(--ink); padding: clamp(1.3rem, 4vw, 2rem); box-shadow: 8px 8px 0 var(--orange); }
+.price { display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; }
+.price b { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: clamp(3.8rem, 11vw, 5.8rem); line-height: 0.9; letter-spacing: -0.03em; }
+.price span { font-family: var(--f-mono); font-weight: 500; color: var(--muted); }
+.coffee { margin: 0.8rem 0 0; font-weight: 600; }
+.price-card ul { list-style: none; margin: 1.2rem 0 1.5rem; padding: 0; display: grid; gap: 0.5rem; }
+.price-card li { padding-left: 1.2rem; position: relative; }
+.price-card li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 0.6rem; height: 0.6rem; background: var(--orange); border: 2px solid var(--ink); }
+.rules { margin: 0; border-top: 1px solid var(--line); }
+.rules div { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 1rem; padding-block: 0.8rem; border-bottom: 1px solid var(--line); }
+.rules dt { font-family: var(--f-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange-text); padding-top: 0.2rem; }
+.rules dd { margin: 0; }
+.cant { margin: 1.4rem 0 0; padding: 0.9rem 1.1rem; border: 2px solid var(--ink); background: var(--card); font-size: 0.95rem; }
+.cant b { font-family: var(--f-mono); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 0.2rem; }
+
+/* FAQ */
+.faq { border-top: 4px solid var(--ink); max-width: 780px; }
+.faq details { border-bottom: 1px solid var(--line); }
+.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem 0; font-family: var(--f-display); font-stretch: 105%; font-weight: 700; font-size: 1.05rem; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; font-family: var(--f-mono); font-size: 1.5rem; line-height: 1; flex: none; color: var(--orange-text); }
+.faq details[open] summary::after { content: "\2212"; }
+.faq details p { margin: 0 0 1.1rem; color: var(--muted); max-width: 40em; }
+
+/* About + CTA */
+.end-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2.2rem 3.5rem; align-items: start; }
+.end-grid h2 { font-weight: 900; font-size: clamp(1.8rem, 4.6vw, 3rem); line-height: 1; margin-bottom: 1rem; }
+.end-grid p { margin: 0 0 0.9rem; max-width: 32em; }
+.end-grid .muted { color: var(--muted); font-size: 1rem; }
+
+.sources { padding-block: 1.8rem 2.5rem; font-size: 0.82rem; color: var(--muted); }
+.sources h3 { font-family: var(--f-mono); font-stretch: 100%; font-size: 0.75rem; letter-spacing: 0.12em; margin-bottom: 0.6rem; color: var(--fg); }
+.sources ol { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.3rem; }
+.sources a { text-underline-offset: 3px; }
+.foot { margin-top: 1.2rem; font-family: var(--f-mono); font-size: 0.75rem; }
+
+@media (max-width: 820px) {
+  .hero-grid, .how-grid, .price-grid, .end-grid { grid-template-columns: minmax(0, 1fr); }
+  .radar { max-width: 320px; margin-inline: 0; }
+  .rules div { grid-template-columns: minmax(0, 1fr); gap: 0.2rem; }
+}
+</style>
+
+<header>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="mark" href="#top"><span class="dot" aria-hidden="true"></span>JobPing</a>
+      <a class="toplink" href="#pricing">€5 / month</a>
+    </div>
+    <div class="hero-grid" id="top">
+      <div>
+        <p class="eyebrow">Germany · Every weekday</p>
+        <h1>The <mark>unfair advantage</mark> in your job search.</h1>
+        <p class="lede">Every weekday JobPing scans the German job boards for postings under 48 hours old, scores them against your profile and CV, and emails you the best five, with the CV changes to make before you apply.</p>
+        <a class="btn" href="https://rooh7t.pages.dev" target="_blank" rel="noopener">Join via my portfolio</a>
+        <div class="addr-row">
+          <a class="addr" href="https://rooh7t.pages.dev" target="_blank" rel="noopener">rooh7t.pages.dev</a>
+        </div>
+        <p class="fine">€5 a month. About a coffee and a pretzel.</p>
+      </div>
+      <div class="radar">
+        <svg viewBox="0 0 400 400" role="img" aria-label="Radar graphic. Five job matches inside the 70-point ring are emailed to you. Six postings outside the ring are dropped.">
+          <defs>
+            <linearGradient id="sw" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" style="stop-color:var(--orange);stop-opacity:0"/>
+              <stop offset="1" style="stop-color:var(--orange);stop-opacity:0.6"/>
+            </linearGradient>
+          </defs>
+          <g fill="none" stroke="var(--ink)" stroke-width="1.5" opacity="0.4">
+            <circle cx="200" cy="200" r="180"/>
+            <circle cx="200" cy="200" r="140"/>
+            <circle cx="200" cy="200" r="60"/>
+            <line x1="200" y1="20" x2="200" y2="380"/>
+            <line x1="20" y1="200" x2="380" y2="200"/>
+          </g>
+          <g class="sweep"><path d="M200 200 L200 20 A180 180 0 0 1 290 44.1 Z" fill="url(#sw)"/></g>
+          <circle cx="200" cy="200" r="100" fill="none" stroke="var(--orange)" stroke-width="4" stroke-dasharray="11 8"/>
+          <circle class="ping" cx="200" cy="200" r="8" fill="none" stroke="var(--orange)" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
+          <circle class="ping p2" cx="200" cy="200" r="8" fill="none" stroke="var(--orange)" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
+          <circle class="ping p3" cx="200" cy="200" r="8" fill="none" stroke="var(--orange)" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
+          <g fill="var(--ink)">
+            <circle cx="262" cy="142" r="8"/><circle cx="140" cy="172" r="8"/><circle cx="215" cy="262" r="8"/><circle cx="118" cy="225" r="8"/><circle cx="280" cy="225" r="8"/>
+            <circle cx="200" cy="200" r="5"/>
+          </g>
+          <g fill="none" stroke="var(--ink)" stroke-width="2.5">
+            <circle cx="330" cy="120" r="6"/><circle cx="80" cy="110" r="6"/><circle cx="310" cy="310" r="6"/><circle cx="95" cy="310" r="6"/><circle cx="200" cy="48" r="6"/><circle cx="352" cy="215" r="6"/>
+          </g>
+          <rect x="172" y="86" width="56" height="26" fill="var(--bg)"/>
+          <text x="200" y="105" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, monospace" font-weight="700" font-size="16" fill="var(--ink)">70+</text>
+        </svg>
+        <div class="legend">
+          <span><i></i>Scored 70+, top five emailed</span>
+          <span><i class="hollow"></i>Below the bar, dropped</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+<section id="why">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Why it exists</p>
+      <h2>Searching takes time. Early postings go fast.</h2>
+    </div>
+    <ul class="stats">
+      <li>
+        <b>63%</b>
+        <p>of students in Germany work alongside their studies.</p>
+        <small>DZHW, 22nd Sozialerhebung, nearly 188,000 students, data from summer 2021. <a href="#s1">[1]</a></small>
+      </li>
+      <li>
+        <b>41%</b>
+        <p>of applications arrive within 48 hours of a job being posted. 56% arrive within 96 hours.</p>
+        <small>St. Louis Fed analysis of about 80 million applications to nearly 10 million postings. <a href="#s2">[2]</a></small>
+      </li>
+      <li>
+        <b>8.4 hrs</b>
+        <p>a week is what unemployed job seekers spend searching.</p>
+        <small>New York Fed Survey of Consumer Expectations, pooled 2013 to 2015 waves. Employed searchers spend 1.2 hours. <a href="#s3">[3]</a></small>
+      </li>
+    </ul>
+    <p class="caveat">The second and third figures come from US studies, and the Fed's application data is from 2017. I haven't found German equivalents. They show that speed and search time matter. They don't prove that applying early gets you more interviews.</p>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">How it works</p>
+      <h2>Five jobs a day, scored and explained.</h2>
+    </div>
+    <div class="how-grid">
+      <ol class="steps">
+        <li><div><h3>Get in touch</h3><p>Reach me through my portfolio. Nothing is charged until we've talked.</p></div></li>
+        <li><div><h3>Pay €5</h3><p>Bank transfer or cash. No card on file, no automatic billing.</p></div></li>
+        <li><div><h3>Send your details</h3><p>Fill in the sign-up form I send you, and send me your CV.</p></div></li>
+        <li><div><h3>Read your matches</h3><p>Monday to Friday, up to five arrive best first, each with a score, why it fits, and CV tweaks.</p></div></li>
+      </ol>
+      <div class="score-box">
+        <h3>How scoring works</h3>
+        <ul>
+          <li>Each posting gets a score from 0 to 100 against your form answers and your CV.</li>
+          <li>Only 70 and above is sent, up to five a day.</li>
+          <li>70 is JobPing's own cutoff, not an industry standard. It keeps the digest to postings worth your time.</li>
+          <li>No match clears the bar? You get a short note instead of filler.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="boards"><b>Boards scanned:</b> Indeed, LinkedIn, StepStone, Xing, Bundesagentur für Arbeit, Jobvector and BerlinStartupJobs. Mostly-German boards are checked against the German level you report.</p>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Pricing</p>
+      <h2>One plan. One price.</h2>
+    </div>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price"><b>€5</b><span>per month</span></div>
+        <p class="coffee">About the price of a coffee and a pretzel.</p>
+        <ul>
+          <li>Jobs in Germany only</li>
+          <li>Digest every weekday</li>
+          <li>Up to 5 matches a day, scored 70+</li>
+          <li>Postings from the last 24 to 48 hours</li>
+        </ul>
+        <a class="btn" href="https://rooh7t.pages.dev" target="_blank" rel="noopener">Join via my portfolio</a>
+        <div class="addr-row">
+          <a class="addr" href="https://rooh7t.pages.dev" target="_blank" rel="noopener">rooh7t.pages.dev</a>
+        </div>
+      </div>
+      <div>
+        <dl class="rules">
+          <div><dt>Payment</dt><dd>After we've talked. Bank transfer or cash, monthly.</dd></div>
+          <div><dt>Renewal</dt><dd>On the date you first paid.</dd></div>
+          <div><dt>Cancel</dt><dd>Tell me before your renewal date. Cancelling after renewing means that month still runs out.</dd></div>
+          <div><dt>Refunds</dt><dd>None for part months.</dd></div>
+        </dl>
+        <p class="cant"><b>What JobPing doesn't do</b>It doesn't apply for you and can't promise interviews. It shows you where to look and what to change.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Questions</p>
+      <h2>Before you pay</h2>
+    </div>
+    <div class="faq">
+      <details>
+        <summary>Do I need to speak German?</summary>
+        <p>No. Indeed, LinkedIn and many StepStone listings are in English. Boards that are mostly German are checked against the German level on your form.</p>
+      </details>
+      <details>
+        <summary>What if there are no good matches?</summary>
+        <p>You get a short note saying so, with a quote for the day. If nothing new was posted anywhere, the note says it was a slow posting day.</p>
+      </details>
+      <details>
+        <summary>Where does my CV go?</summary>
+        <p>You send it straight to me. It is not uploaded to a form.</p>
+      </details>
+      <details>
+        <summary>How do I cancel?</summary>
+        <p>Tell me before your renewal date. If you cancel after renewing, that month still runs to the next renewal date, and part months aren't refunded.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section id="join">
+  <div class="wrap end-grid">
+    <div>
+      <h2>Who is behind it</h2>
+      <p>I'm Rohit Raj Rajana, a network security engineer with about five years in OT/SCADA and enterprise Zero Trust environments.</p>
+      <p>JobPing started as the automation behind my own job search. Friends asked to use it, so I opened it up.</p>
+      <p class="muted">I also wrote two ebooks, The Networking 80/20 and AI Head Start.</p>
+    </div>
+    <div>
+      <h2>Get your first digest</h2>
+      <a class="btn" href="https://rooh7t.pages.dev" target="_blank" rel="noopener">Join via my portfolio</a>
+      <div class="addr-row">
+        <a class="addr" href="https://rooh7t.pages.dev" target="_blank" rel="noopener">rooh7t.pages.dev</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="sources">
+  <div class="wrap">
+    <h3>Sources</h3>
+    <ol>
+      <li id="s1"><a href="https://www.dzhw.eu/services/meldungen/detail?pm_id=1608" target="_blank" rel="noopener">DZHW, results of the Studierendenbefragung in Deutschland (22nd Sozialerhebung), May 2023</a></li>
+      <li id="s2"><a href="https://www.stlouisfed.org/on-the-economy/2017/november/how-quickly-people-apply-jobs" target="_blank" rel="noopener">St. Louis Fed, How Quickly Do People Apply for Jobs?, November 2017</a></li>
+      <li id="s3"><a href="https://libertystreeteconomics.newyorkfed.org/2017/04/how-do-people-find-jobs" target="_blank" rel="noopener">New York Fed, Liberty Street Economics, How Do People Find Jobs?, April 2017</a></li>
+    </ol>
+    <p class="foot">JobPing · Germany · Monday to Friday · €5 a month</p>
+  </div>
+</footer>
+
+
+</body></html>
